@@ -1,0 +1,32 @@
+﻿@model IEnumerable<iCollab.ViewModels.ProjectViewModel>
+
+<div class="box box-warning">
+    <div class="box-header">
+        <i class="fa fa-folder"></i>
+        <div class="box-title">Projelerim</div>
+
+        <div class="pull-right box-tools">
+            <div class="btn-group">
+                <button class="btn btn-warning btn-sm dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bars"></i></button>
+                <ul class="dropdown-menu pull-right" role="menu">
+                    <li>@Html.ActionLink("Yeni Proje", "Create", "Projects")</li>
+                    <li>@Html.ActionLink("Projeler", "Index", "Projects")</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="box-body table-responsive no-padding">
+        @if (Model.Any() == false)
+        {
+            <div class="callout callout-info">
+                Size ait bir proje yok. Yeni bir proje oluşturmak için :
+                @Html.ActionLink("Yeni bir proje", "Create", "Projects", null, new { @class = "btn btn-sm btn-primary" })
+            </div>
+        }
+        else
+        {
+            {Html.RenderPartial("_ProjectsTable", Model);}
+        } 
+    </div>
+</div>

@@ -1,0 +1,123 @@
+﻿@using iCollab.Infra.Extensions
+@using iCollab.ViewModels
+@using Microsoft.AspNet.Identity
+@using Model 
+@model TaskViewModel
+@{
+    ViewBag.Title = Model.Title;
+}
+
+<aside class="right-side">
+    <section class="content-header">
+        <h1 class="pull-left">
+            @Model.Title 
+            
+            @if (Model.IsLate)
+            {
+                <i class="fa fa fa-flag pull-right" style="color:red"> @Model.LateDays Gün geç kalmış.</i><br />
+            }
+        </h1>
+        <div class="pull-right">
+            @if (Model.TaskStatus != TaskStatus.Tamamlandı)
+            {
+                @Html.ActionLink("Düzenle", "Edit", new { id = Model.Id }, new { @class = "btn btn-default btn-sm" })
+                @Html.ActionLink("Sil", "Delete", "Tasks", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Silmek istediğinize emin misiniz?');" })
+            }
+            @Html.ActionLink("Tüm Görevler", "Index", null, new { @class = "btn btn-primary btn-sm" })
+        </div>
+        <div class="clearfix"></div>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-body table-responsive no-padding" style="margin-left: 10px;">
+                        <div>
+                            @Html.Raw(HttpUtility.HtmlDecode(Model.Description))<br />
+                        </div>
+
+                        <div class="pull-left">
+                            @if (Model.Project != null)
+                            {
+                                <strong>Proje : </strong>
+                                @Html.ActionLink(Model.Project.Title, "View", "Projects", new { id = Model.Project.Id }, null)<br />
+                            }
+                            <strong>Durumu : </strong><span class="@Model.TaskStatus.CssClass()"> @Model.TaskStatus</span> <br />
+                            <strong>Önceliği :</strong><span class="@Model.Priority.CssClass()">@Model.Priority </span> <br />
+                            <strong><i class="fa fa-clock-o"></i> Başlangıç Zamanı : </strong> @Html.DisplayFor(m => m.StartDatetime) <br />
+                            <strong><i class="fa fa-clock-o"></i> Bitiş Zamanı : </strong> @Html.DisplayFor(m => m.EndDatetime) <br />
+                        </div>
+                        <div class="pull-right">
+                            <strong><i class="fa fa-clock-o"></i> Oluşturulma Zamanı : </strong> @Html.DisplayFor(m => m.DateCreated) <br />
+                            <strong><i class="fa fa-user"></i> Görev Sahibi : </strong> <label class="label label-warning">@Model.TaskOwner</label><br />
+                            <strong><i class="fa fa-asterisk"></i> Oluşturan : </strong> <label class="label label-info">@Model.CreatedBy</label><br />
+                        </div>
+                        <div class="clearfix"></div>
+
+                        <hr /> 
+                        <div class="pull-left">
+                            @if (Model.ParentTask != null)
+                            {
+                                <span><strong>Üst görev: @Html.ActionLink(@Model.ParentTask.Title, "View", "Tasks", new { id = Model.ParentTask.Id }, null) </strong></span>
+                            }
+                        </div>
+                        <div class="pull-right">
+                            @if (Model.TaskOwner == User.Identity.GetUserName())
+                            {
+                                if (Model.IsProcessed == false && Model.TaskStatus != TaskStatus.Tamamlandı)
+                                {
+                                    <div class="btn-group">
+                                        @Html.ActionLink("Tamamla", "CompleteTask", "Tasks", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm", onclick = "return confirm('Tamamlamak istediğinizden emin misiniz?');" })
+                                        @Html.ActionLink("Reddet", "ReturnTask", "Tasks", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('İade etmek istediğinizden emin misiniz?');" })
+                                    </div>
+                                }
+                            }
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="box">
+                    <div class="box-header" style="margin: 10px;"> 
+                        <h3 class='box-title pull-left'>Alt Görevler</h3> 
+                        <div class="pull-right">
+                            @Html.ActionLink("Alt görev ekle", "AddSubTask", "Tasks", new { parentId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="box-body table-responsive no-padding">
+                        @if (Model.SubTasks != null && Model.SubTasks.Count > 0)
+                        {
+                            {Html.RenderPartial("_TaskTable", Model.SubTasks);}
+                        }
+                        else
+                        {
+                            <div class="callout callout-info">
+                                Herhangi bir alt görev yok. Yeni bir alt görev oluşturmak için :
+                                @Html.ActionLink("Alt görev ekle", "AddSubTask", "Tasks", new { parentId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="box">
+                    <div class="box-body">
+                        @{Html.RenderPartial("_Attachment", new AttachmentViewModel
+                          {
+                              Attachments = Model.Attachments,
+                              RemovePath = "/Tasks/RemoveAttachment/?taskId=" + Model.Id,
+                              UploadPath = "/Tasks/Upload/?id=" + Model.Id
+                          });
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>  
+    </section>
+</aside> 

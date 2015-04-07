@@ -1,0 +1,61 @@
+﻿@using Model
+@model IEnumerable<Model.Project>
+
+<div class="box-body table-responsive no-padding">
+    <table class="table table-responsive table-striped table-hover">
+        <thead>
+            <tr> 
+                <th>Başlık</th>
+                <th>Oluşturulma Zamanı</th>
+                <th>Durumu</th>
+                <th>Önceliği</th> 
+                <th style="width: 20px;">Oluşturan</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr> 
+                    <td> 
+                        @Html.ActionLink(item.Title, "View", "Projects", new { id = item.Id }, null)
+                    </td>
+                    <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                    <td>
+                        @if (item.Status == ProjectStatus.Aktif)
+                        {
+                            <small class="label label-primary">@item.Status</small>
+                        }
+                        @if (item.Status == ProjectStatus.Bitti)
+                        {
+                            <small class="label label-success">@item.Status</small>
+                        }
+                    </td>
+                    <td>
+                        @if (item.Priority == Priority.Yüksek)
+                        {
+                            <small class="label label-danger">@item.Priority</small>
+                        }
+
+                        @if (item.Priority == Priority.Acil)
+                        {
+                            <small class="label label-danger">@item.Priority</small>
+                        }
+
+                        @if (item.Priority == Priority.Normal)
+                        {
+                            <small class="label label-success">@item.Priority</small>
+                        }
+
+                        @if (item.Priority == Priority.Düşük)
+                        {
+                            <small class="label label-primary">@item.Priority</small>
+                        }
+
+                    </td> 
+                    <td>@item.ProjectOwner</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

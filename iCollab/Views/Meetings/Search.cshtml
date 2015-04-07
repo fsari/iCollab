@@ -1,0 +1,59 @@
+﻿@model iCollab.ViewModels.SearchViewModel<Model.Meeting>
+
+@{
+    ViewBag.Title = "Toplantilar";
+}
+
+@using PagedList.Mvc; 
+
+<aside class="right-side">
+
+    <section class="content-header">
+        <h1 class="pull-left">Toplantılar</h1>
+        
+        <div class="clearfix"></div>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        <div class="pull-left" style="margin:10px;">
+                            <div class="pull-right" style="margin:10px;"><label class="label label-info">@Model.TotalItemCount Toplanti</label></div>
+                        </div>
+                        <div class="pull-right" style="margin: 4px;">
+                            <form id="searchform" name="searchform" action="/Meetings/Search" method="POST" class="sidebar-form">
+                                <div class="input-group">
+                                    <input type="text" name="query" class="form-control" placeholder="Arama." />
+                                    <span class="input-group-btn">
+                                        <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <div class="box-body table-responsive no-padding">
+                        @if (Model != null && Model.Results.Count > 0)
+                        {
+                            { Html.RenderPartial("_MeetingTable", Model.Results); }
+                        }
+                        else
+                        {
+                            <div class="callout callout-info">
+                                Herhangi bir toplantı yok. Yeni bir toplantı oluşturmak için :
+                                @Html.ActionLink("Yeni toplantı", "Create", "Meetings", null, new { @class = "btn btn-sm btn-primary" })
+                            </div>
+                        }
+                    </div>
+
+                    <div class="box-footer">
+                        @Html.PagedListPager(Model.Results, page => Url.Action("NavigateSearch", "Meetings", new { query = Model.Query, page }))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</aside>

@@ -1,0 +1,13 @@
+﻿
+@{
+    ViewBag.Title = "GetOnlineUsers";
+}
+
+<h2>GetOnlineUsers</h2>
+
+@model IEnumerable<string>
+           
+@foreach (var user in Model)
+{
+    @user
+}

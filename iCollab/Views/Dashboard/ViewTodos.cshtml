@@ -1,0 +1,51 @@
+﻿<div class="box box-primary">
+    <div class="box-header">
+        <i class="fa  fa-clipboard"></i>
+        <div class="box-title">Yapacaklarınız:</div> 
+    </div>
+    <div class="box-body table-responsive no-padding"> 
+        <section id="todoapp">
+            <header id="header"> 
+                <input id="new-todo" data-bind="value: current, valueUpdate: 'afterkeydown', enterKey: add" placeholder="Ne yapacaksınız?" autofocus>
+            </header>
+            <section id="main" data-bind="visible: todos().length"> 
+                <ul id="todo-list" data-bind="foreach: filteredTodos">
+                    <li data-bind="css: { completed: completed, editing: editing }">
+                        <div class="view">
+                            <input class="toggle" data-bind="checked: completed" type="checkbox">
+                            <label data-bind="text: title, event: { dblclick: $root.editItem }"></label>
+                            <button class="destroy" data-bind="click: $root.remove"></button>
+                        </div>
+                        <input class="edit" data-bind="value: title, valueUpdate: 'afterkeydown', enterKey: $root.stopEditing, selectAndFocus: editing, event: { blur: $root.stopEditing }">
+                    </li>
+                </ul>
+            </section>
+            <footer id="footer" data-bind="visible: completedCount() || remainingCount()">
+                <span id="todo-count">
+                    <strong data-bind="text: remainingCount">0</strong>
+                    <span data-bind="text: getLabel(remainingCount)"></span> kaldı.
+                </span>
+                <ul id="filters">
+                    <li>
+                        <a data-bind="css: { selected: showMode() == 'all' }" href="#/all">Hepsi</a>
+                    </li>
+                    <li>
+                        <a data-bind="css: { selected: showMode() == 'active' }" href="#/active">Aktif</a>
+                    </li>
+                    <li>
+                        <a data-bind="css: { selected: showMode() == 'completed' }" href="#/completed">Tamamlananlar</a>
+                    </li>
+                </ul>
+                <button id="clear-completed" data-bind="visible: completedCount, click: removeCompleted">
+                    Tamamlananları temizle (<span data-bind="text: completedCount"></span>)
+                </button>
+            </footer>
+        </section>
+        
+    </div>
+</div>
+<div class="clearfix"></div>
+
+<script src="~/Assets/dist/js/knockout-2.2.1.js"></script>
+<script src="~/Assets/dist/js/director.js"></script>
+<script src="~/Assets/dist/js/todo.js"></script>

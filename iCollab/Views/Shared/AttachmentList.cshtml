@@ -1,0 +1,40 @@
+﻿@using Microsoft.AspNet.Identity
+@model  iCollab.ViewModels.AttachmentViewModel
+
+@if (Model != null && Model.Attachments.Any())
+{
+    <table id="attachments" class="table table-bordered table-responsive table-striped">
+        @foreach (var item in Model.Attachments)
+        {
+            <tr>
+                <td><i class="fa fa-file"></i> <a href="@item.Path" target="new"> @item.Name</a> 
+                    @if (item.CreatedBy == User.Identity.GetUserName())
+                    {
+                        <a href="#" id="img_@item.Id" class="pull-right"><i class="fa fa-trash-o"></i></a>
+                    }    
+                </td>
+            </tr>
+        }
+    </table>
+
+
+    <script>
+        $(document).ready(function () {
+            $('table#attachments td a').click(function () {
+                var itemId = $(this).attr('id').split('_')[1];
+                var parent = $(this).parent();
+                $.post('@Model.RemovePath', { id: itemId }, function (data) {
+                    if (data == "ok") {
+                        parent.slideUp('slow', function () { $(this).remove(); });
+                    } else {
+                        alert("yetkiniz yok.");
+                    }
+                });
+            });
+        });
+    </script>
+}
+else
+{
+    <text>Eklenti yok.</text>
+}

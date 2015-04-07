@@ -1,0 +1,57 @@
+﻿@model iCollab.ViewModels.SearchViewModel<Model.Announcement>
+@{
+    ViewBag.Title = "Duyurular";
+}
+@using PagedList.Mvc;
+@using PagedList;
+
+
+<aside class="right-side">
+    <section class="content-header">
+        <h1>Duyurular</h1>
+        <h3 class="box-title">
+            <label class="label label-primary">@Model.TotalItemCount</label>
+        </h3>
+        <div class="clearfix"></div>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        
+                        <div class="pull-right" style="margin: 4px;">
+                            <form id="searchform" name="searchform" action="/Announcements/Search" method="POST" class="sidebar-form">
+                                <div class="input-group">
+                                    <input type="text" name="query" class="form-control" placeholder="Arama." />
+                                    <span class="input-group-btn">
+                                        <button type='submit' name='search' id='search-btn' class="btn btn-flat"><i class="fa fa-search"></i></button>
+                                    </span>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <div class="clearfix"></div>
+                    </div>
+
+                    @if (Model != null && Model.Results.Count > 0)
+                    {
+                        { Html.RenderPartial("_AnnouncementTable", Model.Results); }
+                    }
+                    else
+                    {
+                        <div class="callout callout-info">
+                            Herhangi bir duyuru yok. Yeni bir duyuru oluşturmak için :
+                            @Html.ActionLink("Yeni duyuru", "Create", "Announcements", null, new { @class = "btn btn-sm btn-primary" })
+                        </div>
+                    }
+
+                    <div class="box-footer">
+                        @Html.PagedListPager(Model.Results, page => Url.Action("NavigateSearch", "Announcements", new {query = Model.Query, page }))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</aside>

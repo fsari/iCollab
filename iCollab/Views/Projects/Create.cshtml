@@ -1,0 +1,116 @@
+﻿@model iCollab.ViewModels.ProjectViewModel
+@{
+    ViewBag.Title = "Yeni Proje";
+}
+
+@section form{
+    <script src="/Assets/dist/js/jquery.validate.js"></script>
+    <script src="/Assets/dist/js/jquery.validate.unobtrusive.min.js"></script> 
+    <script src="/Assets/dist/js/ckeditor/ckeditor.js" type="text/javascript"></script>
+}
+
+<aside class="right-side">
+
+    <section class="content-header">
+        <h1> Yeni Proje </h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-sm">
+                    @using (Html.BeginForm())
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-horizontal">
+                            @if (ViewData.ModelState.IsValid == false)
+                            {
+                                <div class="alert alert-danger alert-dismissable">
+                                    <i class="fa fa-ban"></i>
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    @Html.ValidationSummary(true)
+                                    @Html.ValidationMessage("Error")
+                                </div>
+                            }
+
+                            <div class="form-group">
+                                <label class="control-label col-md-2 required">Kullanıcılar</label>
+                                <div class="col-md-10">
+                                     @(Html.Kendo().MultiSelectFor(m=>m.UserSelectViewModel)
+                                      .Name("SelectedUsers")
+                                      .DataTextField("FullName")
+                                      .DataValueField("Id")
+                                      .Placeholder("Kullanıcıları seçiniz...")
+                                      .AutoBind(false) 
+                                      .DataSource(source =>
+                                      {
+                                          source.Read(read =>
+                                          {
+                                              read.Action("GetUsers", "Users");
+                                          })
+                                          .ServerFiltering(true);
+                                      })
+                                    )
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Title, new { @class = "control-label col-md-2 required" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.Title)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.TextAreaFor(model => model.Description)
+                                    @Html.ValidationMessageFor(model => model.Description)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.StartDatetime, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+
+                                    @(Html.Kendo().DatePicker().Name("StartDatetime")) 
+                                    @Html.ValidationMessageFor(model => model.StartDatetime)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.EndDatetime, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @(Html.Kendo().DatePicker().Name("EndDatetime")) 
+                                    @Html.ValidationMessageFor(model => model.EndDatetime)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @Html.EnumDropDownListFor(model => model.Priority)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Kaydet" class="btn btn-primary" />
+                                    @Html.ActionLink("İptal", "Index", "Projects", null, new { @class = "btn btn-default" })
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+</aside>
+
+<script>
+    $(function () {  
+        CKEDITOR.replace('Description');
+    });
+</script>

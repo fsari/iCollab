@@ -1,0 +1,600 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Net;
+using System.Web.Mvc; 
+using Core.Mappers;
+using Core.Service;
+using Core.Settings;
+using iCollab.Infra;
+using iCollab.Infra.Extensions;
+using iCollab.ViewModels;
+using Kendo.Mvc.Extensions;
+using Kendo.Mvc.UI;
+using Microsoft.AspNet.Identity;
+using Model;
+using Model.FineUploader;
+using PagedList;
+
+namespace iCollab.Controllers
+{
+    [Authorize]
+    public class TasksController : BaseController
+    {
+        private readonly IMapper<TaskViewModel, Task> _mapper;
+        private readonly IProjectService _projectService;
+        private readonly ITaskService _service;
+        private readonly IUserService _userService;
+        private readonly IAttachmentService _attachmentService;
+
+        public TasksController(
+            ITaskService service,
+            IApplicationSettings appSettings,
+            IMapper<TaskViewModel, Task> mapper,
+            IUserService userService,
+            IProjectService projectService, 
+            IAttachmentService attachmentService)
+            : base(userService, appSettings)
+        {
+            _service = service;
+            _mapper = mapper;
+            _userService = userService;
+            _projectService = projectService;
+            _attachmentService = attachmentService;
+        }
+
+        public ActionResult Read([DataSourceRequest] DataSourceRequest request)
+        {
+            var tasks = _service.GetTasks();
+            return Json(tasks.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult AddSubTask(Guid parentId)
+        {
+            IEnumerable<SelectListItem> userDropDown = _userService.GetUsersDropDown();
+             
+            var taskViewModel = new TaskViewModel
+            {
+                UserSelectList = userDropDown,
+                ParentTaskId = parentId
+            };
+
+            var task = _service.GetTask(parentId);
+
+            if (task.ProjectId.HasValue)
+            {
+                taskViewModel.ProjectId = task.ProjectId.Value;
+            }
+
+            return View(taskViewModel);
+        }
+
+        // TODO: Add parent task to errored requests
+        [HttpPost]
+        public ActionResult AddSubTask(TaskViewModel taskViewModel)
+        { 
+            if (ModelState.IsValid == false || string.IsNullOrEmpty(taskViewModel.SelectedUserId))
+            {
+                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
+
+                ModelState.AddModelError("Error", "Bir kullanıcı seçiniz.");
+
+                return View(taskViewModel);
+            }
+
+            if (taskViewModel.EndDatetime.HasValue)
+            {
+                if (taskViewModel.StartDatetime.HasValue == false)
+                {
+                    taskViewModel.StartDatetime = DateTime.Now;
+                }
+
+                if (taskViewModel.EndDatetime.Value < taskViewModel.StartDatetime.Value)
+                {
+                    taskViewModel.UserSelectList = _userService.GetUsersDropDown();
+
+                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
+
+                    return View(taskViewModel);
+                }
+            }
+
+            if (taskViewModel.ParentTaskId.HasValue == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Task task = _mapper.ToModel(taskViewModel);
+
+            task.CreatedBy = User.Identity.GetUserName();
+
+            ApplicationUser user = _userService.Find(taskViewModel.SelectedUserId);
+
+            task.TaskOwner = user.UserName;
+             
+            var parentTask = _service.GetTask(taskViewModel.ParentTaskId.Value, nocache: true);
+
+            if (parentTask.SubTasks == null)
+            {
+                parentTask.SubTasks = new List<Task>();
+            }
+
+            task.ParentTaskId = taskViewModel.ParentTaskId;
+            task.ParentTask = parentTask;
+
+            parentTask.SubTasks.Add(task);
+
+            _service.Update(parentTask);
+
+            TempData["success"] = "Görev oluşturuldu.";
+
+            return RedirectToAction("View", new {id = task.Id});
+        }
+         
+        public ActionResult RemoveAttachment(Guid taskId, Guid id)
+        { 
+            var task = _service.GetTask(taskId, true);
+
+            var attachment = _attachmentService.GetAttachment(id);
+
+            if (attachment.CreatedBy == User.Identity.GetUserName())
+            {
+                task.Attachments.Remove(attachment);
+
+                _service.Update(task);
+
+                return Content("ok");
+            }
+
+            return Content("fail");
+        }
+
+        [HttpPost]
+        public FineUploaderResult Upload(FineUpload upload, Guid? id)
+        {
+            if (id.HasValue == false)
+            {
+                return new FineUploaderResult(false, error: "id is null");
+            }
+
+            string guidFilename = AttachmentHelper.CreateGuidFilename(upload.Filename);
+
+            string uploadPath = AttachmentHelper.GetUploadPath(guidFilename, AppSettings.TaskServerPath);
+
+            string accessPath = AttachmentHelper.GetAccessPath(guidFilename, AppSettings.TaskAccessPath);
+
+            try
+            {
+                upload.SaveAs(uploadPath);
+
+                var attachment = new Attachment {Name = upload.Filename, Path = accessPath, CreatedBy = User.Identity.GetUserName()};
+
+                Task task = _service.GetTask(id.Value,true);
+
+                if (task == null)
+                {
+                    throw new Exception("task is null");
+                }
+
+                if (task.Attachments == null)
+                {
+                    task.Attachments = new Collection<Attachment>();
+                }
+
+                task.Attachments.Add(attachment);
+
+                _service.Update(task);
+
+                string attachmentsHtml = RenderPartialViewToString("AttachmentList", new AttachmentViewModel 
+                                                                                            {
+                                                                                                Attachments = task.Attachments, 
+                                                                                                RemovePath = "/Tasks/RemoveAttachment/?taskId=" + task.Id
+                                                                                            });
+                 
+                return new FineUploaderResult(true, new {extraInformation = 12345, attachmentsHtml, accessPath});
+            }
+            catch (Exception ex)
+            {
+                return new FineUploaderResult(false, error: ex.Message);
+            }
+        }
+
+        public ActionResult MyTasks(int? page)
+        {
+            int pagenumber = page ?? 1;
+
+            string username = User.Identity.GetUserName();
+
+            IPagedList<Task> tasks = _service.GetUserTasks(username).ToPagedList(pagenumber, AppSettings.PageSize);
+
+            return View(tasks);
+        }
+
+        public ActionResult CompletedTasks(int? page)
+        {
+            int pagenumber = page ?? 1;
+
+            IPagedList<Task> tasks = _service.GetTasksByStatus(TaskStatus.Tamamlandı)
+                .ToPagedList(pagenumber, AppSettings.PageSize);
+
+            return View(tasks);
+        }
+
+        public ActionResult RejectedTasks(int? page)
+        {
+            int pagenumber = page ?? 1;
+
+            IPagedList<Task> tasks = _service.GetTasksByStatus(TaskStatus.İade)
+                .ToPagedList(pagenumber, AppSettings.PageSize);
+
+            return View(tasks);
+        }
+
+        public ActionResult LateTasks(int? page)
+        {
+            int pagenumber = page ?? 1;
+
+            IPagedList<Task> tasks = _service.GetLateTasks().ToPagedList(pagenumber, AppSettings.PageSize);
+
+            return View(tasks);
+        }
+
+        public ActionResult CompleteTask(Guid? id)
+        {
+            if (id.HasValue == false)
+            {
+                return HttpNotFound();
+            }
+
+            Task task = _service.GetTask(id.Value, nocache:true);
+
+            if (task == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (task.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            string username = User.Identity.GetUserName();
+
+            if (task.TaskOwner != username)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+
+            task.TaskStatus = TaskStatus.Tamamlandı;
+            task.IsProcessed = true;
+            task.DateCompleted = DateTime.Now;
+
+            _service.Update(task);
+
+            TempData["success"] = "Görev tamamlandı.";
+
+            return RedirectToAction("View", new {id = id.Value});
+        }
+
+        public ActionResult ReturnTask(Guid? id)
+        {
+            if (id.HasValue == false)
+            {
+                return HttpNotFound();
+            }
+
+            Task task = _service.GetTask(id.Value);
+
+            if (task == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (task.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            string username = User.Identity.GetUserName();
+
+            if (task.TaskOwner != username)
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+
+            ApplicationUser user = _userService.GetUserInstance(task.CreatedBy);
+
+            task.TaskStatus = TaskStatus.İade;
+            task.IsProcessed = true;
+            task.DateCompleted = DateTime.Now;
+
+            //TODO : alert task owner
+            task.TaskOwner = user.UserName;
+
+            _service.Update(task);
+
+            TempData["success"] = "Görev iade edildi.";
+            return RedirectToAction("View", new {id = id.Value});
+        }
+
+        public ActionResult View(Guid? id)
+        {
+            if (id.HasValue == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Task task = _service.GetTask(id.Value);
+
+            if (task == null)
+            {
+                return new HttpNotFoundResult();
+            }
+
+            if (task.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            TaskViewModel taskViewModel = _mapper.ToEntity(task);
+            if (task.ProjectId != null) taskViewModel.ProjectId = task.ProjectId.Value;
+
+            taskViewModel.SubTasks.RemoveAll(i=>i.IsDeleted); 
+
+            return View(taskViewModel);
+        }
+
+        public ActionResult Index()
+        { 
+            return View();
+        }
+
+        public ActionResult ViewCalendar()
+        {
+
+            return View();
+        }
+
+        public ActionResult Search(string query, int? page)
+        {
+            int pagenumber = page ?? 1;
+            var resultset = _service.Search(query).ToPagedList(pagenumber, AppSettings.PageSize);
+
+            var searchViewModel = new SearchViewModel<Task>
+            {
+                Query = query,
+                Page = pagenumber,
+                Results = resultset,
+                TotalItemCount = resultset.TotalItemCount
+            };
+
+            return View(searchViewModel);
+        }
+
+        public ActionResult NavigateSearch(string query, int? page)
+        {
+            int pagenumber = page ?? 1;
+            var resultset = _service.Search(query).ToPagedList(pagenumber, AppSettings.PageSize);
+
+            var searchViewModel = new SearchViewModel<Task>
+            {
+                Query = query,
+                Page = pagenumber,
+                Results = resultset,
+                TotalItemCount = resultset.TotalItemCount
+            };
+
+            return View("Search", searchViewModel);
+        }
+
+        public ActionResult CreateTask()
+        {
+            IEnumerable<SelectListItem> userDropDown = _userService.GetUsersDropDown();
+
+            var taskViewModel = new TaskViewModel
+            {
+                UserSelectList = userDropDown
+            };
+
+            return View(taskViewModel);
+        }
+
+        [HttpPost]
+        public ActionResult CreateTask(TaskViewModel taskViewModel)
+        {
+            if (ModelState.IsValid == false || string.IsNullOrEmpty(taskViewModel.SelectedUserId))
+            {
+                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
+
+                ModelState.AddModelError("Error", "Tüm alanları kontrol edip tekrar deneyiniz.");
+
+                return View(taskViewModel);
+            }
+
+            if (taskViewModel.EndDatetime.HasValue)
+            {
+                if (taskViewModel.StartDatetime.HasValue == false)
+                {
+                    taskViewModel.StartDatetime = DateTime.Now;
+                }
+
+                if (taskViewModel.EndDatetime.Value < taskViewModel.StartDatetime.Value)
+                {
+                    taskViewModel.UserSelectList = _userService.GetUsersDropDown();
+
+                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
+
+                    return View(taskViewModel);
+                }
+            }
+
+            Task task = _mapper.ToModel(taskViewModel);
+
+            task.CreatedBy = User.Identity.GetUserName();
+
+            ApplicationUser user = _userService.Find(taskViewModel.SelectedUserId);
+
+            task.TaskOwner = user.UserName;
+
+            _service.Create(task);
+            
+            TempData["success"] = "Görev oluşturuldu.";
+
+            return RedirectToAction("View", new {id = task.Id});
+        }
+
+        public ActionResult Edit(Guid? id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Task task = _service.GetTask(id.Value);
+
+            if (task == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (task.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (task.CreatedBy != User.Identity.GetUserName())
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+
+            TaskViewModel taskviewmodel = _mapper.ToEntity(task);
+
+            Project project = null;
+
+            if (task.ProjectId.HasValue)
+            {
+                taskviewmodel.ProjectId = task.ProjectId.Value;
+                project = _projectService.GetProject(task.ProjectId.Value);
+            }
+
+            IEnumerable<ApplicationUser> users;
+
+            if (project != null)
+            {
+                
+            }
+            else
+            {
+                users = _userService.GetAllUsers();
+            }
+             
+            ApplicationUser user = _userService.GetUserInstance(task.TaskOwner);
+
+            taskviewmodel.SelectedUserId = user.Id;
+
+            return View(taskviewmodel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(TaskViewModel taskviewmodel)
+        {
+            if (string.IsNullOrEmpty(taskviewmodel.SelectedUserId))
+            {
+                taskviewmodel.UserSelectList = _userService.GetUsersDropDown();
+
+                ModelState.AddModelError("Error", "Bir kullanıcı seçiniz.");
+
+                return View(taskviewmodel);
+            }
+
+            if (taskviewmodel.EndDatetime.HasValue)
+            {
+                if (taskviewmodel.StartDatetime.HasValue == false)
+                {
+                    taskviewmodel.StartDatetime = DateTime.Now;
+                }
+
+                if (taskviewmodel.EndDatetime.Value < taskviewmodel.StartDatetime.Value)
+                {
+                    taskviewmodel.UserSelectList = _userService.GetUsersDropDown();
+
+                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
+
+                    return View(taskviewmodel);
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                Task task = _mapper.ToModel(taskviewmodel);
+
+                if (task.ProjectId.HasValue)
+                {
+                    task.ProjectId = taskviewmodel.ProjectId;
+                    Project project = _projectService.Find(taskviewmodel.ProjectId);
+
+                    task.Project = project;
+                }
+
+                task.EditedBy = User.Identity.GetUserName();
+
+                ApplicationUser assignedTo = _userService.Find(taskviewmodel.SelectedUserId);
+
+                task.TaskOwner = assignedTo.UserName;
+
+                _service.Update(task);
+
+                TempData["success"] = "Görev güncellendi.";
+
+                return RedirectToAction("View", new {taskviewmodel.Id});
+            }
+            return View(taskviewmodel);
+        }
+
+        public ActionResult Delete(Guid? id)
+        {
+            if (id.HasValue == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Task task = _service.GetTask(id.Value, nocache:true);
+
+            if (task == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (task.CreatedBy != User.Identity.GetUserName())
+            {
+                return RedirectToAction("Unauthorized", "Error");
+            }
+
+            if (task.SubTasks.Any(x=>x.IsDeleted == false))
+            {
+                TempData["error"] = "Alt görevi olan bir görevi silemezsiniz. Önce alt görevi silmeniz gerekli.";
+                return RedirectToAction("View", new { id });
+            }
+
+            if (task.TaskStatus == TaskStatus.Tamamlandı)
+            {
+                TempData["error"] = "Tamamlanan bir görevi silemezsiniz";
+                return RedirectToAction("View", new {id});
+            }
+
+            task.DeletedBy = User.Identity.GetUserName();
+
+            _service.SoftDelete(task);
+
+            if (task.ParentTask != null)
+            {
+                _service.InvalidateCache(task.ParentTask.Id);
+            }
+
+            TempData["success"] = "Görev silinmiştir.";
+            return RedirectToAction("Index");
+        }
+    }
+}

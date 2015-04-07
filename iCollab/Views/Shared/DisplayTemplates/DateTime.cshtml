@@ -1,0 +1,9 @@
+﻿@model DateTime?
+
+@if (Model.HasValue)
+{
+    <span class="label label-default">
+        @string.Format("{0:dd/MM/yyyy}", Model)
+    </span>
+}
+

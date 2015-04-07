@@ -1,0 +1,41 @@
+﻿@{
+    ViewBag.Title = "Kontrol Paneli"; 
+}  
+
+<link href="/Assets/fullcalendar/lib/cupertino/jquery-ui.min.css" rel="stylesheet" />
+<link href="/Assets/fullcalendar/fullcalendar.css" rel="stylesheet" />
+<script src="/Assets/fullcalendar/lib/moment.min.js"></script>
+<script src="/Assets/fullcalendar/fullcalendar.min.js"></script>
+<script src="/Assets/fullcalendar/lang-all.js"></script>
+
+<aside class="right-side">
+    
+    <section class="content-header">
+        <h1>Kontrol Paneli</h1> 
+    </section>
+
+    <section class="content"> 
+        @{Html.RenderAction("QuickReports","Dashboard");}
+
+        <div class="row"> 
+            <section class="col-lg-6">
+                @{Html.RenderAction("ViewTasks","Dashboard");}
+
+                @{ Html.RenderAction("ViewProjects", "Dashboard"); }
+                  
+                @{ Html.RenderAction("ViewAnnouncements", "Dashboard"); }
+            </section> 
+            
+            <section class="col-lg-6">
+                
+                @*  @{ Html.RenderAction("ViewActivities", "Dashboard"); }*@
+                
+                @{ Html.RenderAction("ViewTodos", "Dashboard"); }
+                
+                @{Html.RenderPartial("ViewCalendar");}
+                
+            </section> 
+        </div> 
+    </section> 
+</aside>
+ 

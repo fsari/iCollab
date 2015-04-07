@@ -1,0 +1,131 @@
+﻿using System;
+using System.Data.Entity;
+using System.Linq;  
+using Core.Caching;
+using Core.Repository;
+using Core.Service.CrudService;
+using Model;
+
+namespace Core.Service
+{
+
+    public interface ITaskService : ICrudService<Model.Task>
+    {
+        IQueryable<Task> GetTasksByStatus(TaskStatus status);
+        Task GetTask(Guid id, bool nocache = false);
+        IQueryable<Task> GetUserTasks(string username);
+        IQueryable<Task> GetTasks();
+        IQueryable<Task> GetLateTasks();
+        int TasksCount();
+        bool UserHasAnyTasks(string userId); 
+        IQueryable<Task> Search(string query); 
+    } 
+
+    public class TaskService : BaseCrudService<Task>, ITaskService
+    {
+        private readonly IRepository<Task> _repository;
+        private readonly ICacheManager<Guid, Task> _cache;
+
+        public TaskService(IRepository<Task> repository, ICacheManager<Guid, Task> cache, UoW uow)
+            : base(repository, cache, uow)
+        {
+            _repository = repository;
+            _cache = cache;
+        }
+
+        public IQueryable<Task> GetTasksByStatus(TaskStatus status)
+        {
+            var tasks = _repository.CollectionUntracked.Where(x => x.TaskStatus == status).OrderByDescending(t => t.DateCreated);
+
+            return tasks;
+        }
+
+        private Task GetTaskInstance(Guid id)
+        {
+            Task task = _repository.Collection
+                            .Include(p => p.Project)
+                            .Include(a => a.Attachments)
+                            .Include(t=>t.SubTasks)
+                            .Include(p=>p.ParentTask) 
+                            .FirstOrDefault(x => x.Id == id);
+
+            return task;
+        }
+
+        public Task GetTask(Guid id, bool nocache = false)
+        {
+
+            Task task;
+
+            if (nocache)
+            {
+                _cache.InvalidateCacheItem(id);
+
+                task = GetTaskInstance(id);
+                  
+                return task;
+            }
+
+            task = _cache.Get(id);
+
+            if (task == null)
+            {
+                task = GetTaskInstance(id);
+
+                if (task == null)
+                {
+                    return null;
+                }
+
+                _cache.Set(id, task);
+            }
+
+            return task;
+        }
+
+        public IQueryable<Task> GetUserTasks(string username)
+        {
+            var tasks = _repository.CollectionUntracked
+                            .Include(p => p.Project)  
+                            .Include(a => a.Attachments)
+                            .Where(x => x.TaskOwner == username)
+                            .OrderByDescending(t => t.DateCreated);
+
+            return tasks;
+        }
+
+        public IQueryable<Task> GetTasks()
+        {
+            var tasks = _repository.CollectionUntracked.OrderByDescending(t => t.DateCreated);
+
+            return tasks;
+        }
+
+        public IQueryable<Task> GetLateTasks()
+        {
+            var tasks = _repository.CollectionUntracked.Where(x => x.EndDatetime < DateTime.Now && x.TaskStatus != TaskStatus.Tamamlandı)
+                .OrderByDescending(t => t.DateCreated);
+
+            return tasks;
+        }
+
+        public int TasksCount()
+        {
+            var count = _repository.CollectionUntracked.Count();
+
+            return count;
+        }
+
+        public bool UserHasAnyTasks(string userId)
+        {
+            return _repository.CollectionUntracked.Any(x => x.TaskOwner == userId);
+        }
+
+        public IQueryable<Task> Search(string query)
+        {
+            var tasks = _repository.CollectionUntracked.Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(t => t.DateCreated);
+
+            return tasks;
+        }
+    }
+}

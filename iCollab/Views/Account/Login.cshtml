@@ -1,0 +1,51 @@
+﻿@model iCollab.ViewModels.LoginViewModel
+@{
+    ViewBag.Title = "Giriş";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+
+<div class="login-box">
+    <div class="login-logo">
+        <br />
+        <a href="/"><b>Dev</b> me</a>
+    </div>
+    <div class="login-box-body">
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        {
+            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+            @Html.AntiForgeryToken()
+
+            <div class="form-group has-feedback">
+                <label class="col-md-2 control-label">E-Posta</label>
+                <div class="col-md-10">
+                    @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+                    <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                    @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="form-group has-feedback">
+                <label class="col-md-2 control-label">Şifre </label>
+                <div class="col-md-10">
+                    @Html.PasswordFor(m => m.Password, new { @class = "form-control" })
+                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-xs-8">
+                    <div class="checkbox icheck">
+                        <label>
+                            @Html.CheckBoxFor(m=>m.RememberMe)
+                            Remember Me
+                        </label>
+                    </div>
+                </div><!-- /.col -->
+                <div class="col-xs-4">
+                    <input type="submit" class="btn btn-primary btn-block btn-flat" value="Giriş yapın" />
+                </div><!-- /.col -->
+            </div>
+        }
+    </div>
+</div> 

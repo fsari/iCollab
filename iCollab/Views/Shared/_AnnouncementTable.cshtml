@@ -1,0 +1,26 @@
+﻿@model IEnumerable<Model.Announcement>
+ 
+<table class="table table-responsive table-striped">
+    <thead>
+        <tr>
+            <th></th>
+            <th style="width: 100px;">Tarih</th>
+            <th style="width: 90px;">Oluşturan</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@Html.ActionLink(item.Title, "View", "Announcements", new { id = item.Id }, null)</td>
+                <td>@Html.DisplayFor(modelItem => item.PublishDate)</td>
+                <td>
+                    @if (item.CreatedBy != null)
+                    {
+                        <span class="label label-success">@item.CreatedBy</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table> 

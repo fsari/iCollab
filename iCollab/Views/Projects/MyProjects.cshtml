@@ -1,0 +1,45 @@
+﻿@model IPagedList<Model.Project>
+@{
+    ViewBag.Title = "Projelerim";
+}
+@using PagedList.Mvc;
+@using PagedList;
+
+<aside class="right-side">
+
+    <section class="content-header">
+        <h1>Geciken Projeler</h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+                        @Html.Partial("_ProjectMenu")
+
+                        <div class="pull-right" style="margin:10px;">
+                            <label class="label label-info">@Model.TotalItemCount Proje</label>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    @if (Model != null && Model.Any())
+                    {
+                        { Html.RenderPartial("_ProjectTable", Model); }
+                    }
+                    else
+                    {
+                        <div class="callout callout-info">
+                            Geciken bir proje yok.
+                        </div>
+                    }
+
+                    <div class="box-footer">
+                        @Html.PagedListPager(Model, page => Url.Action("CompletedProjects", "Projects", new { page }))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</aside>
+

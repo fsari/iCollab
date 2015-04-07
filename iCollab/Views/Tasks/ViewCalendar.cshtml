@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "Takvim";
+}
+ 
+<link href="~/Assets/fullcalendar/lib/cupertino/jquery-ui.min.css" rel="stylesheet" />
+<link href="~/Assets/fullcalendar/fullcalendar.css" rel="stylesheet" /> 
+<script src="~/Assets/fullcalendar/lib/moment.min.js"></script>
+<script src="~/Assets/fullcalendar/fullcalendar.min.js"></script>
+<script src="~/Assets/fullcalendar/lang-all.js"></script>
+
+<aside class="right-side">
+    <section class="content-header">
+        <h1>
+            Takviminiz
+        </h1>
+    </section>
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="box">
+                    <div class="box-body"> 
+                        <div id="calendar"></div>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </section>
+</aside> 
+
+<script>
+
+    $(document).ready(function () {
+
+        $('#calendar').fullCalendar({
+            header: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'month,agendaWeek,agendaDay'
+            },
+            editable: true, 
+            eventStartEditable : false,
+            lang: "tr",
+            eventLimit: false,
+            height: 650,
+            timezone: "local",
+            timeFormat: ' ',
+            events: "/Dashboard/GetCalendarEvents/"
+        });
+
+    });
+
+</script>
