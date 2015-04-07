@@ -133,7 +133,6 @@
     <Compile Include="Service\ProjectService.cs" />
     <Compile Include="Service\TaskService.cs" />
     <Compile Include="Settings\ApplicationSettings.cs" />
-    <Compile Include="Settings\IApplicationSettings.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

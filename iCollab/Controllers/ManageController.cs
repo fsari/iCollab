@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Core.Settings;
 using iCollab.Infra;
+using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Model;
+using Model.FineUploader;
 
 namespace iCollab.Controllers
 {
@@ -38,29 +43,56 @@ namespace iCollab.Controllers
 
             return PartialView("_ProfilePicture", profileViewModel);
         } 
-
-        // TODO : FIX PATH and folder it per user
+         
         [HttpPost] 
         public ActionResult UploadPicture(HttpPostedFileBase file)
         {
             if (file != null)
             {
-                string pic = System.IO.Path.GetFileName(file.FileName);
-                string path = System.IO.Path.Combine(Server.MapPath("~/Attachments/Profile"), pic);
-                file.SaveAs(path);
 
-                var attachment = new Attachment();
-                attachment.Name = file.FileName;
-                attachment.Path = path;
+                string guidFilename = AttachmentHelper.CreateGuidFilename(file.FileName);
+                string uploadPath = AttachmentHelper.GetUploadPath(guidFilename, AppSettings.ProfileServerPath);
+                string accessPath = AttachmentHelper.GetAccessPath(guidFilename, AppSettings.ProfileAccessPath);
 
-                var user = UserService.GetUserInstance(User.Identity.GetUserName());
+                try
+                {
 
-                user.Picture = attachment;
+                    var workingDirectory = Path.GetDirectoryName(uploadPath);
 
-                UserService.UpdateUser(user);
+                    if (workingDirectory == null)
+                    {
+                        throw new Exception("directory is null");
+                    }
+
+                    if (Directory.Exists(workingDirectory) == false)
+                    {
+                        Directory.CreateDirectory(workingDirectory);
+                    }
+
+                    file.SaveAs(uploadPath);
+
+                    var attachment = new Attachment
+                    {
+                        Name = file.FileName,
+                        Path = accessPath,
+                        CreatedBy = User.Identity.GetUserName()
+                    };
+
+                    var user = UserService.GetUserInstance(User.Identity.GetUserName());
+
+                    user.Picture = attachment;
+
+                    UserService.UpdateUser(user);
+
+                    TempData["success"] = "Fotograf güncellendi.";
+                    return RedirectToAction("Index", "Manage");
+                }
+                catch (Exception ex)
+                {
+                    TempData["error"] = "Hata oluştu.";
+                    return RedirectToAction("Index", "Manage"); 
+                }
                  
-                TempData["success"] = "Fotograf güncellendi.";
-                return RedirectToAction("Index", "Manage");
             }
             TempData["error"] = "Hata oluştu.";
             return RedirectToAction("Index", "Manage");
