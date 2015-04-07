@@ -8,6 +8,7 @@ using Core.Caching;
 using Core.Repository;
 using iCollab.ViewModels;
 using Microsoft.AspNet.Identity;
+using Microsoft.SqlServer.Server;
 using Model;
 using PagedList;
 
@@ -29,6 +30,8 @@ namespace iCollab.Infra
         int GetUserCount();
         IEnumerable<string> GetOnlineUsers();
         IEnumerable<ApplicationUser> GetUsers(List<string> userId);
+
+        bool ChangePassword(string userId, string currentPassword, string newPassword);
     }
 
     public class UserService : IUserService
@@ -45,6 +48,18 @@ namespace iCollab.Infra
             _userCache = userCache;
             _uow = uow;
             _userManager = usermanager;  
+        }
+
+        public bool ChangePassword(string userId, string currentPassword, string newPassword)
+        {
+            var result = _userManager.ChangePassword(userId, currentPassword, newPassword);
+
+            if (result.Succeeded)
+            {
+                return true;
+            }
+
+            return false;
         }
 
         public void AssignManager(string userId)
@@ -109,20 +124,24 @@ namespace iCollab.Infra
             if (appUser == null)
             {
                 //user = _userManager.FindByName(userName);
-                ApplicationUser user = _uow.Context.Set<ApplicationUser>().AsNoTracking().FirstOrDefault(x => x.UserName == userName);
+                ApplicationUser user = _uow.Context.Set<ApplicationUser>().Include(a=>a.Picture).AsNoTracking().FirstOrDefault(x => x.UserName == userName);
 
                 if (user == null)
                 {
                     return null;
                 }
 
-                appUser = new AppUserViewModel();
+                appUser = new AppUserViewModel
+                {
+                    FullName = user.FullName,
+                    Email = user.Email,
+                    IsManager = user.IsManager,
+                    Phone = user.Phone,
+                    Id = user.Id,
+                    Picture = user.Picture
+                };
 
-                appUser.FullName = user.FullName;
-                appUser.Email = user.Email;
-                appUser.IsManager = user.IsManager;
                 appUser.Phone = user.Phone;
-                appUser.Id = user.Id;
 
                 _userCache.Set(userName, appUser);
             }

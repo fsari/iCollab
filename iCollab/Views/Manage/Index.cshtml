@@ -1,8 +1,8 @@
-﻿@model iCollab.ViewModels.IndexViewModel
+﻿@model iCollab.ViewModels.ProfileViewModel
 @{
     ViewBag.Title = "Manage";
 }
- 
+
 <aside class="right-side">
     <section class="content-header">
         <h1>
@@ -10,8 +10,8 @@
         </h1>
     </section>
     <section class="content">
-        @Html.Partial("_ChangePasswordPartial")
-        @{ Html.RenderAction("AccountDetails", "Account");}
+        
+        @{Html.RenderAction("ChangePassword","Manage");}
 
     </section>
 </aside>

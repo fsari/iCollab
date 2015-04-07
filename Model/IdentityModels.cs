@@ -28,7 +28,7 @@ namespace Model
         public DateTime? LastLogin { set; get; }
 
         [Display(Name = "Resim")]
-        public virtual Attachment Picture { get; set; } 
+        public Attachment Picture { get; set; } 
         [Display(Name = "Adı Soyadı")]
         public string FullName { get; set; }
         [Display(Name = "Telefon")]
