@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data.Entity;
 using System.Linq;
 using System.Web.Http;
 using iCollab.Infra;
@@ -19,7 +20,7 @@ namespace iCollab.Controllers
         {
             string username = User.Identity.GetUserName();
 
-            ApplicationUser user = _db.Users.FirstOrDefault(x => x.UserName == username);
+            ApplicationUser user = _db.Users.Include(t=>t.Todos).FirstOrDefault(x => x.UserName == username);
 
             if (user == null)
             {
@@ -41,7 +42,7 @@ namespace iCollab.Controllers
             {  
                 string username = User.Identity.GetUserName();
 
-                ApplicationUser user = _db.Users.FirstOrDefault(u=>u.UserName == username);
+                ApplicationUser user = _db.Users.Include(t=>t.Todos).FirstOrDefault(u=>u.UserName == username);
 
                 if (user == null)
                 {

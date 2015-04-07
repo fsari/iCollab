@@ -42,7 +42,7 @@ namespace Model
         [NotMapped]
         public bool IsManager { get; set; }
 
-        public virtual ICollection<Todo> Todos { set; get; }
+        public ICollection<Todo> Todos { set; get; }
     }
 
     public class Department : BaseEntity
