@@ -29,7 +29,7 @@ namespace iCollab.Infra
         IEnumerable<SelectListItem> GetUsersDropDown();
         int GetUserCount();
         IEnumerable<string> GetOnlineUsers();
-        IEnumerable<ApplicationUser> GetUsers(List<string> userId);
+        IEnumerable<string> GetUsers(List<string> userId);
 
         bool ChangePassword(string userId, string currentPassword, string newPassword);
         bool UpdateUser(ApplicationUser user);
@@ -118,9 +118,9 @@ namespace iCollab.Infra
             return users;
         }
 
-        public IEnumerable<ApplicationUser> GetUsers(List<string> userId)
+        public IEnumerable<string> GetUsers(List<string> userId)
         {
-            var users = _uow.Context.Set<ApplicationUser>().AsNoTracking().Where(x => userId.Contains(x.Id)).AsEnumerable();
+            var users = _uow.Context.Set<ApplicationUser>().AsNoTracking().Where(x => userId.Contains(x.Id)).Select(x=>x.UserName).AsEnumerable();
 
             return users;
         }
@@ -153,7 +153,8 @@ namespace iCollab.Infra
                     IsManager = user.IsManager,
                     Phone = user.Phone,
                     Id = user.Id,
-                    Picture = user.Picture
+                    Picture = user.Picture,
+                    UserName =  user.UserName
                 };
 
                 appUser.Phone = user.Phone;
@@ -164,13 +165,13 @@ namespace iCollab.Infra
             return appUser;
         }
 
-        public ApplicationUser Create(ApplicationUser item)
+        public ApplicationUser Create(ApplicationUser user)
         {
-            var result = _userManager.Create(item);
+            var result = _userManager.Create(user);
 
             if (result.Succeeded)
             {
-                
+                return user;
             }
            
             return null;

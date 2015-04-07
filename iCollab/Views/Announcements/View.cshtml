@@ -19,17 +19,20 @@
     </section>
 
     <section class="content">
-        <div class="row">
-            <div class="col-xs-12">
-                <div class="box">
-                    <div class="box-body">
-                        <div>
-                            @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
+        @if (string.IsNullOrEmpty(Model.Description) == false)
+        {
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <div>
+                                @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        }
 
         <div class="row">
             <div class="col-xs-7">
@@ -52,10 +55,10 @@
                               RemovePath = "/Announcements/RemoveAttachment/?announcementId=" + Model.Id,
                               UploadPath = "/Announcements/Upload/?id=" + Model.Id
                           });
-                        } 
+                        }
                     </div>
                 </div>
-            </div> 
+            </div>
 
         </div>
     </section>

@@ -55,8 +55,8 @@ namespace Core.Service
                     Include(a => a.Attachments).
                     Include(d => d.Documents).
                     Include(t => t.Tasks).
-                    Include(m=>m.Meetings).
-                    Include(p=>p.ProjectOwner).
+                    Include(m=>m.Meetings). 
+                    Include(u=>u.ProjectUsers).
                     FirstOrDefault(m => m.Id == id);
 
             if (project == null)

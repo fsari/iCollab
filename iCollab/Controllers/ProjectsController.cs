@@ -386,14 +386,20 @@ namespace iCollab.Controllers
             if (ModelState.IsValid)
             {
                 Project project = _mapper.ToModel(viewModel);
+                 
+                project.ProjectOwner = AppUser.UserName;
+                project.CreatedBy = AppUser.UserName;
 
-                IEnumerable<ApplicationUser> users = _userService.GetUsers(viewModel.SelectedUsers);
-
-                project.ProjectOwner = _userService.Find(AppUser.Id);
-                project.CreatedBy = AppUser.FullName;
-                project.ProjectUsers = users.ToList();
-
+                if (project.ProjectUsers == null)
+                {
+                    project.ProjectUsers = new Collection<ProjectUsers>();
+                }
+                 
                 _projectService.Create(project);
+
+                project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers() { UserId = x }));
+
+                _projectService.Update(project);
 
                 TempData["success"] = "Proje oluşturuldu.";
 
@@ -417,7 +423,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (project.ProjectOwner.Id != User.Identity.GetUserId())
+            if (project.ProjectOwner != User.Identity.GetUserId())
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
@@ -446,7 +452,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (project.ProjectOwner.Id != User.Identity.GetUserId())
+            if (project.ProjectOwner != User.Identity.GetUserId())
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
@@ -558,7 +564,7 @@ namespace iCollab.Controllers
                 return RedirectToAction("View", new {id});
             }
 
-            if (project.ProjectOwner.Id != User.Identity.GetUserId())
+            if (project.ProjectOwner != User.Identity.GetUserId())
             {
                 return RedirectToAction("Unauthorized", "Error");
             }

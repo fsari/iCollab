@@ -33,14 +33,13 @@ namespace Model
         public DateTime? DateCompleted { set; get; }
         [Display(Name = "İptal Tarihi")]
         public DateTime? DateCancelled { set; get; }
-          
-        [Index]
-        public ApplicationUser ProjectOwner { get; set; }
+           
+        public string ProjectOwner { get; set; }
         public ICollection<Task> Tasks { get; set; }
         public ICollection<Document> Documents { set; get; }
         public ICollection<Attachment> Attachments { set; get; }
         public ICollection<Meeting> Meetings { set; get; }
-        public ICollection<ApplicationUser> ProjectUsers { set; get; }
+        public ICollection<ProjectUsers> ProjectUsers { set; get; }
 
     }
 }
