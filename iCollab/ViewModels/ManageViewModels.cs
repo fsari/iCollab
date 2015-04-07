@@ -2,25 +2,18 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
+using Model;
 
 namespace iCollab.ViewModels
 {
     public class ProfileViewModel
     { 
         public string PhoneNumber { get; set; }
+        [Required]
         public string FullName { set; get; }
-    }
 
-    public class ManageLoginsViewModel
-    {
-        public IList<UserLoginInfo> CurrentLogins { get; set; }
-        public IList<AuthenticationDescription> OtherLogins { get; set; }
-    }
-
-    public class FactorViewModel
-    {
-        public string Purpose { get; set; }
-    }
+        public Attachment Attachment { set; get; }
+    } 
 
     public class SetPasswordViewModel
     {
@@ -54,30 +47,5 @@ namespace iCollab.ViewModels
         [Compare("NewPassword", ErrorMessage = "Şifreniz uyuşmamaktadır. Kontrol ediniz.")]
         public string ConfirmPassword { get; set; }
     }
-
-    public class AddPhoneNumberViewModel
-    {
-        [Required]
-        [Phone]
-        [Display(Name = "Phone Number")]
-        public string Number { get; set; }
-    }
-
-    public class VerifyPhoneNumberViewModel
-    {
-        [Required]
-        [Display(Name = "Code")]
-        public string Code { get; set; }
-
-        [Required]
-        [Phone]
-        [Display(Name = "Phone Number")]
-        public string PhoneNumber { get; set; }
-    }
-
-    public class ConfigureTwoFactorViewModel
-    {
-        public string SelectedProvider { get; set; }
-        public ICollection<System.Web.Mvc.SelectListItem> Providers { get; set; }
-    }
+     
 }

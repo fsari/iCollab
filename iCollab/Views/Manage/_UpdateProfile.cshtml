@@ -1,0 +1,31 @@
+﻿@model iCollab.ViewModels.ProfileViewModel
+     
+<div class="box">
+    <div class="box-body">
+        @using (Html.BeginForm("UpdateProfile", "Manage", FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
+        { 
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.FullName, new { @class = "col-md-2 control-label" })
+                <div class="col-xs-5">
+                    @Html.TextBoxFor(m => m.FullName, new { @class = "form-control col-xs-3", @autocomplete = "off" })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.PhoneNumber, new { @class = "col-md-2 control-label" })
+                <div class="col-xs-5">
+                    @(Html.Kendo().MaskedTextBox()
+                        .Name("PhoneNumber")
+                        .Mask("(999) 000-0000")
+                        .Value(Model.PhoneNumber)
+                    )
+                </div>
+            </div> 
+            <div class="form-group">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Kaydet" class="btn btn-default" />
+                </div>
+            </div>
+        }
+    </div>
+</div> 

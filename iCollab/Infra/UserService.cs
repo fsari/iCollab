@@ -32,6 +32,7 @@ namespace iCollab.Infra
         IEnumerable<ApplicationUser> GetUsers(List<string> userId);
 
         bool ChangePassword(string userId, string currentPassword, string newPassword);
+        bool UpdateUser(ApplicationUser user);
     }
 
     public class UserService : IUserService
@@ -60,6 +61,20 @@ namespace iCollab.Infra
             }
 
             return false;
+        }
+
+        public bool UpdateUser(ApplicationUser user)
+        {
+            var result = _userManager.Update(user);
+
+            if (result.Succeeded)
+            {
+                _userCache.Remove(user.Email);
+
+                return true;
+            }
+
+            return true;
         }
 
         public void AssignManager(string userId)

@@ -3,15 +3,30 @@
     ViewBag.Title = "Manage";
 }
 
+@section form{
+    <script src="/Assets/dist/js/jquery.validate.js"></script>
+    <script src="/Assets/dist/js/jquery.validate.unobtrusive.min.js"></script>
+}
+
 <aside class="right-side">
     <section class="content-header">
-        <h1>
-            Profil Bilgileri
-        </h1>
+        <h1> Profil Bilgileri </h1>
     </section>
     <section class="content">
+        <div class="row">
+            <div class="col-md-6">
+                @{Html.RenderAction("UpdateProfile", "Manage");}
+            </div>
+            <div class="col-md-6">
+                @{Html.RenderAction("ChangePassword", "Manage");}
+            </div> 
+        </div>
         
-        @{Html.RenderAction("ChangePassword","Manage");}
-
+        <div class="row">
+            <div class="col-md-6">
+                @{Html.RenderAction("ProfilePicture", "Manage");}
+            </div> 
+        </div>
+         
     </section>
 </aside>

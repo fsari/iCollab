@@ -9,6 +9,7 @@ using iCollab.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Model;
 
 namespace iCollab.Controllers
 {
@@ -29,6 +30,78 @@ namespace iCollab.Controllers
             };
             return View(model);
         }
+
+        [ChildActionOnly]
+        public ActionResult ProfilePicture()
+        {
+            var profileViewModel = new ProfileViewModel {Attachment = AppUser.Picture};
+
+            return PartialView("_ProfilePicture", profileViewModel);
+        } 
+
+        // TODO : FIX PATH and folder it per user
+        [HttpPost] 
+        public ActionResult UploadPicture(HttpPostedFileBase file)
+        {
+            if (file != null)
+            {
+                string pic = System.IO.Path.GetFileName(file.FileName);
+                string path = System.IO.Path.Combine(Server.MapPath("~/Attachments/Profile"), pic);
+                file.SaveAs(path);
+
+                var attachment = new Attachment();
+                attachment.Name = file.FileName;
+                attachment.Path = path;
+
+                var user = UserService.GetUserInstance(User.Identity.GetUserName());
+
+                user.Picture = attachment;
+
+                UserService.UpdateUser(user);
+                 
+                TempData["success"] = "Fotograf güncellendi.";
+                return RedirectToAction("Index", "Manage");
+            }
+            TempData["error"] = "Hata oluştu.";
+            return RedirectToAction("Index", "Manage");
+        }
+
+        [ChildActionOnly]
+        public ActionResult UpdateProfile()
+        {
+            var profileViewModel = new ProfileViewModel();
+
+            profileViewModel.FullName = AppUser.FullName;
+            profileViewModel.PhoneNumber = AppUser.Phone;
+
+            return PartialView("_UpdateProfile", profileViewModel);
+        }
+
+        [HttpPost] 
+        public ActionResult UpdateProfile(ProfileViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["error"] = "Hata oluştu.";
+                return RedirectToAction("Index");
+            }
+
+            var user = UserService.GetUserInstance(User.Identity.GetUserName());
+
+            user.Phone = model.PhoneNumber;
+            user.FullName = model.FullName;
+
+            var result = UserService.UpdateUser(user);
+
+            if (result)
+            {
+                TempData["success"] = "Profil güncellendi.";
+                return RedirectToAction("Index");
+            }
+
+            TempData["error"] = "Hata oluştu.";
+            return RedirectToAction("Index");
+        }
          
 
         [ChildActionOnly]
@@ -37,9 +110,8 @@ namespace iCollab.Controllers
             return PartialView();
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> ChangePassword(ChangePasswordViewModel model)
+        [HttpPost] 
+        public ActionResult ChangePassword(ChangePasswordViewModel model)
         {
             if (!ModelState.IsValid)
             {
