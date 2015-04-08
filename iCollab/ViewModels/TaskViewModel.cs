@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Mvc;
-using Kendo.Mvc.UI;
 using Model;
 
 namespace iCollab.ViewModels
