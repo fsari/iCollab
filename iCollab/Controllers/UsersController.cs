@@ -35,7 +35,7 @@ namespace iCollab.Controllers
 
         public ActionResult GetUsers()
         {
-            IQueryable<UserSelectViewModel> users = _userService.GetAllUsers().Select(x => new UserSelectViewModel { Id = x.Id, FullName = x.FullName });
+            var users = _userService.GetAllUsers().Select(x => new UserSelectViewModel { Id = x.Id, FullName = x.FullName });
             return Json(users, JsonRequestBehavior.AllowGet);
         }
 

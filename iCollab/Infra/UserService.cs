@@ -29,8 +29,7 @@ namespace iCollab.Infra
         IEnumerable<SelectListItem> GetUsersDropDown();
         int GetUserCount();
         IEnumerable<string> GetOnlineUsers();
-        IEnumerable<string> GetUsers(List<string> userId);
-
+        IQueryable<ApplicationUser> GetUsers(IEnumerable<string> userId); 
         bool ChangePassword(string userId, string currentPassword, string newPassword);
         bool UpdateUser(ApplicationUser user);
     }
@@ -118,9 +117,9 @@ namespace iCollab.Infra
             return users;
         }
 
-        public IEnumerable<string> GetUsers(List<string> userId)
+        public IQueryable<ApplicationUser> GetUsers(IEnumerable<string> userId)
         {
-            var users = _uow.Context.Set<ApplicationUser>().AsNoTracking().Where(x => userId.Contains(x.Id)).Select(x=>x.UserName).AsEnumerable();
+            var users = _uow.Context.Set<ApplicationUser>().AsNoTracking().Where(x => userId.Contains(x.Id));
 
             return users;
         }

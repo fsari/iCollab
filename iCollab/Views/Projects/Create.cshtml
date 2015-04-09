@@ -1,4 +1,5 @@
-﻿@model iCollab.ViewModels.ProjectViewModel
+﻿@using Model
+@model iCollab.ViewModels.ProjectViewModel
 @{
     ViewBag.Title = "Yeni Proje";
 }
@@ -90,8 +91,8 @@
 
                             <div class="form-group">
                                 @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EnumDropDownListFor(model => model.Priority)
+                                <div class="col-md-10"> 
+                                    @(Html.Kendo().DropDownList().Name("Priority").BindTo(Enum.GetNames(typeof(Priority)))) 
                                 </div>
                             </div>
 

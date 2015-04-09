@@ -346,14 +346,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            ProjectViewModel viewModel = _mapper.ToEntity(project);
-
-/*            Project nextproject = _projectService.GetNextProject(project);
-
-            Project previousproject = _projectService.GetPreviousProject(project);
-
-            viewModel.NextProjectId = nextproject == null ? default(Guid?) : nextproject.Id;
-            viewModel.PreviousProjectId = previousproject == null ? default(Guid?) : previousproject.Id;*/
+            ProjectViewModel viewModel = _mapper.ToEntity(project); 
 
             return View(viewModel);
         }
@@ -368,6 +361,13 @@ namespace iCollab.Controllers
         [HttpPost]
         public ActionResult Create(ProjectViewModel viewModel)
         {
+            if (viewModel.SelectedUsers == null || viewModel.SelectedUsers.Any() == false)
+            {
+                ModelState.AddModelError("Error", "Kullanıcı seçmeniz lazım.");
+
+                return View(viewModel);
+            }
+
             if (viewModel.EndDatetime.HasValue)
             {
                 if (viewModel.StartDatetime.HasValue == false)
@@ -406,6 +406,7 @@ namespace iCollab.Controllers
                 return RedirectToAction("View", new {id = project.Id});
             }
 
+            ModelState.AddModelError("Error", "Formu kontrol edip tekrar deneyiniz.");
             return View(viewModel);
         }
 
@@ -492,6 +493,11 @@ namespace iCollab.Controllers
 
             ProjectViewModel viewModel = _mapper.ToEntity(project);
 
+            var userIds = project.ProjectUsers.Select(x => x.UserId);
+
+            var users = _userService.GetUsers(userIds);
+
+            viewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
 
             return View(viewModel);
         }
@@ -564,7 +570,7 @@ namespace iCollab.Controllers
                 return RedirectToAction("View", new {id});
             }
 
-            if (project.ProjectOwner != User.Identity.GetUserId())
+            if (project.ProjectOwner != User.Identity.GetUserName())
             {
                 return RedirectToAction("Unauthorized", "Error");
             }

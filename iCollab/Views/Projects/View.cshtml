@@ -56,7 +56,7 @@
                                     @if (Model.CreatedBy == User.Identity.GetUserName() && (Model.Status != ProjectStatus.Bitti || Model.Status != ProjectStatus.Iptal))
                                     {
                                         @Html.ActionLink("Projeyi Bitir", "Finish", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Projeyi bitirmek istediginizden emin misiniz?');" })
-                                        @Html.ActionLink("Projeyi iptal et", "CancelProject", new { id = Model.Id }, new { @class = "btn btn-warning btn-sm", onclick = "return confirm('Projeyi bitirmek istediginizden emin misiniz?');" })
+                                        @Html.ActionLink("Projeyi iptal et", "CancelProject", new { id = Model.Id }, new { @class = "btn btn-warning btn-sm", onclick = "return confirm('Projeyi iptal etmek istediginizden emin misiniz?');" })
                                     }
                                 </div>
                             </div>
