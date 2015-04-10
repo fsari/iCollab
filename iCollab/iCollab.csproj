@@ -195,6 +195,7 @@
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Controllers\TodosController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Infra\Extensions\AppBuilderExtensions.cs" />
     <Compile Include="Infra\Extensions\AttachmentHelper.cs" />
     <Compile Include="Infra\Extensions\AuthorizeAttribute.cs" />
     <Compile Include="Infra\Extensions\DateTimeExtensions.cs" />
@@ -1643,7 +1644,6 @@
     <Content Include="Assets\toastr\toastr.css" />
     <Content Include="Assets\toastr\toastr.js" />
     <Content Include="Attachments\UserProfile\04793b3c-8803-43c4-98e6-f4b5809ad7c2.jpeg" />
-    <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Assets\bootstrap\css\bootstrap.css.map" />
     <Content Include="Assets\bootstrap\fonts\glyphicons-halflings-regular.eot" />
@@ -1898,7 +1898,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
-    <None Include="Project_Readme.html" />
     <Content Include="Views\Manage\_UpdateProfile.cshtml" />
     <Content Include="Views\Manage\_ProfilePicture.cshtml" />
     <Content Include="Views\Tasks\ViewGantt.cshtml" />

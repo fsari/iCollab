@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin; 
+﻿using iCollab.Infra.Extensions;
+using Microsoft.Owin; 
 using Owin; 
 
 [assembly: OwinStartupAttribute(typeof(iCollab.Startup))]
@@ -8,7 +9,8 @@ namespace iCollab
     {
         public void Configuration(IAppBuilder app)
         { 
-            ConfigureAuth(app);  
+            ConfigureAuth(app);
+            //app.UseSimpleLogger();
         }
     }
 }

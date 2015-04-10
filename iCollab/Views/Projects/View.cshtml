@@ -40,7 +40,11 @@
                                         <strong>Durumu : </strong> <label class="label label-info">@Model.Status </label><br />
                                         <strong>Önceliği : </strong> <label class="label label-primary">@Model.Priority </label><br />
 
-                                        <strong>Kullanıcılar :</strong>
+                                        <strong>Kullanıcılar :</strong> 
+                                        @foreach (var user in Model.SelectedUsers)
+                                        {
+                                            <label class="label label-default">  @user </label>
+                                        }
                                         
                                     </div>
                                     <div class="pull-right">
@@ -111,8 +115,7 @@
                                     }
                                 </div>
                             </div>
-                            <div class="box-body">
-
+                            <div class="box-body"> 
                                 @if (Model.Documents != null)
                                 {
                                     if (Model.Documents.Any() == false)

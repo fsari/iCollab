@@ -80,7 +80,7 @@ namespace iCollab.ViewModels
         [Display(Name = "Tamamlanma Yüzdesi")]
         public int PercentComplete{ get; set; }
 
-        public UserSelectViewModel UserSelectViewModel { set; get; }
+        public IEnumerable<UserSelectViewModel> SelectedProjectUsers { set; get; } 
         public List<string> SelectedUsers { set; get; }
 
         public bool IsLate

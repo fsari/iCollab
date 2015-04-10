@@ -1,4 +1,5 @@
-﻿@model iCollab.ViewModels.TaskViewModel
+﻿@using Model
+@model iCollab.ViewModels.TaskViewModel
 
 @{
     ViewBag.Title = "Görev Ekle";
@@ -13,9 +14,7 @@
  
 <aside class="right-side">
     <section class="content-header">
-        <h1>
-            Görev Ekle
-        </h1>
+        <h1> Görev Ekle </h1>
     </section>
     <section class="content">
         <div class="row">
@@ -79,8 +78,7 @@
                             <div class="form-group">
                                 @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
-                                    @Html.EnumDropDownListFor(model => model.Priority)
-                                    @Html.ValidationMessageFor(model => model.Priority)
+                                    @(Html.Kendo().DropDownList().Name("Priority").BindTo(Enum.GetNames(typeof(Priority)))) 
                                 </div>
                             </div>
 

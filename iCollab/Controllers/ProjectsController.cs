@@ -346,7 +346,13 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            ProjectViewModel viewModel = _mapper.ToEntity(project); 
+            var projectUsers = project.ProjectUsers.Select(x=>x.UserId);
+
+            var users = _userService.GetUsers(projectUsers.AsEnumerable());
+
+            ProjectViewModel viewModel = _mapper.ToEntity(project);
+
+            viewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
 
             return View(viewModel);
         }
@@ -497,7 +503,7 @@ namespace iCollab.Controllers
 
             var users = _userService.GetUsers(userIds);
 
-            viewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
+            viewModel.SelectedProjectUsers = users.Select(x => new UserSelectViewModel(){FullName = x.FullName, Id = x.Id});
 
             return View(viewModel);
         }
@@ -505,6 +511,14 @@ namespace iCollab.Controllers
         [HttpPost]
         public ActionResult Edit(ProjectViewModel viewModel)
         {
+
+            if (viewModel.SelectedUsers == null || viewModel.SelectedUsers.Any() == false)
+            { 
+                TempData["error"] = "Kullanıcı seçmeniz lazım.";
+
+                return View(viewModel);
+            }
+
             if (viewModel.EndDatetime.HasValue)
             {
                 if (viewModel.StartDatetime.HasValue == false)
@@ -513,8 +527,8 @@ namespace iCollab.Controllers
                 }
 
                 if (viewModel.EndDatetime.Value < viewModel.StartDatetime.Value)
-                {
-                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
+                { 
+                    TempData["error"] = "Bitiş tarihi başlangıç tarihinden erken olamaz.";
 
                     return View(viewModel);
                 }
@@ -540,7 +554,12 @@ namespace iCollab.Controllers
                 project.Title = viewModel.Title;
                 project.Description = viewModel.Description;
 
+                project.ProjectUsers.Clear();
 
+                _projectService.Update(project);
+
+                project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers() { UserId = x }));
+  
                 _projectService.Update(project);
 
                 TempData["success"] = "Proje güncellendi.";
@@ -548,6 +567,7 @@ namespace iCollab.Controllers
                 return RedirectToAction("View", new {project.Id});
             }
 
+            TempData["error"] = "Bir hata oluştu formu kontrol edip tekrar deneyiniz.";
             return View(viewModel);
         }
 
@@ -567,6 +587,7 @@ namespace iCollab.Controllers
 
             if (project.Status == ProjectStatus.Bitti)
             {
+                TempData["success"] = "Bitmiş projeyi silemezsiniz.";
                 return RedirectToAction("View", new {id});
             }
 
@@ -649,7 +670,7 @@ namespace iCollab.Controllers
                 }
                     );
 
-                return new FineUploaderResult(true, new {extraInformation = 12345, attachmentsHtml, accessPath});
+                return new FineUploaderResult(true, new { extraInformation = 12345, attachmentsHtml, accessPath });
             }
             catch (Exception ex)
             {
