@@ -192,6 +192,7 @@
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\MeetingsController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
+    <Compile Include="Controllers\GanttController.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Controllers\TodosController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
@@ -1911,6 +1912,9 @@
       <Project>{5175532e-1839-4ca8-be2d-d6761f0760a3}</Project>
       <Name>Model</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Gantt\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
