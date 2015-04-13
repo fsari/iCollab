@@ -1,4 +1,5 @@
-﻿@model iCollab.ViewModels.TaskViewModel
+﻿@using Model
+@model iCollab.ViewModels.TaskViewModel
 
 @{
     ViewBag.Title = "Düzenle";
@@ -29,8 +30,7 @@
                                 @Html.HiddenFor(model => model.Id)
                                 @Html.HiddenFor(model => model.ProjectId)
                                 @Html.HiddenFor(model=>model.DateCreated)
-                                @Html.HiddenFor(model=>model.CreatedBy)
-                                @Html.HiddenFor(model =>model.TaskOwner)
+                                @Html.HiddenFor(model=>model.CreatedBy) 
                                 
                                 @if (ViewData.ModelState.IsValid == false)
                                 {
@@ -45,9 +45,25 @@
                                 <div class="form-group">
                                     <label class="control-label col-md-2 required">Kullanıcılar</label>
                                     <div class="col-md-10">
-                                        @Html.DropDownListFor(m => m.SelectedUserId, Model.UserSelectList, "Kullanıcı Seç")
+                                        @(Html.Kendo().MultiSelect()
+                                      .Name("SelectedUsers")
+                                      .DataTextField("FullName")
+                                      .DataValueField("Id")
+                                      .Placeholder("Kullanıcıları seçiniz...")
+                                      .AutoBind(false)
+                                      .DataSource(source =>
+                                      {
+                                          source.Read(read =>
+                                          {
+                                              read.Action("GetUsers", "Users");
+                                          })
+                                          .ServerFiltering(true);
+                                      })
+                                     .Value(Model.SelectedProjectUsers))
+
                                     </div>
-                                </div> 
+                                </div>
+
 
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.Title, new { @class = "control-label col-md-2 required" })
@@ -86,8 +102,7 @@
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2" })
                                     <div class="col-md-10">
-                                        @Html.EnumDropDownListFor(model => model.Priority)
-                                        @Html.ValidationMessageFor(model => model.Priority)
+                                        @(Html.Kendo().DropDownList().Name("Priority").BindTo(Enum.GetNames(typeof(Priority))))
                                     </div>
                                 </div>
                                  

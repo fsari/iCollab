@@ -45,13 +45,18 @@
                             }
                             <strong>Durumu : </strong><span class="@Model.TaskStatus.CssClass()"> @Model.TaskStatus</span> <br />
                             <strong>Önceliği :</strong><span class="@Model.Priority.CssClass()">@Model.Priority </span> <br />
-                            <strong><i class="fa fa-clock-o"></i> Başlangıç Zamanı : </strong> @Html.DisplayFor(m => m.StartDatetime) <br />
-                            <strong><i class="fa fa-clock-o"></i> Bitiş Zamanı : </strong> @Html.DisplayFor(m => m.EndDatetime) <br />
+                            <strong><i class="fa fa-user"></i> Atananlar: </strong>
+                            @foreach (var u in Model.SelectedUsers)
+                            {
+                                <label class="label label-default">@u</label>
+                            }
+                            <br />
+                            <strong><i class="fa fa-asterisk"></i> Oluşturan : </strong> <label class="label label-info">@Model.CreatedBy</label><br />
                         </div>
                         <div class="pull-right">
                             <strong><i class="fa fa-clock-o"></i> Oluşturulma Zamanı : </strong> @Html.DisplayFor(m => m.DateCreated) <br />
-                            <strong><i class="fa fa-user"></i> Görev Sahibi : </strong> <label class="label label-warning">@Model.TaskOwner</label><br />
-                            <strong><i class="fa fa-asterisk"></i> Oluşturan : </strong> <label class="label label-info">@Model.CreatedBy</label><br />
+                            <strong><i class="fa fa-clock-o"></i> Başlangıç Zamanı : </strong> @Html.DisplayFor(m => m.StartDatetime) <br />
+                            <strong><i class="fa fa-clock-o"></i> Bitiş Zamanı : </strong> @Html.DisplayFor(m => m.EndDatetime) <br />
                         </div>
                         <div class="clearfix"></div>
 
@@ -62,18 +67,16 @@
                                 <span><strong>Üst görev: @Html.ActionLink(@Model.ParentTask.Title, "View", "Tasks", new { id = Model.ParentTask.Id }, null) </strong></span>
                             }
                         </div>
-                        <div class="pull-right">
-                            @if (Model.TaskOwner == User.Identity.GetUserName())
+                        <div class="pull-right"> 
+                            @if (Model.IsProcessed == false && Model.TaskStatus != TaskStatus.Tamamlandı)
                             {
-                                if (Model.IsProcessed == false && Model.TaskStatus != TaskStatus.Tamamlandı)
-                                {
-                                    <div class="btn-group">
-                                        @Html.ActionLink("Tamamla", "CompleteTask", "Tasks", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm", onclick = "return confirm('Tamamlamak istediğinizden emin misiniz?');" })
-                                        @Html.ActionLink("Reddet", "ReturnTask", "Tasks", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('İade etmek istediğinizden emin misiniz?');" })
-                                    </div>
-                                }
+                                <div class="btn-group">
+                                    @Html.ActionLink("Tamamla", "CompleteTask", "Tasks", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm", onclick = "return confirm('Tamamlamak istediğinizden emin misiniz?');" })
+                                    @Html.ActionLink("Reddet", "ReturnTask", "Tasks", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('İade etmek istediğinizden emin misiniz?');" })
+                                </div>
                             }
                         </div>
+
                         <div class="clearfix"></div>
                     </div>
                 </div>

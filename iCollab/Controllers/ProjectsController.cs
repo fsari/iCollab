@@ -308,7 +308,7 @@ namespace iCollab.Controllers
 
             ApplicationUser assignee = _userService.Find(taskViewModel.SelectedUserId);
 
-            task.TaskOwner = assignee.UserName;
+            //task.TaskOwner = assignee.UserName;
 
             if (project.Tasks == null)
             {

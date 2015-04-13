@@ -62,13 +62,15 @@ namespace iCollab.ViewModels
         public List<Task> SubTasks { set; get; }
         public Task ParentTask { set; get; }
         public Guid? ParentTaskId { set; get; }
-        public string CreatedBy { get; set; }
-        public string TaskOwner { get; set; } 
+        public string CreatedBy { get; set; } 
         public string SelectedUserId { get; set; }
         public IEnumerable<SelectListItem> UserSelectList { get; set; }
 
         [Display(Name = "İşlendi mi?")]
         public bool IsProcessed { get; set; }
+
+        public IEnumerable<UserSelectViewModel> SelectedProjectUsers { set; get; }
+        public List<string> SelectedUsers { set; get; }
 
         public bool IsLate
         {

@@ -54,9 +54,9 @@ namespace iCollab.Controllers
         public ActionResult ViewTasks()
         {
             var username = User.Identity.GetUserName();
-            var tasks = _taskService.GetUserTasks(username).Take(AppSettings.IndexPageSize);
+            //var tasks = _taskService.GetUserTasks(username).Take(AppSettings.IndexPageSize);
 
-            return PartialView(tasks);
+            return null; //PartialView(tasks);
         }
 
         [ChildActionOnly]
@@ -122,16 +122,16 @@ namespace iCollab.Controllers
 
             string user = User.Identity.GetUserName();
 
-            var tasks = _taskService.GetTasks().
+            /*var tasks = _taskService.GetTasks().
                 Where(x => x.StartDatetime > fromDate && x.EndDatetime < toDate && x.TaskOwner == user && x.TaskStatus != TaskStatus.İade)
-                .Select(y => new CalendarEventItem() { end = y.EndDatetime.Value, start = y.StartDatetime.Value, title = y.Title, id = y.Id.ToString(), url = "/Tasks/View/" + y.Id }).ToArray();
+                .Select(y => new CalendarEventItem() { end = y.EndDatetime.Value, start = y.StartDatetime.Value, title = y.Title, id = y.Id.ToString(), url = "/Tasks/View/" + y.Id }).ToArray();*/
 /*
 
             var items = tasks.Select(y => new { end = DateTimeToUnixTimestamp(y.end), start = DateTimeToUnixTimestamp(y.start), title = y.title, id = y.id, url = "/Tasks/View/" + y.id });
 */
 
 
-            return Json(tasks, JsonRequestBehavior.AllowGet);
+            return Json(null, JsonRequestBehavior.AllowGet);
         }
 
         public static double DateTimeToUnixTimestamp(DateTime dateTime)

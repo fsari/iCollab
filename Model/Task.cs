@@ -45,12 +45,7 @@ namespace Model
 
         [Display(Name = "Görev Durumu")]
         public TaskStatus TaskStatus { set; get; }
-         
-        [Display(Name = "Görev Sahibi")]
-        [Column(TypeName = "VARCHAR")]
-        [StringLength(200)]
-        [Index]
-        public string TaskOwner { get; set; }
+ 
 
         [Display(Name = "Proje No")]
         public Guid? ProjectId { get; set; }
@@ -60,6 +55,8 @@ namespace Model
 
         public ICollection<Attachment> Attachments { get; set; } 
         public List<Task> SubTasks { set; get; }
+
+        public ICollection<TaskUsers> TaskUsers { set; get; }
 
         public Task ParentTask { set; get; }
         public Guid? ParentTaskId { set; get; }

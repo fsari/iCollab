@@ -47,6 +47,7 @@ namespace Core.Service
                             .Include(a => a.Attachments)
                             .Include(t=>t.SubTasks)
                             .Include(p=>p.ParentTask) 
+                            .Include(t=>t.TaskUsers)
                             .FirstOrDefault(x => x.Id == id);
 
             return task;
@@ -85,13 +86,13 @@ namespace Core.Service
 
         public IQueryable<Task> GetUserTasks(string username)
         {
-            var tasks = _repository.CollectionUntracked
+            /*var tasks = _repository.CollectionUntracked
                             .Include(p => p.Project)  
                             .Include(a => a.Attachments)
                             .Where(x => x.TaskOwner == username)
-                            .OrderByDescending(t => t.DateCreated);
+                            .OrderByDescending(t => t.DateCreated);*/
 
-            return tasks;
+            return null;
         }
 
         public IQueryable<Task> GetTasks()
@@ -118,7 +119,7 @@ namespace Core.Service
 
         public bool UserHasAnyTasks(string userId)
         {
-            return _repository.CollectionUntracked.Any(x => x.TaskOwner == userId);
+            return false; //_repository.CollectionUntracked.Any(x => x.TaskOwner == userId);
         }
 
         public IQueryable<Task> Search(string query)

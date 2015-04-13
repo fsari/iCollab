@@ -138,7 +138,7 @@ namespace iCollab.Controllers
 
             ApplicationUser user = _userService.Find(taskViewModel.SelectedUserId);
 
-            task.TaskOwner = user.UserName;
+            //task.TaskOwner = user.UserName;
              
             var parentTask = _service.GetTask(taskViewModel.ParentTaskId.Value, nocache: true);
 
@@ -288,10 +288,10 @@ namespace iCollab.Controllers
 
             string username = User.Identity.GetUserName();
 
-            if (task.TaskOwner != username)
+            /*if (task.TaskOwner != username)
             {
                 return RedirectToAction("Unauthorized", "Error");
-            }
+            }*/
 
             task.TaskStatus = TaskStatus.Tamamlandı;
             task.IsProcessed = true;
@@ -325,10 +325,10 @@ namespace iCollab.Controllers
 
             string username = User.Identity.GetUserName();
 
-            if (task.TaskOwner != username)
+            /*if (task.TaskOwner != username)
             {
                 return RedirectToAction("Unauthorized", "Error");
-            }
+            }*/
 
             ApplicationUser user = _userService.GetUserInstance(task.CreatedBy);
 
@@ -337,7 +337,7 @@ namespace iCollab.Controllers
             task.DateCompleted = DateTime.Now;
 
             //TODO : alert task owner
-            task.TaskOwner = user.UserName;
+            //task.TaskOwner = user.UserName;
 
             _service.Update(task);
 
@@ -367,7 +367,13 @@ namespace iCollab.Controllers
             TaskViewModel taskViewModel = _mapper.ToEntity(task);
             if (task.ProjectId != null) taskViewModel.ProjectId = task.ProjectId.Value;
 
-            taskViewModel.SubTasks.RemoveAll(i=>i.IsDeleted); 
+            taskViewModel.SubTasks.RemoveAll(i=>i.IsDeleted);
+
+            var taskUsers = task.TaskUsers.Select(x => x.UserId);
+
+            var users = _userService.GetUsers(taskUsers.AsEnumerable());
+
+            taskViewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
 
             return View(taskViewModel);
         }
@@ -417,12 +423,7 @@ namespace iCollab.Controllers
 
         public ActionResult CreateTask()
         {
-            IEnumerable<SelectListItem> userDropDown = _userService.GetUsersDropDown();
-
-            var taskViewModel = new TaskViewModel
-            {
-                UserSelectList = userDropDown
-            };
+            var taskViewModel = new TaskViewModel();
 
             return View(taskViewModel);
         }
@@ -430,11 +431,10 @@ namespace iCollab.Controllers
         [HttpPost]
         public ActionResult CreateTask(TaskViewModel taskViewModel)
         {
-            if (ModelState.IsValid == false || string.IsNullOrEmpty(taskViewModel.SelectedUserId))
-            {
-                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
 
-                ModelState.AddModelError("Error", "Tüm alanları kontrol edip tekrar deneyiniz.");
+            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
+            {
+                ModelState.AddModelError("Error", "Kullanıcı seçmeniz lazım.");
 
                 return View(taskViewModel);
             }
@@ -460,11 +460,16 @@ namespace iCollab.Controllers
 
             task.CreatedBy = User.Identity.GetUserName();
 
-            ApplicationUser user = _userService.Find(taskViewModel.SelectedUserId);
-
-            task.TaskOwner = user.UserName;
+            if (task.TaskUsers == null)
+            {
+                task.TaskUsers = new Collection<TaskUsers>();
+            } 
 
             _service.Create(task);
+
+            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUsers() { UserId = x }));
+
+            _service.Update(task);
             
             TempData["success"] = "Görev oluşturuldu.";
 
@@ -495,89 +500,68 @@ namespace iCollab.Controllers
                 return RedirectToAction("Unauthorized", "Error");
             }
 
-            TaskViewModel taskviewmodel = _mapper.ToEntity(task);
-
-            Project project = null;
-
-            if (task.ProjectId.HasValue)
-            {
-                taskviewmodel.ProjectId = task.ProjectId.Value;
-                project = _projectService.GetProject(task.ProjectId.Value);
-            }
-
-            IEnumerable<ApplicationUser> users;
-
-            if (project != null)
-            {
-                
-            }
-            else
-            {
-                users = _userService.GetAllUsers();
-            }
+            TaskViewModel taskviewmodel = _mapper.ToEntity(task); 
              
-            ApplicationUser user = _userService.GetUserInstance(task.TaskOwner);
+            var userIds = task.TaskUsers.Select(x => x.UserId);
 
-            taskviewmodel.SelectedUserId = user.Id;
+            var users = _userService.GetUsers(userIds);
+
+            taskviewmodel.SelectedProjectUsers = users.Select(x => new UserSelectViewModel() { FullName = x.FullName, Id = x.Id });
 
             return View(taskviewmodel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(TaskViewModel taskviewmodel)
+        public ActionResult Edit(TaskViewModel taskViewModel)
         {
-            if (string.IsNullOrEmpty(taskviewmodel.SelectedUserId))
+            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
             {
-                taskviewmodel.UserSelectList = _userService.GetUsersDropDown();
+                ModelState.AddModelError("Error", "Kullanıcı seçmeniz lazım.");
 
-                ModelState.AddModelError("Error", "Bir kullanıcı seçiniz.");
-
-                return View(taskviewmodel);
+                return View(taskViewModel);
             }
 
-            if (taskviewmodel.EndDatetime.HasValue)
+            if (taskViewModel.EndDatetime.HasValue)
             {
-                if (taskviewmodel.StartDatetime.HasValue == false)
+                if (taskViewModel.StartDatetime.HasValue == false)
                 {
-                    taskviewmodel.StartDatetime = DateTime.Now;
+                    taskViewModel.StartDatetime = DateTime.Now;
                 }
 
-                if (taskviewmodel.EndDatetime.Value < taskviewmodel.StartDatetime.Value)
+                if (taskViewModel.EndDatetime.Value < taskViewModel.StartDatetime.Value)
                 {
-                    taskviewmodel.UserSelectList = _userService.GetUsersDropDown();
+                    taskViewModel.UserSelectList = _userService.GetUsersDropDown();
 
                     ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
 
-                    return View(taskviewmodel);
+                    return View(taskViewModel);
                 }
             }
 
             if (ModelState.IsValid)
             {
-                Task task = _mapper.ToModel(taskviewmodel);
+                var instance = _service.GetTask(taskViewModel.Id, true);
 
-                if (task.ProjectId.HasValue)
-                {
-                    task.ProjectId = taskviewmodel.ProjectId;
-                    Project project = _projectService.Find(taskviewmodel.ProjectId);
+                instance.EditedBy = User.Identity.GetUserName();
+                instance.DateEdited = DateTime.Now;
+                instance.Title = taskViewModel.Title;
+                instance.Description = taskViewModel.Description;
+                instance.EndDatetime = taskViewModel.EndDatetime;
+                instance.StartDatetime = taskViewModel.StartDatetime;
 
-                    task.Project = project;
-                }
+                _service.Update(instance);
 
-                task.EditedBy = User.Identity.GetUserName();
+                instance.TaskUsers.Clear();
+                instance.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUsers() { UserId = x }));
 
-                ApplicationUser assignedTo = _userService.Find(taskviewmodel.SelectedUserId);
-
-                task.TaskOwner = assignedTo.UserName;
-
-                _service.Update(task);
+                _service.Update(instance);
 
                 TempData["success"] = "Görev güncellendi.";
 
-                return RedirectToAction("View", new {taskviewmodel.Id});
+                return RedirectToAction("View", new { taskViewModel.Id });
             }
-            return View(taskviewmodel);
+            return View(taskViewModel);
         }
 
         public ActionResult Delete(Guid? id)
