@@ -517,8 +517,7 @@ namespace iCollab.Controllers
         {
             if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
             {
-                ModelState.AddModelError("Error", "Kullanıcı seçmeniz lazım.");
-
+                TempData["error"] = "Kullanıcı seçmeniz lazım.";
                 return View(taskViewModel);
             }
 
@@ -533,7 +532,7 @@ namespace iCollab.Controllers
                 {
                     taskViewModel.UserSelectList = _userService.GetUsersDropDown();
 
-                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
+                    TempData["error"] = "Bitiş tarihi başlangıç tarihinden erken olamaz.";
 
                     return View(taskViewModel);
                 }
@@ -561,6 +560,8 @@ namespace iCollab.Controllers
 
                 return RedirectToAction("View", new { taskViewModel.Id });
             }
+
+            TempData["error"] = "Bir hata oluştu formu kontrol ediniz.";
             return View(taskViewModel);
         }
 

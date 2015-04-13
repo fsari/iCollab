@@ -32,6 +32,8 @@ namespace iCollab.Infra
         IQueryable<ApplicationUser> GetUsers(IEnumerable<string> userId); 
         bool ChangePassword(string userId, string currentPassword, string newPassword);
         bool UpdateUser(ApplicationUser user);
+
+        IEnumerable<ProjectUsers> GetProjectUsers(Guid projectId);
     }
 
     public class UserService : IUserService
@@ -74,6 +76,21 @@ namespace iCollab.Infra
             }
 
             return true;
+        }
+
+        public IEnumerable<ProjectUsers> GetProjectUsers(Guid projectId)
+        {
+            //var users = _uow.Context.Set<ApplicationUser>().AsNoTracking().Where(x => userId.Contains(x.Id));
+            var project = _uow.Context.Set<Project>().Include(u=>u.ProjectUsers).FirstOrDefault(x => x.Id == projectId);
+
+            if (project == null)
+            {
+                return null;
+
+            }
+
+            return project.ProjectUsers.AsEnumerable();
+
         }
 
         public void AssignManager(string userId)

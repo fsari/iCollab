@@ -39,7 +39,21 @@
                             <div class="form-group">
                                 <label class="control-label col-md-2 required">Kullanıcılar</label>
                                 <div class="col-md-10">
-                                    @Html.DropDownListFor(m => m.SelectedUserId, Model.UserSelectList, "Kullanıcı Seç")
+                                    @(Html.Kendo().MultiSelect()
+                                      .Name("SelectedUsers")
+                                      .DataTextField("FullName")
+                                      .DataValueField("Id")
+                                      .Placeholder("Kullanıcıları seçiniz...")
+                                      .AutoBind(false)
+                                      .DataSource(source =>
+                                      {
+                                          source.Read(read =>
+                                          {
+                                              read.Action("GetProjectUsers", "Users", new {projectId = Model.ProjectId});
+                                          })
+                                          .ServerFiltering(true);
+                                      })
+                                    )
                                 </div>
                             </div> 
 

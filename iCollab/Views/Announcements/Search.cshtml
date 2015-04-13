@@ -8,10 +8,10 @@
 
 <aside class="right-side">
     <section class="content-header">
-        <h1>Duyurular</h1>
-        <h3 class="box-title">
+        <h1 class="pull-left">Duyurular</h1>
+        <h1 class="box-title pull-right">
             <label class="label label-primary">@Model.TotalItemCount</label>
-        </h3>
+        </h1>
         <div class="clearfix"></div>
     </section>
 
@@ -19,8 +19,10 @@
         <div class="row">
             <div class="col-xs-12">
                 <div class="box">
-                    <div class="box-header">
-                        
+                    <div class="box-header"> 
+                        <h3 class="box-title">
+                            @Html.ActionLink("Yeni Duyuru", "Create", "Announcements", null, new { @class = "btn btn-primary" })
+                        </h3>
                         <div class="pull-right" style="margin: 4px;">
                             <form id="searchform" name="searchform" action="/Announcements/Search" method="POST" class="sidebar-form">
                                 <div class="input-group">
@@ -31,7 +33,6 @@
                                 </div>
                             </form>
                         </div>
-                        
                         <div class="clearfix"></div>
                     </div>
 

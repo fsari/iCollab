@@ -49,8 +49,16 @@
                                     </div>
                                     <div class="pull-right">
                                         <strong>Oluşturulma Zamanı : </strong> @Html.DisplayFor(model => model.DateCreated) <br />
-                                        <strong>Başlangıç : </strong> @Html.DisplayFor(model => model.StartDatetime) <br />
-                                        <strong>Bitiş : </strong> @Html.DisplayFor(model => model.EndDatetime) <br />
+                                        
+                                        @if (Model.StartDatetime.HasValue)
+                                        {
+                                            <strong>Başlangıç : </strong> @Html.DisplayFor(model => model.StartDatetime) <br />
+                                        }
+                                        
+                                        @if (Model.EndDatetime.HasValue)
+                                        {
+                                            <strong>Bitiş : </strong> @Html.DisplayFor(model => model.EndDatetime) <br />
+                                        } 
                                     </div>
 
                                     <div class="clearfix"></div>
