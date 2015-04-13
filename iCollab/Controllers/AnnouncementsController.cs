@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
+using System.Collections.ObjectModel; 
 using System.Net;
 using System.Web.Mvc;
 using Core.Mappers;
@@ -45,7 +44,7 @@ namespace iCollab.Controllers
 
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            IQueryable<Announcement> announcements = _announcementService.GetAnnouncements();
+            var announcements = _announcementService.GetAnnouncements();
 
             return Json(announcements.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
@@ -215,6 +214,7 @@ namespace iCollab.Controllers
                 }
 
                 model.EditedBy = User.Identity.GetUserName();
+                model.DateEdited = DateTime.Now;
 
                 Announcement instance = _announcementService.Update(model);
 

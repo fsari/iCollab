@@ -85,7 +85,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ActivityReport.cs" />
     <Compile Include="Activity\Activity.cs" />
     <Compile Include="Activity\ActivityType.cs" />
     <Compile Include="Activity\Subject.cs" />

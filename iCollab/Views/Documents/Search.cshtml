@@ -1,4 +1,4 @@
-﻿@model IPagedList<Model.Document>
+﻿@model iCollab.ViewModels.SearchViewModel<>
 
 @{
     ViewBag.Title = "Dökümanlar";
@@ -34,10 +34,10 @@
                     </div>
 
                     <div class="box-body table-responsive no-padding">
-                        @if (Model != null && Model.Count > 0)
+                        @if (Model != null && Model.Results.Any())
                         {
                             {
-                                Html.RenderPartial("_DocumentTable", Model);
+                                Html.RenderPartial("_DocumentTable", Model.Results);
                             }
                         }
                         else
@@ -49,7 +49,7 @@
                         }
                     </div>
                     <div class="box-footer">
-                        @Html.PagedListPager(Model, page => Url.Action("NavigateSearch", "Documents", new { page }))
+                        @Html.PagedListPager(Model.Results, page => Url.Action("NavigateSearch", "Announcements", new {query = Model.Query, page }))
                     </div>
                 </div>
             </div>
