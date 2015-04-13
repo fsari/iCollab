@@ -68,11 +68,13 @@ namespace iCollab.Controllers
             int pagenumber = page ?? 1;
             IPagedList<Project> resultset = _projectService.Search(query).ToPagedList(pagenumber, AppSettings.PageSize);
 
-            var searchViewModel = new SearchViewModel<Project>();
-            searchViewModel.Query = query;
-            searchViewModel.Page = pagenumber;
-            searchViewModel.Results = resultset;
-            searchViewModel.TotalItemCount = resultset.TotalItemCount;
+            var searchViewModel = new SearchViewModel<Project>
+            {
+                Query = query,
+                Page = pagenumber,
+                Results = resultset,
+                TotalItemCount = resultset.TotalItemCount
+            };
 
             return View(searchViewModel);
         }
@@ -82,11 +84,13 @@ namespace iCollab.Controllers
             int pagenumber = page ?? 1;
             IPagedList<Project> resultset = _projectService.Search(query).ToPagedList(pagenumber, AppSettings.PageSize);
 
-            var searchViewModel = new SearchViewModel<Project>();
-            searchViewModel.Query = query;
-            searchViewModel.Page = pagenumber;
-            searchViewModel.Results = resultset;
-            searchViewModel.TotalItemCount = resultset.TotalItemCount;
+            var searchViewModel = new SearchViewModel<Project>
+            {
+                Query = query,
+                Page = pagenumber,
+                Results = resultset,
+                TotalItemCount = resultset.TotalItemCount
+            };
 
             return View("Search", searchViewModel);
         }
@@ -95,8 +99,7 @@ namespace iCollab.Controllers
         {
             int pagenumber = page ?? 1;
 
-            IPagedList<Project> projects =
-                _projectService.GetProjectsByStatus(ProjectStatus.Bitti).ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Project> projects = _projectService.GetProjectsByStatus(ProjectStatus.Bitti).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(projects);
         }
@@ -105,8 +108,7 @@ namespace iCollab.Controllers
         {
             int pagenumber = page ?? 1;
 
-            IPagedList<Project> projects = _projectService.GetLateProjects()
-                .ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Project> projects = _projectService.GetLateProjects().ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(projects);
         }
@@ -115,8 +117,7 @@ namespace iCollab.Controllers
         {
             int pagenumber = page ?? 1;
 
-            IPagedList<Project> projects =
-                _projectService.GetProjectsByStatus(ProjectStatus.Aktif).ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Project> projects = _projectService.GetProjectsByStatus(ProjectStatus.Aktif).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(projects);
         }
@@ -125,8 +126,7 @@ namespace iCollab.Controllers
         {
             int pagenumber = page ?? 1;
 
-            IPagedList<Project> projects =
-                _projectService.GetProjectsByStatus(ProjectStatus.Iptal).ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Project> projects = _projectService.GetProjectsByStatus(ProjectStatus.Iptal).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(projects);
         }
@@ -135,9 +135,7 @@ namespace iCollab.Controllers
         {
             int pagenumber = page ?? 1;
 
-            IPagedList<Project> projects =
-                _projectService.GetProjectsByStatus(ProjectStatus.Planlandı)
-                    .ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Project> projects = _projectService.GetProjectsByStatus(ProjectStatus.Planlandı).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(projects);
         }
@@ -306,10 +304,6 @@ namespace iCollab.Controllers
 
             task.CreatedBy = User.Identity.GetUserName();
 
-            ApplicationUser assignee = _userService.Find(taskViewModel.SelectedUserId);
-
-            //task.TaskOwner = assignee.UserName;
-
             if (project.Tasks == null)
             {
                 project.Tasks = new Collection<Task>();
@@ -403,7 +397,7 @@ namespace iCollab.Controllers
                  
                 _projectService.Create(project);
 
-                project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers() { UserId = x }));
+                project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers { UserId = x }));
 
                 _projectService.Update(project);
 
@@ -503,7 +497,7 @@ namespace iCollab.Controllers
 
             var users = _userService.GetUsers(userIds);
 
-            viewModel.SelectedProjectUsers = users.Select(x => new UserSelectViewModel(){FullName = x.FullName, Id = x.Id});
+            viewModel.SelectedProjectUsers = users.Select(x => new UserSelectViewModel {FullName = x.FullName, Id = x.Id});
 
             return View(viewModel);
         }
@@ -558,7 +552,7 @@ namespace iCollab.Controllers
 
                 _projectService.Update(project);
 
-                project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers() { UserId = x }));
+                project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers { UserId = x }));
   
                 _projectService.Update(project);
 

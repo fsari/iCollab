@@ -1,6 +1,5 @@
 ﻿using System;
-using System.Data.Entity;
-using System.Net;
+using System.Data.Entity; 
 using System.Web;
 using System.Web.Mvc;
 using Autofac;
@@ -12,10 +11,7 @@ using Core.Service;
 using Core.Service.CrudService;
 using Core.Settings;
 using iCollab.Infra; 
-using MemoryCacheT;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.EntityFramework;
-using Microsoft.AspNet.Identity.Owin;
+using MemoryCacheT; 
 using Microsoft.Owin.Security;
 using Model;
 
@@ -32,8 +28,6 @@ namespace iCollab
             builder.RegisterModule(new AutofacWebTypesModule());
 
             builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>();
-
-            DataContext db = new DataContext();
 
             builder.RegisterType<DataContext>().As<DbContext>().InstancePerRequest();
             builder.RegisterType<UoW>().AsSelf().InstancePerRequest();
@@ -59,25 +53,6 @@ namespace iCollab
             builder.RegisterType<TaskService>().As<ITaskService>().InstancePerRequest();
             builder.RegisterType<ProjectService>().As<IProjectService>().InstancePerRequest(); 
             builder.RegisterType<AttachmentServıce>().As<IAttachmentService>().InstancePerRequest();
-
-            /*builder.RegisterType<ApplicationUserStore<ApplicationUser>>().As<IUserStore<ApplicationUser>>();*/
-
-            //builder.RegisterType<UserManager<ApplicationUser>>().UsingConstructor(typeof(IUserStore<ApplicationUser>)).InstancePerDependency();
-
-            //builder.RegisterType<UserManager<ApplicationUser>>().UsingConstructor(typeof(IUserStore<ApplicationUser>)).InstancePerDependency();
-
-           /* builder.Register(c => new UserStore<ApplicationUser>(db)).AsImplementedInterfaces();
-
-            builder.RegisterType<ApplicationUserManager>().AsSelf();
-          
-            builder.RegisterType<ApplicationUserManager>().As<UserManager<ApplicationUser>>().InstancePerRequest();
-
-            builder.Register(c => new IdentityFactoryOptions<ApplicationUserManager>
-            {
-                DataProtectionProvider = new Microsoft.Owin.Security.DataProtection.DpapiDataProtectionProvider("iCollab​")
-            });
-
-            builder.RegisterType<ApplicationSignInManager>().AsSelf();*/
 
             builder.RegisterType<ApplicationUserStore<ApplicationUser>>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();

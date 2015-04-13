@@ -75,89 +75,7 @@ namespace iCollab.Controllers
         {
             var tasks = _service.GetTasks();
             return Json(tasks.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
-        }
-
-        public ActionResult AddSubTask(Guid parentId)
-        {
-            IEnumerable<SelectListItem> userDropDown = _userService.GetUsersDropDown();
-             
-            var taskViewModel = new TaskViewModel
-            {
-                UserSelectList = userDropDown,
-                ParentTaskId = parentId
-            };
-
-            var task = _service.GetTask(parentId);
-
-            if (task.ProjectId.HasValue)
-            {
-                taskViewModel.ProjectId = task.ProjectId.Value;
-            }
-
-            return View(taskViewModel);
-        }
-
-        // TODO: Add parent task to errored requests
-        [HttpPost]
-        public ActionResult AddSubTask(TaskViewModel taskViewModel)
-        { 
-            if (ModelState.IsValid == false || string.IsNullOrEmpty(taskViewModel.SelectedUserId))
-            {
-                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
-
-                ModelState.AddModelError("Error", "Bir kullanıcı seçiniz.");
-
-                return View(taskViewModel);
-            }
-
-            if (taskViewModel.EndDatetime.HasValue)
-            {
-                if (taskViewModel.StartDatetime.HasValue == false)
-                {
-                    taskViewModel.StartDatetime = DateTime.Now;
-                }
-
-                if (taskViewModel.EndDatetime.Value < taskViewModel.StartDatetime.Value)
-                {
-                    taskViewModel.UserSelectList = _userService.GetUsersDropDown();
-
-                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
-
-                    return View(taskViewModel);
-                }
-            }
-
-            if (taskViewModel.ParentTaskId.HasValue == false)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            Task task = _mapper.ToModel(taskViewModel);
-
-            task.CreatedBy = User.Identity.GetUserName();
-
-            ApplicationUser user = _userService.Find(taskViewModel.SelectedUserId);
-
-            //task.TaskOwner = user.UserName;
-             
-            var parentTask = _service.GetTask(taskViewModel.ParentTaskId.Value, nocache: true);
-
-            if (parentTask.SubTasks == null)
-            {
-                parentTask.SubTasks = new List<Task>();
-            }
-
-            task.ParentTaskId = taskViewModel.ParentTaskId;
-            task.ParentTask = parentTask;
-
-            parentTask.SubTasks.Add(task);
-
-            _service.Update(parentTask);
-
-            TempData["success"] = "Görev oluşturuldu.";
-
-            return RedirectToAction("View", new {id = task.Id});
-        }
+        } 
          
         public ActionResult RemoveAttachment(Guid taskId, Guid id)
         { 
@@ -419,6 +337,88 @@ namespace iCollab.Controllers
             };
 
             return View("Search", searchViewModel);
+        }
+
+        public ActionResult AddSubTask(Guid parentId)
+        { 
+            var taskViewModel = new TaskViewModel
+            { 
+                ParentTaskId = parentId
+            };
+
+            var task = _service.GetTask(parentId);
+
+            if (task.ProjectId.HasValue)
+            {
+                taskViewModel.ProjectId = task.ProjectId.Value;
+            }
+
+            return View(taskViewModel);
+        }
+
+        // TODO: Add parent task to errored requests
+        [HttpPost]
+        public ActionResult AddSubTask(TaskViewModel taskViewModel)
+        {
+            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
+            {
+                ModelState.AddModelError("Error", "Kullanıcı seçmeniz lazım.");
+
+                return View(taskViewModel);
+            }
+
+            if (taskViewModel.EndDatetime.HasValue)
+            {
+                if (taskViewModel.StartDatetime.HasValue == false)
+                {
+                    taskViewModel.StartDatetime = DateTime.Now;
+                }
+
+                if (taskViewModel.EndDatetime.Value < taskViewModel.StartDatetime.Value)
+                {
+                    taskViewModel.UserSelectList = _userService.GetUsersDropDown();
+
+                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
+
+                    return View(taskViewModel);
+                }
+            }
+
+            if (taskViewModel.ParentTaskId.HasValue == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Task task = _mapper.ToModel(taskViewModel);
+
+            task.CreatedBy = User.Identity.GetUserName(); 
+
+            var parentTask = _service.GetTask(taskViewModel.ParentTaskId.Value, nocache: true);
+
+            if (parentTask.SubTasks == null)
+            {
+                parentTask.SubTasks = new List<Task>();
+            }
+
+            task.ParentTaskId = taskViewModel.ParentTaskId;
+            task.ParentTask = parentTask;
+
+            parentTask.SubTasks.Add(task);
+
+            _service.Update(parentTask);
+
+            if (task.TaskUsers == null)
+            {
+                task.TaskUsers = new Collection<TaskUsers>();
+            }
+
+            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUsers() { UserId = x }));
+
+            _service.Update(task);
+
+            TempData["success"] = "Görev oluşturuldu.";
+
+            return RedirectToAction("View", new { id = task.Id });
         }
 
         public ActionResult CreateTask()

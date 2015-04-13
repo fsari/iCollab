@@ -29,13 +29,11 @@ namespace iCollab.ViewModels
 
         [Display(Name = "Oluşturulma Zamanı")]
         public DateTime DateCreated{ get; set; }
- 
-        [Required]
+  
         [DataType(DataType.DateTime)]
         [Display(Name = "Başlangıç Zamanı")]
         public DateTime? StartDatetime { set; get; }
-
-        [Required]
+         
         [DataType(DataType.DateTime)]
         [Display(Name = "Bitiş Zamanı")]
         public DateTime? EndDatetime { set; get; }

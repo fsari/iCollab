@@ -1,4 +1,5 @@
-﻿@model iCollab.ViewModels.TaskViewModel
+﻿@using Model
+@model iCollab.ViewModels.TaskViewModel
 
 @{
     ViewBag.Title = "Görev Ekle";
@@ -41,7 +42,21 @@
                             <div class="form-group">
                                 <label class="control-label col-md-2 required">Kullanıcı</label>
                                 <div class="col-md-10">
-                                    @Html.DropDownListFor(m => m.SelectedUserId, Model.UserSelectList, "Kullanıcı Seç")
+                                    @(Html.Kendo().MultiSelect()
+                                      .Name("SelectedUsers")
+                                      .DataTextField("FullName")
+                                      .DataValueField("Id")
+                                      .Placeholder("Kullanıcı seçiniz...")
+                                      .AutoBind(false)
+                                      .DataSource(source =>
+                                      {
+                                          source.Read(read =>
+                                          {
+                                              read.Action("GetUsers", "Users");
+                                          })
+                                          .ServerFiltering(true);
+                                      })
+                                    )
                                 </div>
                             </div>
 
@@ -59,15 +74,7 @@
                                     @Html.TextAreaFor(model => model.Description)
                                     @Html.ValidationMessageFor(model => model.Description)
                                 </div>
-                            </div>
-                            
-                            <div class="form-group">
-                                @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @Html.EnumDropDownListFor(model => model.Priority)
-                                    @Html.ValidationMessageFor(model => model.Priority)
-                                </div>
-                            </div>
+                            </div> 
 
                             <div class="form-group">
                                 @Html.LabelFor(model => model.StartDatetime, new { @class = "control-label col-md-2" })
@@ -84,6 +91,13 @@
                                     @Html.ValidationMessageFor(model => model.EndDatetime)
                                 </div>
                             </div> 
+                            
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @(Html.Kendo().DropDownList().Name("Priority").BindTo(Enum.GetNames(typeof(Priority))))
+                                </div>
+                            </div>
 
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-md-10">

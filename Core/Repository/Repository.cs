@@ -110,8 +110,7 @@ namespace Core.Repository
             var instance = await _uow.Context.Set<TEntity>().FindAsync(id).ConfigureAwait(false);
 
             return instance;
-        }
-
+        } 
 
         public IQueryable<TEntity> FindBy(Expression<Func<TEntity, bool>> predicate)
         {
