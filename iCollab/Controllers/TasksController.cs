@@ -45,32 +45,7 @@ namespace iCollab.Controllers
             _projectService = projectService;
             _attachmentService = attachmentService;
         }
-
-        public JsonResult Tasks([DataSourceRequest] DataSourceRequest request)
-        {
-            var tasks = new List<GanttTaskViewModel> {
-                new GanttTaskViewModel { TaskID = 1, Title = "My Project", Start = new DateTime(2014,8,21,11,00,00), End = new DateTime(2014,8,25,18,30,00), Summary = true, Expanded = true, ParentID = null, OrderId = 1 },
-                new GanttTaskViewModel { TaskID = 2, ParentID = 1, Title = "Task 1", Start = new DateTime(2014,8,21,11,00,00), End = new DateTime(2014,8,23,14,30,00), OrderId = 2 },
-                new GanttTaskViewModel { TaskID = 3, ParentID = 1, Title = "Task 2", Start = new DateTime(2014,8,21,15,00,00), End = new DateTime(2014,8,25,18,00,00), OrderId = 3 }
-            };
-
-            return Json(tasks.AsQueryable().ToDataSourceResult(request));
-        }
-
-        public JsonResult Dependencies([DataSourceRequest] DataSourceRequest request)
-        {
-            var dependencies = new List<DependencyViewModel> {
-                new DependencyViewModel { DependencyID = 100, PredecessorID = 2, SuccessorID = 3, Type = 0 }
-            };
-
-            return Json(dependencies.AsQueryable().ToDataSourceResult(request));
-        }
-
-        public ActionResult ViewGantt()
-        {
-            return View();
-        }
-
+          
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
             var tasks = _service.GetTasks();
@@ -367,22 +342,15 @@ namespace iCollab.Controllers
                 return View(taskViewModel);
             }
 
-            if (taskViewModel.EndDatetime.HasValue)
+
+            if (taskViewModel.End < taskViewModel.Start)
             {
-                if (taskViewModel.StartDatetime.HasValue == false)
-                {
-                    taskViewModel.StartDatetime = DateTime.Now;
-                }
+                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
 
-                if (taskViewModel.EndDatetime.Value < taskViewModel.StartDatetime.Value)
-                {
-                    taskViewModel.UserSelectList = _userService.GetUsersDropDown();
+                ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
 
-                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
-
-                    return View(taskViewModel);
-                }
-            }
+                return View(taskViewModel);
+            } 
 
             if (taskViewModel.ParentTaskId.HasValue == false)
             {
@@ -439,22 +407,14 @@ namespace iCollab.Controllers
                 return View(taskViewModel);
             }
 
-            if (taskViewModel.EndDatetime.HasValue)
+            if (taskViewModel.End < taskViewModel.Start)
             {
-                if (taskViewModel.StartDatetime.HasValue == false)
-                {
-                    taskViewModel.StartDatetime = DateTime.Now;
-                }
+                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
 
-                if (taskViewModel.EndDatetime.Value < taskViewModel.StartDatetime.Value)
-                {
-                    taskViewModel.UserSelectList = _userService.GetUsersDropDown();
+                ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
 
-                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
-
-                    return View(taskViewModel);
-                }
-            }
+                return View(taskViewModel);
+            } 
 
             Task task = _mapper.ToModel(taskViewModel);
 
@@ -521,22 +481,14 @@ namespace iCollab.Controllers
                 return View(taskViewModel);
             }
 
-            if (taskViewModel.EndDatetime.HasValue)
+            if (taskViewModel.End < taskViewModel.Start)
             {
-                if (taskViewModel.StartDatetime.HasValue == false)
-                {
-                    taskViewModel.StartDatetime = DateTime.Now;
-                }
+                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
 
-                if (taskViewModel.EndDatetime.Value < taskViewModel.StartDatetime.Value)
-                {
-                    taskViewModel.UserSelectList = _userService.GetUsersDropDown();
+                TempData["error"] = "Bitiş tarihi başlangıç tarihinden erken olamaz.";
 
-                    TempData["error"] = "Bitiş tarihi başlangıç tarihinden erken olamaz.";
-
-                    return View(taskViewModel);
-                }
-            }
+                return View(taskViewModel);
+            } 
 
             if (ModelState.IsValid)
             {
@@ -546,8 +498,8 @@ namespace iCollab.Controllers
                 instance.DateEdited = DateTime.Now;
                 instance.Title = taskViewModel.Title;
                 instance.Description = taskViewModel.Description;
-                instance.EndDatetime = taskViewModel.EndDatetime;
-                instance.StartDatetime = taskViewModel.StartDatetime;
+                instance.End = taskViewModel.End;
+                instance.Start = taskViewModel.Start;
 
                 _service.Update(instance);
 

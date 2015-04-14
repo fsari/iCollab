@@ -77,18 +77,18 @@
                             </div> 
 
                             <div class="form-group">
-                                @Html.LabelFor(model => model.StartDatetime, new { @class = "control-label col-md-2" })
+                                @Html.LabelFor(model => model.Start, new { @class = "control-label col-md-2" })
                                 <div class="col-md-10"> 
-                                    @(Html.Kendo().DatePicker().Name("StartDatetime"))
-                                    @Html.ValidationMessageFor(model => model.StartDatetime)
+                                    @(Html.Kendo().DatePicker().Name("Start"))
+                                    @Html.ValidationMessageFor(model => model.Start)
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                @Html.LabelFor(model => model.EndDatetime, new { @class = "control-label col-md-2" })
+                                @Html.LabelFor(model => model.End, new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
-                                    @(Html.Kendo().DatePicker().Name("EndDatetime"))
-                                    @Html.ValidationMessageFor(model => model.EndDatetime)
+                                    @(Html.Kendo().DatePicker().Name("End"))
+                                    @Html.ValidationMessageFor(model => model.End)
                                 </div>
                             </div> 
                             

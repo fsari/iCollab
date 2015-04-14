@@ -30,13 +30,15 @@ namespace iCollab.ViewModels
         [Display(Name = "Oluşturulma Zamanı")]
         public DateTime DateCreated{ get; set; }
   
+        [Required]
         [DataType(DataType.DateTime)]
         [Display(Name = "Başlangıç Zamanı")]
-        public DateTime? StartDatetime { set; get; }
-         
+        public DateTime Start { set; get; }
+
+        [Required]
         [DataType(DataType.DateTime)]
         [Display(Name = "Bitiş Zamanı")]
-        public DateTime? EndDatetime { set; get; }
+        public DateTime End { set; get; }
 
         [DataType(DataType.DateTime)]
         [Display(Name = "Tamamlanma Zamanı")]
@@ -73,13 +75,9 @@ namespace iCollab.ViewModels
         public bool IsLate
         {
             get
-            { 
-                if (EndDatetime.HasValue == false)
-                {
-                    return false;
-                }
+            {  
 
-                if (TaskStatus == TaskStatus.Aktif && EndDatetime < DateTime.Now)
+                if (TaskStatus == TaskStatus.Aktif && End < DateTime.Now)
                 {
                     return true;
                 }
@@ -92,12 +90,7 @@ namespace iCollab.ViewModels
         {
             get
             {
-                if (EndDatetime.HasValue)
-                {
-                    return (DateTime.Now- EndDatetime.Value).Days;
-                }
-
-                return 0;
+                return (DateTime.Now - End).Days; 
             }
         }
     }

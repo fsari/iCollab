@@ -104,7 +104,7 @@ namespace Core.Service
 
         public IQueryable<Task> GetLateTasks()
         {
-            var tasks = _repository.CollectionUntracked.Where(x => x.EndDatetime < DateTime.Now && x.TaskStatus != TaskStatus.Tamamlandı)
+            var tasks = _repository.CollectionUntracked.Where(x => x.End < DateTime.Now && x.TaskStatus != TaskStatus.Tamamlandı)
                 .OrderByDescending(t => t.DateCreated);
 
             return tasks;

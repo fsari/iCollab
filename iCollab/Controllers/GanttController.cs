@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Web.Mvc; 
+using System.Web.Mvc;
 using Core.Mappers;
 using Core.Service;
 using Core.Settings;
@@ -23,73 +23,37 @@ namespace iCollab.Controllers
 {
     [Authorize]
     public class GanttController : BaseController
-    {
-        private readonly IMapper<TaskViewModel, Task> _mapper;
-        private readonly IProjectService _projectService;
-        private readonly ITaskService _service;
-        private readonly IUserService _userService;
-        private readonly IAttachmentService _attachmentService;
+    { 
+        private readonly ITaskService _service; 
 
         public GanttController(
             ITaskService service,
-            IApplicationSettings appSettings,
-            IMapper<TaskViewModel, Task> mapper,
-            IUserService userService,
-            IProjectService projectService,
-            IAttachmentService attachmentService)
+            IApplicationSettings appSettings, 
+            IUserService userService)
             : base(userService, appSettings)
         {
-            _service = service;
-            _mapper = mapper;
-            _userService = userService;
-            _projectService = projectService;
-            _attachmentService = attachmentService;
+            _service = service; 
         }
 
         public JsonResult Tasks([DataSourceRequest] DataSourceRequest request)
         {
-            var tasks = new List<GanttTaskViewModel>
+            var tasks = _service.GetTasks().Select(x => new GanttTaskViewModel
             {
-                new GanttTaskViewModel
-                {
-                    TaskID = 1,
-                    Title = "My Project",
-                    Start = new DateTime(2014, 8, 21, 11, 00, 00),
-                    End = new DateTime(2014, 8, 25, 18, 30, 00),
-                    Summary = true,
-                    Expanded = true,
-                    ParentID = null,
-                    OrderId = 1
-                },
-                new GanttTaskViewModel
-                {
-                    TaskID = 2,
-                    ParentID = 1,
-                    Title = "Task 1",
-                    Start = new DateTime(2014, 8, 21, 11, 00, 00),
-                    End = new DateTime(2014, 8, 23, 14, 30, 00),
-                    OrderId = 2
-                },
-                new GanttTaskViewModel
-                {
-                    TaskID = 3,
-                    ParentID = 1,
-                    Title = "Task 2",
-                    Start = new DateTime(2014, 8, 21, 15, 00, 00),
-                    End = new DateTime(2014, 8, 25, 18, 00, 00),
-                    OrderId = 3
-                }
-            };
+                TaskID = x.Id, 
+                Title = x.Title, 
+                Start = x.Start, 
+                End = x.End, 
+                ParentID = x.ParentTaskId, 
+                OrderId = x.OrderId, 
+                PercentComplete = x.PercentComplete
+            });
 
             return Json(tasks.AsQueryable().ToDataSourceResult(request));
         }
 
         public JsonResult Dependencies([DataSourceRequest] DataSourceRequest request)
         {
-            var dependencies = new List<DependencyViewModel>
-            {
-                new DependencyViewModel {DependencyID = 100, PredecessorID = 2, SuccessorID = 3, Type = 0}
-            };
+            var dependencies = new List<DependencyViewModel>();
 
             return Json(dependencies.AsQueryable().ToDataSourceResult(request));
         }
@@ -99,14 +63,56 @@ namespace iCollab.Controllers
             return View();
         }
 
-        public ActionResult Read([DataSourceRequest] DataSourceRequest request)
+        public virtual JsonResult DestroyTask([DataSourceRequest] DataSourceRequest request, GanttTaskViewModel task)
         {
-            var tasks = _service.GetTasks();
-            return Json(tasks.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+            if (ModelState.IsValid)
+            {
+                var instance = _service.GetTask(task.TaskID, true);
+
+                _service.Delete(instance);
+            }
+
+            return Json(new[] { task }.ToDataSourceResult(request, ModelState));
         }
 
+        public virtual JsonResult CreateTask([DataSourceRequest] DataSourceRequest request, GanttTaskViewModel task)
+        {
+            if (ModelState.IsValid)
+            {
+                var model = new Task
+                {
+                    Id = task.TaskID,
+                    Title = task.Title,
+                    Start = task.Start,
+                    End = task.End,
+                    ParentTaskId = task.ParentID,
+                    PercentComplete = task.PercentComplete,
+                    OrderId = task.OrderId
+                };
 
+                _service.Create(model);
+            }
 
+            return Json(new[] { task }.ToDataSourceResult(request, ModelState));
+        }
+
+        public virtual JsonResult UpdateTask([DataSourceRequest] DataSourceRequest request, GanttTaskViewModel task)
+        {
+            if (ModelState.IsValid)
+            {
+                var instance = _service.GetTask(task.TaskID, true);
+                instance.Title = task.Title;
+                instance.Start = task.Start;
+                instance.End = task.End;
+                instance.ParentTaskId = task.ParentID;
+                instance.PercentComplete = task.PercentComplete;
+                instance.OrderId = task.OrderId;
+
+                _service.Update(instance);
+            }
+
+            return Json(new[] { task }.ToDataSourceResult(request, ModelState));
+        }
 
     }
 }

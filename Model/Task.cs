@@ -25,12 +25,12 @@ namespace Model
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
 		[Display(Name = "Başlangıç Zamanı")]
-        public DateTime? StartDatetime { set; get; }
+        public DateTime Start { set; get; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
 		[Display(Name = "Bitiş Zamanı")]
-        public DateTime? EndDatetime { set; get; }
+        public DateTime End { set; get; }
 
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
@@ -61,11 +61,14 @@ namespace Model
         public Task ParentTask { set; get; }
         public Guid? ParentTaskId { set; get; }
 
+        public decimal PercentComplete { get; set; }
+        public int OrderId { get; set; }
+
         [NotMapped]
         public bool IsLate {
             get
             {
-                if (TaskStatus == TaskStatus.Aktif && EndDatetime <  DateTime.Now)
+                if (TaskStatus == TaskStatus.Aktif && End <  DateTime.Now)
                 {
                     return true;
                 }

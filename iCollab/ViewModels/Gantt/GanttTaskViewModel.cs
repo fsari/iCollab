@@ -4,9 +4,9 @@ using Kendo.Mvc.UI;
 namespace iCollab.ViewModels.Gantt
 {
     public class GanttTaskViewModel : IGanttTask
-    {
-        public int TaskID { get; set; }
-        public int? ParentID { get; set; }
+    { 
+        public Guid TaskID { get; set; }
+        public Guid? ParentID { get; set; }
 
         public string Title { get; set; }
 
@@ -32,10 +32,10 @@ namespace iCollab.ViewModels.Gantt
 
     public class DependencyViewModel : IGanttDependency
     {
-        public int DependencyID { get; set; }
+        public Guid DependencyID { get; set; }
 
-        public int PredecessorID { get; set; }
-        public int SuccessorID { get; set; }
+        public Guid PredecessorID { get; set; }
+        public Guid SuccessorID { get; set; }
         public DependencyType Type { get; set; }
     }
 

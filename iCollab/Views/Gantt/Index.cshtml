@@ -10,10 +10,28 @@
                 <div class="box">
                      @(Html.Kendo().Gantt<iCollab.ViewModels.Gantt.GanttTaskViewModel, iCollab.ViewModels.Gantt.DependencyViewModel>()
                         .Name("Gantt")
+                        .Columns(columns =>
+                        {
+                            columns.Bound(c => c.TaskID).Title("ID").Width(50);
+                            columns.Bound(t=>t.Title).Editable(true).Sortable(true);
+                            columns.Bound(s=>s.Start).Title("Start Time").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
+                            columns.Bound(e=>e.End).Title("End Time").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
+                        })
+                        .Views(views =>
+                        {
+                            views.DayView();
+                            views.WeekView(weekView => weekView.Selected(true));
+                            views.MonthView();
+                        })
+                        .Height(800)
+                        .ShowWorkHours(false)
+                        .ShowWorkDays(false)
+                        .Snap(false)
                         .DataSource(ds => ds
-                            .Read(read => read
-                                .Action("Tasks", "Gantt")
-                            )
+                            .Read("Tasks", "Gantt")
+                            .Create("CreateTask", "Gantt")
+                            .Destroy("DestroyTask", "Gantt")
+                            .Update("UpdateTask", "Gantt")
                             .Model(m =>
                             {
                                 m.Id(f => f.TaskID);

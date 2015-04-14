@@ -50,10 +50,6 @@ namespace iCollab.Infra
                 throw;
             }
         }
-
-        public static DataContext Create()
-        {
-            return new DataContext();
-        }
+         
     }
 }
