@@ -36,6 +36,10 @@
             </li>
             <li id="Tasks">
                 <a href="/Tasks/Index"> <i class="fa fa-bars"></i> Görevler</a>
+            </li> 
+
+            <li id="Tasks">
+                <a href="/Gantt/Index"> <i class="fa fa-bars"></i> Gantt</a>
             </li>
             <li>
                 <a href="/Tasks/ViewCalendar"> <i class="fa fa-calendar"></i> Takviminiz</a>
@@ -61,65 +65,5 @@
     $(document).ready(function () {
         $('#@ViewBag.Active').addClass('active');
     });
-</script>
-
-
-
-
-@* 
-<aside class="left-side sidebar-offcanvas"> 
-    <section class="sidebar"> 
-        <div class="user-panel"> 
-            <div class="pull-left image">
-                @if (Model.Picture != null)
-                {
-                    <img src="@Model.Picture.Path" class="img-circle" alt="Kullanıcı resmi" />
-                }
-                else
-                {
-                    <img src="/Assets/img/avatar2.png" />
-                }
-            </div>
-            <div class="pull-left info">
-
-                $1$<p>Merhaba, @Html.ActionLink(@User.Identity.GetUserName(), "ChangePassword", "Manage")</p>#1#
-
-            </div> 
-        </div>
-
-        <ul class="sidebar-menu" id="sidebar-menu">
-            <li>
-                <a href="/Dashboard/Index"> <i class="fa fa-th"></i> Kontrol Paneli</a>
-            </li>
-            <li>
-                <a href="/Projects/Index"> <i class="fa fa-tasks"></i> Projeler</a>
-            </li>
-            <li>
-                <a href="/Tasks/Index"> <i class="fa fa-bars"></i> Görevler</a>
-            </li>
-            <li>
-                <a href="/Tasks/ViewCalendar"> <i class="fa fa-calendar"></i> Takviminiz</a>
-            </li>
-            <li>
-                <a href="/Documents/Index"> <i class="fa  fa-book"></i> Dökümanlar</a>
-            </li>
-            <li>
-                <a href="/Meetings/Index"> <i class="fa fa-exchange"></i> Toplantılar</a>
-            </li>
-            <li>
-                <a href="/Announcements/Index"> <i class="fa fa-bullhorn"></i> Duyurular</a>
-            </li>
-            <li>
-                <a href="/Users/Index"> <i class="fa fa-user"></i> Kullanıcılar</a>
-            </li>
-            <li>
-                <a href="/UserGroups/Index"> <i class="fa fa-users"></i> Kullanıcı Grupları</a>
-            </li>
-        </ul>
-        <hr />
-        $1$<div style="margin-left:2px;">
-                <strong class="label label-danger">Online kullanıcılar:</strong>
-                <div id="usersCount"></div>
-            </div>#1#
-    </section>
-</aside>*@
+</script> 
+ 

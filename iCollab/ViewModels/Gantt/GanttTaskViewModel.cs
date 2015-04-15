@@ -1,11 +1,12 @@
 ﻿using System; 
-using Kendo.Mvc.UI;
+using Kendo.Mvc.UI; 
 
 namespace iCollab.ViewModels.Gantt
 {
     public class GanttTaskViewModel : IGanttTask
-    { 
-        public Guid TaskID { get; set; }
+    {
+
+        public string TaskID { get; set; }
         public Guid? ParentID { get; set; }
 
         public string Title { get; set; }

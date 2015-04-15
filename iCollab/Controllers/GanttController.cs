@@ -1,23 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net;
-using System.Web.Mvc;
-using Core.Mappers;
+using System.Collections.Generic; 
+using System.Linq; 
+using System.Web.Mvc; 
 using Core.Service;
 using Core.Settings;
-using iCollab.Infra;
-using iCollab.Infra.Extensions;
-using iCollab.ViewModels;
+using iCollab.Infra; 
 using iCollab.ViewModels.Gantt;
 using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI;
-using Microsoft.AspNet.Identity;
-using Model;
-using Model.FineUploader;
-using PagedList;
-using TaskViewModel = iCollab.ViewModels.TaskViewModel;
+using Kendo.Mvc.UI; 
+using Model; 
 
 namespace iCollab.Controllers
 {
@@ -39,7 +30,7 @@ namespace iCollab.Controllers
         {
             var tasks = _service.GetTasks().Select(x => new GanttTaskViewModel
             {
-                TaskID = x.Id, 
+                TaskID = x.Id.ToString(), 
                 Title = x.Title, 
                 Start = x.Start, 
                 End = x.End, 
@@ -67,7 +58,7 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
-                var instance = _service.GetTask(task.TaskID, true);
+                var instance = _service.GetTask(Guid.Parse(task.TaskID), true);
 
                 _service.Delete(instance);
             }
@@ -79,9 +70,10 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
+
                 var model = new Task
                 {
-                    Id = task.TaskID,
+                    Id = Guid.NewGuid(),
                     Title = task.Title,
                     Start = task.Start,
                     End = task.End,
@@ -89,6 +81,8 @@ namespace iCollab.Controllers
                     PercentComplete = task.PercentComplete,
                     OrderId = task.OrderId
                 };
+
+                task.TaskID = model.Id.ToString();
 
                 _service.Create(model);
             }
@@ -100,7 +94,13 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
-                var instance = _service.GetTask(task.TaskID, true);
+                var instance = _service.GetTask(Guid.Parse(task.TaskID), true);
+
+                if (instance == null)
+                {
+                    return null;
+                }
+
                 instance.Title = task.Title;
                 instance.Start = task.Start;
                 instance.End = task.End;

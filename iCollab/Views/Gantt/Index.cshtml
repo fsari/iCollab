@@ -12,16 +12,16 @@
                         .Name("Gantt")
                         .Columns(columns =>
                         {
-                            columns.Bound(c => c.TaskID).Title("ID").Width(50);
-                            columns.Bound(t=>t.Title).Editable(true).Sortable(true);
-                            columns.Bound(s=>s.Start).Title("Start Time").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
-                            columns.Bound(e=>e.End).Title("End Time").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
+                            columns.Bound("TaskID").Title("ID").Width(50);
+                            columns.Bound("title").Editable(true).Sortable(true);
+                            columns.Bound("start").Title("Start Time").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
+                            columns.Bound("end").Title("End Time").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
                         })
                         .Views(views =>
                         {
                             views.DayView();
-                            views.WeekView(weekView => weekView.Selected(true));
-                            views.MonthView();
+                            views.WeekView();
+                            views.MonthView(monthView => monthView.Selected(true));
                         })
                         .Height(800)
                         .ShowWorkHours(false)
