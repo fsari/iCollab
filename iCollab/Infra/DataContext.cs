@@ -24,6 +24,7 @@ namespace iCollab.Infra
         public IDbSet<Document> Documents { get; set; }
         public IDbSet<ContentPage> ContentPages { set; get; }
         public IDbSet<Activity> Activities { set; get; }
+        public IDbSet<Dependency> Dependencies{ set; get; }
 
         public override int SaveChanges()
         {

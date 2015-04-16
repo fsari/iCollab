@@ -93,6 +93,7 @@
     <Compile Include="Audit.cs" />
     <Compile Include="BaseEntity.cs" />
     <Compile Include="ContentPage.cs" />
+    <Compile Include="Dependency.cs" />
     <Compile Include="Document.cs" />
     <Compile Include="FineUploader\FineUpload.cs" />
     <Compile Include="FineUploader\FineUploaderResult.cs" />

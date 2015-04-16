@@ -29,8 +29,8 @@
     <script src="/Assets/kendo/js/jszip.min.js"></script>
     <script src="/Assets/kendo/js/kendo.all.min.js"></script>
     <script src="/Assets/kendo/js/kendo.aspnetmvc.min.js"></script>
-    <script src="/Assets/kendo/js/cultures/kendo.culture.tr-TR.min.js"></script>
-     
+    <script src="/Assets/kendo/js/cultures/kendo.culture.tr-TR.min.js"></script> 
+    
     @RenderSection("choosen", required: false)
     @RenderSection("form", required: false)  
 
@@ -38,7 +38,9 @@
     <script src="/Assets/toastr/toastr.js"></script> 
   
     <script>
-        kendo.culture("tr-TR");
+        $(document).ready(function () {
+            kendo.culture("tr-TR"); 
+        });
     </script>
      
 </head>

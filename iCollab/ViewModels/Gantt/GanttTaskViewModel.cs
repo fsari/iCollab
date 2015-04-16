@@ -6,8 +6,8 @@ namespace iCollab.ViewModels.Gantt
     public class GanttTaskViewModel : IGanttTask
     {
 
-        public string TaskID { get; set; }
-        public Guid? ParentID { get; set; }
+        public string TaskId { get; set; }
+        public Guid? ParentId { get; set; }
 
         public string Title { get; set; }
 
@@ -33,10 +33,9 @@ namespace iCollab.ViewModels.Gantt
 
     public class DependencyViewModel : IGanttDependency
     {
-        public Guid DependencyID { get; set; }
-
-        public Guid PredecessorID { get; set; }
-        public Guid SuccessorID { get; set; }
+        public Guid DependencyId { get; set; }
+        public Guid PredecessorId { get; set; }
+        public Guid SuccessorId { get; set; }
         public DependencyType Type { get; set; }
     }
 

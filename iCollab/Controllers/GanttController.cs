@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic; 
 using System.Linq; 
-using System.Web.Mvc; 
+using System.Web.Mvc;
+using Core.Mappers;
 using Core.Service;
 using Core.Settings;
 using iCollab.Infra; 
@@ -15,40 +16,39 @@ namespace iCollab.Controllers
     [Authorize]
     public class GanttController : BaseController
     { 
-        private readonly ITaskService _service; 
+        private readonly ITaskService _service;
+        private readonly IMapper<Dependency, DependencyViewModel> _mapper;
+        private readonly IDependencyService _dependencyService;
 
         public GanttController(
             ITaskService service,
             IApplicationSettings appSettings, 
-            IUserService userService)
+            IUserService userService, 
+            IMapper<Dependency, DependencyViewModel> mapper, 
+            IDependencyService dependencyService)
             : base(userService, appSettings)
         {
-            _service = service; 
+            _service = service;
+            _mapper = mapper;
+            _dependencyService = dependencyService;
         }
 
         public JsonResult Tasks([DataSourceRequest] DataSourceRequest request)
         {
             var tasks = _service.GetTasks().Select(x => new GanttTaskViewModel
             {
-                TaskID = x.Id.ToString(), 
+                TaskId = x.Id.ToString(), 
                 Title = x.Title, 
                 Start = x.Start, 
                 End = x.End, 
-                ParentID = x.ParentTaskId, 
+                ParentId = x.ParentTaskId, 
                 OrderId = x.OrderId, 
                 PercentComplete = x.PercentComplete
             });
 
             return Json(tasks.AsQueryable().ToDataSourceResult(request));
         }
-
-        public JsonResult Dependencies([DataSourceRequest] DataSourceRequest request)
-        {
-            var dependencies = new List<DependencyViewModel>();
-
-            return Json(dependencies.AsQueryable().ToDataSourceResult(request));
-        }
-
+         
         public ActionResult Index()
         {
             return View();
@@ -58,7 +58,7 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
-                var instance = _service.GetTask(Guid.Parse(task.TaskID), true);
+                var instance = _service.GetTask(Guid.Parse(task.TaskId), true);
 
                 _service.Delete(instance);
             }
@@ -72,19 +72,18 @@ namespace iCollab.Controllers
             {
 
                 var model = new Task
-                {
-                    Id = Guid.NewGuid(),
+                { 
                     Title = task.Title,
                     Start = task.Start,
                     End = task.End,
-                    ParentTaskId = task.ParentID,
+                    ParentTaskId = task.ParentId,
                     PercentComplete = task.PercentComplete,
                     OrderId = task.OrderId
-                };
-
-                task.TaskID = model.Id.ToString();
+                }; 
 
                 _service.Create(model);
+
+                task.TaskId = model.Id.ToString();
             }
 
             return Json(new[] { task }.ToDataSourceResult(request, ModelState));
@@ -94,7 +93,7 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
-                var instance = _service.GetTask(Guid.Parse(task.TaskID), true);
+                var instance = _service.GetTask(Guid.Parse(task.TaskId), true);
 
                 if (instance == null)
                 {
@@ -104,7 +103,7 @@ namespace iCollab.Controllers
                 instance.Title = task.Title;
                 instance.Start = task.Start;
                 instance.End = task.End;
-                instance.ParentTaskId = task.ParentID;
+                instance.ParentTaskId = task.ParentId;
                 instance.PercentComplete = task.PercentComplete;
                 instance.OrderId = task.OrderId;
 
@@ -112,6 +111,48 @@ namespace iCollab.Controllers
             }
 
             return Json(new[] { task }.ToDataSourceResult(request, ModelState));
+        }
+
+        public virtual JsonResult ReadDependencies([DataSourceRequest] DataSourceRequest request)
+        {
+            return Json(_dependencyService.GetQueryable().ToDataSourceResult(request));
+        }
+
+        public virtual JsonResult DestroyDependency([DataSourceRequest] DataSourceRequest request, DependencyViewModel dependency)
+        {
+            if (ModelState.IsValid)
+            {
+                var entity = _mapper.ToEntity(dependency);
+
+                _dependencyService.Delete(entity);
+            }
+
+            return Json(new[] { dependency }.ToDataSourceResult(request, ModelState));
+        }
+
+        public virtual JsonResult CreateDependency([DataSourceRequest] DataSourceRequest request, DependencyViewModel dependency)
+        {
+            if (ModelState.IsValid)
+            {
+                var entity = _mapper.ToEntity(dependency);
+
+                _dependencyService.Create(entity);
+            }
+
+            return Json(new[] { dependency }.ToDataSourceResult(request, ModelState));
+        }
+
+        public virtual JsonResult UpdateDependency([DataSourceRequest] DataSourceRequest request, DependencyViewModel dependency)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var entity = _mapper.ToEntity(dependency);
+
+                _dependencyService.Update(entity);
+            }
+
+            return Json(new[] { dependency }.ToDataSourceResult(request, ModelState));
         }
 
     }

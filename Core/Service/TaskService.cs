@@ -128,5 +128,25 @@ namespace Core.Service
 
             return tasks;
         }
+
+        public IQueryable<Dependency> GetDependencies()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void DeleteDependency(Dependency entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void CreateDependency(Dependency entity)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void UpdateDependency(Dependency entity)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

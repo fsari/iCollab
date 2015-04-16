@@ -1,4 +1,8 @@
-﻿<aside class="right-side">
+﻿@{
+    ViewBag.Title = "Gantt";
+}
+
+<aside class="right-side">
 
     <section class="content-header">
         <h1>Gantt</h1>
@@ -11,17 +15,16 @@
                      @(Html.Kendo().Gantt<iCollab.ViewModels.Gantt.GanttTaskViewModel, iCollab.ViewModels.Gantt.DependencyViewModel>()
                         .Name("Gantt")
                         .Columns(columns =>
-                        {
-                            columns.Bound("TaskID").Title("ID").Width(50);
-                            columns.Bound("title").Editable(true).Sortable(true);
-                            columns.Bound("start").Title("Start Time").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
-                            columns.Bound("end").Title("End Time").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
+                        { 
+                            columns.Bound("title").Title("Başlık").Editable(true).Sortable(true);
+                            columns.Bound("start").Title("Başlangıç").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
+                            columns.Bound("end").Title("Bitiş").Format("{0:MM/dd/yyyy}").Width(100).Editable(true).Sortable(true);
                         })
                         .Views(views =>
                         {
                             views.DayView();
-                            views.WeekView();
-                            views.MonthView(monthView => monthView.Selected(true));
+                            views.WeekView(view => view.Selected(true));
+                            views.MonthView();
                         })
                         .Height(800)
                         .ShowWorkHours(false)
@@ -34,8 +37,8 @@
                             .Update("UpdateTask", "Gantt")
                             .Model(m =>
                             {
-                                m.Id(f => f.TaskID);
-                                m.ParentId(f => f.ParentID);
+                                m.Id(f => f.TaskId);
+                                m.ParentId(f => f.ParentId);
                                 m.OrderId(f => f.OrderId);
                                 m.Field(f => f.Expanded).DefaultValue(true);
                             })
@@ -46,9 +49,9 @@
                             )
                             .Model(m =>
                             {
-                                m.Id(f => f.DependencyID);
-                                m.PredecessorId(f => f.PredecessorID);
-                                m.SuccessorId(f => f.SuccessorID);
+                                m.Id(f => f.DependencyId);
+                                m.PredecessorId(f => f.PredecessorId);
+                                m.SuccessorId(f => f.SuccessorId);
                                 m.Type(f => f.Type);
                             })
                         )
