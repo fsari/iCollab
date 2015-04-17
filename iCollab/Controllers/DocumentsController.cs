@@ -18,7 +18,7 @@ using PagedList;
 
 namespace iCollab.Controllers
 {
-    [System.Web.Mvc.Authorize]
+    [Authorize]
     public class DocumentsController : BaseController
     {
         private readonly IDocumentService _service;
@@ -48,7 +48,7 @@ namespace iCollab.Controllers
         {
             IQueryable<Document> documents  = _service.GetDocuments();
             return Json(documents.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
-        }
+        } 
 
         [HttpPost]
         public ActionResult Search(string query, int? page)
