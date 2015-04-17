@@ -115,7 +115,10 @@ namespace iCollab.Controllers
 
         public virtual JsonResult ReadDependencies([DataSourceRequest] DataSourceRequest request)
         {
-            return Json(_dependencyService.GetQueryable().ToDataSourceResult(request));
+            var dependencies = _dependencyService.GetTable()
+                .Select(x => new DependencyViewModel() { Id = x.Id, PredecessorId = x.PredecessorId, SuccessorId = x.SuccessorId, Type = (Kendo.Mvc.UI.DependencyType)(int)x.Type }); 
+
+            return Json(dependencies.ToDataSourceResult(request));
         }
 
         public virtual JsonResult DestroyDependency([DataSourceRequest] DataSourceRequest request, DependencyViewModel dependency)
@@ -136,7 +139,11 @@ namespace iCollab.Controllers
             {
                 var entity = _mapper.ToEntity(dependency);
 
+                entity.Type = (Model.DependencyType)((int)dependency.Type);
+                  
                 _dependencyService.Create(entity);
+
+                dependency.Id = entity.Id;
             }
 
             return Json(new[] { dependency }.ToDataSourceResult(request, ModelState));

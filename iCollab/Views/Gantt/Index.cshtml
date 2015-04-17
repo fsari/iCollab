@@ -29,7 +29,7 @@
                         .Height(800)
                         .ShowWorkHours(false)
                         .ShowWorkDays(false)
-                        .Snap(false)
+                        .Snap(false) 
                         .DataSource(ds => ds
                             .Read("Tasks", "Gantt")
                             .Create("CreateTask", "Gantt")
@@ -44,12 +44,13 @@
                             })
                         )
                         .DependenciesDataSource(ds => ds
-                            .Read(read => read
-                            .Action("Dependencies", "Gantt")
-                            )
+                            .Read("ReadDependencies", "Gantt")
+                            .Create("CreateDependency", "Gantt")
+                            .Destroy("DestroyDependency", "Gantt")
+                            .Update("UpdateDependency", "Gantt")    
                             .Model(m =>
                             {
-                                m.Id(f => f.DependencyId);
+                                m.Id(f => f.Id);
                                 m.PredecessorId(f => f.PredecessorId);
                                 m.SuccessorId(f => f.SuccessorId);
                                 m.Type(f => f.Type);

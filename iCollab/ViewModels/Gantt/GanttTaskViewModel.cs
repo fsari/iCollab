@@ -33,7 +33,7 @@ namespace iCollab.ViewModels.Gantt
 
     public class DependencyViewModel : IGanttDependency
     {
-        public Guid DependencyId { get; set; }
+        public Guid Id { get; set; }
         public Guid PredecessorId { get; set; }
         public Guid SuccessorId { get; set; }
         public DependencyType Type { get; set; }

@@ -53,6 +53,7 @@ namespace iCollab
             builder.RegisterType<TaskService>().As<ITaskService>().InstancePerRequest();
             builder.RegisterType<ProjectService>().As<IProjectService>().InstancePerRequest(); 
             builder.RegisterType<AttachmentServıce>().As<IAttachmentService>().InstancePerRequest();
+            builder.RegisterType<DependencyService>().As<IDependencyService>().InstancePerRequest();
 
             builder.RegisterType<ApplicationUserStore<ApplicationUser>>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();
