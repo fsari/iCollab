@@ -13,7 +13,7 @@ namespace Core.Service
     {
         IQueryable<Task> GetTasksByStatus(TaskStatus status);
         Task GetTask(Guid id, bool nocache = false);
-        IQueryable<Task> GetUserTasks(string username);
+        IQueryable<Task> GetUserTasks(string userId);
         IQueryable<Task> GetTasks();
         IQueryable<Task> GetLateTasks();
         int TasksCount();
@@ -24,13 +24,15 @@ namespace Core.Service
     public class TaskService : BaseCrudService<Task>, ITaskService
     {
         private readonly IRepository<Task> _repository;
+        private readonly IRepository<TaskUser> _taskUsersRepository; 
         private readonly ICacheManager<Guid, Task> _cache;
 
-        public TaskService(IRepository<Task> repository, ICacheManager<Guid, Task> cache, UoW uow)
+        public TaskService(IRepository<Task> repository, ICacheManager<Guid, Task> cache, UoW uow, IRepository<TaskUser> taskUsersRepository)
             : base(repository, cache, uow)
         {
             _repository = repository;
             _cache = cache;
+            _taskUsersRepository = taskUsersRepository;
         }
 
         public IQueryable<Task> GetTasksByStatus(TaskStatus status)
@@ -84,7 +86,7 @@ namespace Core.Service
             return task;
         }
 
-        public IQueryable<Task> GetUserTasks(string username)
+        public IQueryable<Task> GetUserTasks(string userId)
         {
             /*var tasks = _repository.CollectionUntracked
                             .Include(p => p.Project)  
@@ -92,7 +94,9 @@ namespace Core.Service
                             .Where(x => x.TaskOwner == username)
                             .OrderByDescending(t => t.DateCreated);*/
 
-            return null;
+            var userTasks = _repository.CollectionUntracked.Include(t => t.TaskUsers).Where(x => x.TaskUsers.Any(r => r.UserId == userId));
+
+            return userTasks;
         }
 
         public IQueryable<Task> GetTasks()
@@ -104,8 +108,7 @@ namespace Core.Service
 
         public IQueryable<Task> GetLateTasks()
         {
-            var tasks = _repository.CollectionUntracked.Where(x => x.End < DateTime.Now && x.TaskStatus != TaskStatus.Tamamlandı)
-                .OrderByDescending(t => t.DateCreated);
+            var tasks = _repository.CollectionUntracked.Where(x => x.End < DateTime.Now && x.TaskStatus != TaskStatus.Tamamlandı).OrderByDescending(t => t.DateCreated);
 
             return tasks;
         }
@@ -128,25 +131,6 @@ namespace Core.Service
 
             return tasks;
         }
-
-        public IQueryable<Dependency> GetDependencies()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteDependency(Dependency entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void CreateDependency(Dependency entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void UpdateDependency(Dependency entity)
-        {
-            throw new NotImplementedException();
-        }
+         
     }
 }

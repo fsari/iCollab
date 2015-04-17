@@ -53,10 +53,10 @@ namespace iCollab.Controllers
         [ChildActionOnly]
         public ActionResult ViewTasks()
         {
-            var username = User.Identity.GetUserName();
-            //var tasks = _taskService.GetUserTasks(username).Take(AppSettings.IndexPageSize);
+            var userId = User.Identity.GetUserId();
+            var tasks = _taskService.GetUserTasks(userId).Take(AppSettings.IndexPageSize);
 
-            return null; //PartialView(tasks);
+            return PartialView(tasks);
         }
 
         [ChildActionOnly]

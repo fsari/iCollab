@@ -23,7 +23,8 @@
                         <div>
                             @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
 
-                            <div> 
+                            <div>
+                                @Html.ActionLink("Pdf'e aktar", "ExportAsPdf", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-danger" }) 
                                 @Html.ActionLink("İçerik ekle", "AddContentPage", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-primary" })
                             </div>
                         </div>
@@ -62,7 +63,7 @@
                         
                         <div class="box box-default collapsed-box">
                             <div class="box-header with-border">
-                                <h3 class="box-title">@item.Title</h3>
+                                <h3 class="box-title" data-widget="collapse">@item.Title</h3>
                                 <div class="box-tools pull-right">
                                     <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
                                 </div> 

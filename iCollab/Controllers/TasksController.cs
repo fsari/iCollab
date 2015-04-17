@@ -124,9 +124,9 @@ namespace iCollab.Controllers
         {
             int pagenumber = page ?? 1;
 
-            string username = User.Identity.GetUserName();
+            string userId = User.Identity.GetUserId();
 
-            IPagedList<Task> tasks = _service.GetUserTasks(username).ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Task> tasks = _service.GetUserTasks(userId).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(tasks);
         }
@@ -377,10 +377,10 @@ namespace iCollab.Controllers
 
             if (task.TaskUsers == null)
             {
-                task.TaskUsers = new Collection<TaskUsers>();
+                task.TaskUsers = new Collection<TaskUser>();
             }
 
-            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUsers() { UserId = x }));
+            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser() { UserId = x }));
 
             _service.Update(task);
 
@@ -422,12 +422,12 @@ namespace iCollab.Controllers
 
             if (task.TaskUsers == null)
             {
-                task.TaskUsers = new Collection<TaskUsers>();
+                task.TaskUsers = new Collection<TaskUser>();
             } 
 
             _service.Create(task);
 
-            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUsers() { UserId = x }));
+            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser() { UserId = x }));
 
             _service.Update(task);
             
@@ -504,7 +504,7 @@ namespace iCollab.Controllers
                 _service.Update(instance);
 
                 instance.TaskUsers.Clear();
-                instance.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUsers() { UserId = x }));
+                instance.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser() { UserId = x }));
 
                 _service.Update(instance);
 

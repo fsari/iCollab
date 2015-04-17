@@ -56,7 +56,7 @@ namespace Model
         public ICollection<Attachment> Attachments { get; set; } 
         public List<Task> SubTasks { set; get; }
 
-        public ICollection<TaskUsers> TaskUsers { set; get; }
+        public ICollection<TaskUser> TaskUsers { set; get; }
 
         public Task ParentTask { set; get; }
         public Guid? ParentTaskId { set; get; }
