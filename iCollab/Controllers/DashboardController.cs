@@ -48,16 +48,7 @@ namespace iCollab.Controllers
             _meetingService = meetingService;
             _documentService = documentService;
             _activityService = activityService;
-        }
-
-        [ChildActionOnly]
-        public ActionResult ViewTasks()
-        {
-            var userId = User.Identity.GetUserId();
-            var tasks = _taskService.GetUserTasks(userId).Take(AppSettings.IndexPageSize);
-
-            return PartialView(tasks);
-        }
+        } 
 
         [ChildActionOnly]
         public ActionResult ViewTodos()
@@ -133,21 +124,7 @@ namespace iCollab.Controllers
 
             return Json(null, JsonRequestBehavior.AllowGet);
         }
-
-        public static double DateTimeToUnixTimestamp(DateTime dateTime)
-        {
-            return (dateTime - new DateTime(1970, 1, 1).ToLocalTime()).TotalSeconds;
-        }
-
-        private static DateTime ConvertFromUnixTimestamp(double timestamp)
-        {
-
-            var origin = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-
-            return origin.AddSeconds(timestamp);
-
-        }
-
+         
         [ChildActionOnly]
         public ActionResult GetOnlineUsers()
         {
@@ -179,9 +156,18 @@ namespace iCollab.Controllers
         }
 
         [ChildActionOnly]
+        public ActionResult ViewTasks()
+        {
+            var userId = AppUser.Id;
+            var tasks = _taskService.GetUserTasks(userId).Take(AppSettings.IndexPageSize);
+
+            return PartialView(tasks);
+        }
+
+        [ChildActionOnly]
         public ActionResult ViewProjects()
         {
-            string user = User.Identity.GetUserName();
+            string user = AppUser.Id;
 
             var projects = _projectService.GetUserProjects(user).ToPagedList(1, AppSettings.IndexPageSize);
 

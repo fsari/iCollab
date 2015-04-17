@@ -4,8 +4,7 @@
 <table class="table table-striped table-responsive">
     <thead>
         <tr>
-            <th></th>
-            <th></th>
+            <th></th> 
             <th></th>
         </tr>
     </thead>
@@ -20,8 +19,7 @@
                     }
                     
                     @Html.ActionLink(item.Title, "View", "Projects", new { id = item.Id }, null)
-                </td>
-                <td>@Html.DisplayFor(m=>item.EndDatetime) </td>
+                </td> 
                 <td style="width: 240px"> 
                     <div class="progress">
                         @if (item.Status == ProjectStatus.Bitti)

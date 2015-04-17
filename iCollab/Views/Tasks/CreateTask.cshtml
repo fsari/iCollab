@@ -76,7 +76,7 @@
                                 @Html.LabelFor(model => model.Start, new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
 
-                                    @(Html.Kendo().DatePicker().Name("Start"))
+                                    @(Html.Kendo().DatePicker().Value(DateTime.Now).Name("Start"))
                                     @Html.ValidationMessageFor(model => model.Start)
                                 </div>
                             </div>
@@ -84,7 +84,7 @@
                             <div class="form-group">
                                 @Html.LabelFor(model => model.End, new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
-                                    @(Html.Kendo().DatePicker().Name("End"))
+                                    @(Html.Kendo().DatePicker().Value(DateTime.Now.AddDays(2)).Name("End"))
                                     @Html.ValidationMessageFor(model => model.End)
                                 </div>
                             </div>

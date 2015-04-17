@@ -134,9 +134,9 @@ namespace Core.Service
             return previousProject;
         }
 
-        public IQueryable<Project> GetUserProjects(string username)
+        public IQueryable<Project> GetUserProjects(string userId)
         {  
-            var projects = _repository.CollectionUntracked.Include(t=>t.Tasks).Where(x => x.CreatedBy == username).OrderByDescending(x => x.DateCreated);
+            var projects = _repository.CollectionUntracked.Include(p=>p.ProjectUsers).Where(x => x.ProjectUsers.Any(e=>e.UserId == userId)).OrderByDescending(x => x.DateCreated);
 
             return projects;
         }
