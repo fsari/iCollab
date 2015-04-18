@@ -45,24 +45,18 @@ namespace Model
 
         [Display(Name = "Görev Durumu")]
         public TaskStatus TaskStatus { set; get; }
- 
-
         [Display(Name = "Proje No")]
         public Guid? ProjectId { get; set; }
-
         [Display(Name = "Proje")]
         public Project Project { get; set; } 
-
         public ICollection<Attachment> Attachments { get; set; } 
         public List<Task> SubTasks { set; get; }
-
         public ICollection<TaskUser> TaskUsers { set; get; }
-
         public Task ParentTask { set; get; }
         public Guid? ParentTaskId { set; get; }
-
         public decimal PercentComplete { get; set; }
         public int OrderId { get; set; }
+        public TaskType TaskType { set; get; }
 
         [NotMapped]
         public bool IsLate {
@@ -77,5 +71,20 @@ namespace Model
             }
         }
 
+    }
+
+    public enum TaskType
+    {
+        General = 0,
+        Development = 1, 
+        Bug = 2,
+        Update = 3,
+        ChangeRequest = 4,
+        Idea = 5,
+        Enhancement = 6,
+        Research = 7,
+        Maintenance = 8,
+        QualityAssurance = 9,
+        Release = 10
     }
 }

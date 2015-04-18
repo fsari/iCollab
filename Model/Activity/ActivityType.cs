@@ -4,10 +4,13 @@ namespace Model.Activity
 {
     public enum ActivityType
     {
-        [Display(Name="Olusturdu",Description = "Olusturdu")]
-        Created,
-        Read,
-        Updated,
-        Deleted
+        [Display(Name="olusturdu",Description = "olusturdu")]
+        Created=0,
+        [Display(Name = "okudu", Description = "okudu")]
+        Read=1,
+        [Display(Name = "düzenledi", Description = "düzenledi")]
+        Updated=2,
+        [Display(Name = "sildi", Description = "sildi")]
+        Deleted=3
     }
 }

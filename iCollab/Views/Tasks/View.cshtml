@@ -45,6 +45,7 @@
                             }
                             <strong>Durumu : </strong><span class="@Model.TaskStatus.CssClass()"> @Model.TaskStatus</span> <br />
                             <strong>Önceliği :</strong><span class="@Model.Priority.CssClass()">@Model.Priority </span> <br />
+                            <strong>Türü :</strong><span class="label label-primary">@Model.TaskType </span> <br />
                             <strong><i class="fa fa-user"></i> Atananlar: </strong>
                             @foreach (var u in Model.SelectedUsers)
                             {

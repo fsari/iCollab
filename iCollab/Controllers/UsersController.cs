@@ -65,6 +65,42 @@ namespace iCollab.Controllers
             return RedirectToAction("Index");
         }
 
+        public ActionResult DisableUser(string userId)
+        {
+            ApplicationUser user = _userService.Find(userId);
+
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            user.Disabled = true;
+
+            _userService.UpdateUser(user);
+
+            TempData["success"] = "Kullanıcı disable edildi.";
+
+            return RedirectToAction("Index");
+        }
+
+        public ActionResult EnableUser(string userId)
+        {
+            ApplicationUser user = _userService.Find(userId);
+
+            if (user == null)
+            {
+                return HttpNotFound();
+            }
+
+            user.Disabled = false;
+
+            _userService.UpdateUser(user);
+
+            TempData["success"] = "Kullanıcı disable edildi.";
+
+            return RedirectToAction("Index");
+        }
+
         [Authorize(Roles = "manager")]
         public ActionResult RemoveUser(string userId)
         {

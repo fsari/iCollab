@@ -50,6 +50,9 @@ namespace iCollab.ViewModels
         [Display(Name = "Görev Durumu")]
         public TaskStatus TaskStatus { set; get; }
 
+        [Display(Name = "Görev Türü")]
+        public TaskType TaskType { set; get; }
+
         [Display(Name = "Proje No")]
         public Guid ProjectId{ get; set; }
 		
@@ -71,6 +74,8 @@ namespace iCollab.ViewModels
 
         public IEnumerable<UserSelectViewModel> SelectedProjectUsers { set; get; }
         public List<string> SelectedUsers { set; get; }
+
+
 
         public bool IsLate
         {

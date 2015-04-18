@@ -13,6 +13,7 @@ using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using Microsoft.AspNet.Identity;
 using Model;
+using Model.Activity;
 using Model.FineUploader;
 using PagedList;
 
@@ -244,6 +245,13 @@ namespace iCollab.Controllers
             if (ModelState.IsValid)
             {
                 Document createdItem = _service.Create(document);
+
+                Activity activity = new Activity();
+                activity.ActivityType = ActivityType.Created;
+                activity.CreatedBy = AppUser.FullName;
+                activity.Subject = Subject.Document;
+                activity.Title = createdItem.Title;
+
 
                 TempData["success"] = "Döküman oluşturuldu.";
                 return RedirectToAction("View", new {id = createdItem.Id});

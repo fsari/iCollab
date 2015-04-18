@@ -27,25 +27,30 @@
                             <thead>
                                 <tr> 
                                     <th>Adı Soyadı</th> 
-                                    <th>E-Posta</th>
-                                    @if (ViewBag.IsManager)
-                                     {
-                                        <th></th>
-                                    }
+                                    <th>E-Posta</th> 
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
                                     <th style="width: 120px;">Kullanıcıyı Kaldır</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var user in Model)
                                 {
-                                    <tr> 
-                                        <td>@user.FullName</td> 
+                                    <tr>
+                                        <td>@user.FullName</td>
                                         <td>@user.Email</td>
-                                        @if (ViewBag.IsManager)
+
+                                        @if (user.Disabled)
                                         {
-                                            <td>@Html.ActionLink("Yonetici ata", "AssignAsManager", "Users", new {userId = @user.Id}, new {@class = "btn btn-danger btn-sm"})</td>
+                                            <td>@Html.ActionLink("Enable", "EnableUser", "Users", new { userId = @user.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Enable etmek istediğinizden emin misiniz ?');" })</td>
                                         }
-                                        
+                                        else
+                                        {
+                                            <td>@Html.ActionLink("Disable", "DisableUser", "Users", new { userId = @user.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Disable etmek istediğinizden emin misiniz ?');" })</td>
+                                        }
+
+                                        <td>@Html.ActionLink("Yonetici ata", "AssignAsManager", "Users", new { userId = @user.Id }, new { @class = "btn btn-danger btn-sm" })</td>
                                         <td>@Html.ActionLink("Kaldır", "RemoveUser", "Users", new { userId = @user.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Silmek istediğinize emin misiniz ?');" })</td>
                                     </tr>
                                 }

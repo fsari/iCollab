@@ -27,6 +27,9 @@ namespace Model
         [Display(Name = "Son Giriş")]
         public DateTime? LastLogin { set; get; }
 
+        [Display(Name = "Oluşturulma tarihi")]
+        public DateTime? DateCreated { set; get; }
+
         [Display(Name = "Resim")]
         public Attachment Picture { get; set; } 
         [Display(Name = "Adı Soyadı")]
@@ -41,6 +44,8 @@ namespace Model
 
         [NotMapped]
         public bool IsManager { get; set; }
+
+        public bool Disabled { set; get; }
 
         public ICollection<Todo> Todos { set; get; }
     }

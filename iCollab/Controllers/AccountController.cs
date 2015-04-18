@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using iCollab.Infra;
 using iCollab.ViewModels;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -18,11 +19,13 @@ namespace iCollab.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
+        private IUserService _service;
           
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IUserService service)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _service = service;
         }
           
         [AllowAnonymous]
@@ -35,22 +38,35 @@ namespace iCollab.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Login(LoginViewModel model, string returnUrl)
+        public ActionResult Login(LoginViewModel model, string returnUrl)
         {
             if (!ModelState.IsValid)
             {
                 return View(model);
             }
              
-            var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, shouldLockout: false);
-            switch (result)
+            var result = _signInManager.PasswordSignIn(model.Email, model.Password, model.RememberMe, shouldLockout: false);
+
+            if (result == SignInStatus.Success)
             {
-                case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);  
-                default:
-                    ModelState.AddModelError("", "Invalid login attempt.");
-                    return View(model);
+                var user = _service.FindByEmail(model.Email);
+
+                if (user.Disabled)
+                {
+
+                    Request.GetOwinContext().Authentication.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
+                    return RedirectToAction("Index", "Dashboard");
+                }
+
+                user.LastLogin = DateTime.Now;
+
+                _service.UpdateUser(user);
+
+                return RedirectToLocal(returnUrl);
             }
+
+            ModelState.AddModelError("", "Invalid login attempt.");
+            return View(model);
         }
 
         
@@ -67,8 +83,14 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                user.FullName = model.Fullname;
+                var user = new ApplicationUser
+                {
+                    UserName = model.Email,
+                    Email = model.Email,
+                    FullName = model.Fullname,
+                    DateCreated = DateTime.Now
+                };
+
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {

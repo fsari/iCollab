@@ -292,7 +292,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (ModelState.IsValid == false || string.IsNullOrEmpty(taskViewModel.SelectedUserId))
+            if (ModelState.IsValid == false || taskViewModel.SelectedUsers.Any() == false)
             {
                 taskViewModel.ProjectViewModel = _mapper.ToEntity(project);
                 ModelState.AddModelError("Error", "Bir kullanıcı seçmeniz gerekli.");
@@ -302,7 +302,7 @@ namespace iCollab.Controllers
 
             Task task = _taskMapper.ToModel(taskViewModel);
 
-            task.CreatedBy = User.Identity.GetUserName();
+            task.CreatedBy = AppUser.UserName;
 
             if (project.Tasks == null)
             {
@@ -424,7 +424,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (project.ProjectOwner != User.Identity.GetUserId())
+            if (project.ProjectOwner != AppUser.Id)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
@@ -453,7 +453,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (project.ProjectOwner != User.Identity.GetUserId())
+            if (project.ProjectOwner != AppUser.Id)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
@@ -486,7 +486,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (project.CreatedBy != User.Identity.GetUserName())
+            if (project.CreatedBy != AppUser.UserName)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
@@ -585,12 +585,12 @@ namespace iCollab.Controllers
                 return RedirectToAction("View", new {id});
             }
 
-            if (project.ProjectOwner != User.Identity.GetUserName())
+            if (project.ProjectOwner != AppUser.UserName)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
 
-            project.DeletedBy = User.Identity.GetUserName();
+            project.DeletedBy = AppUser.UserName;
 
             _projectService.SoftDelete(project);
 

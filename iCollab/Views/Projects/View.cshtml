@@ -84,10 +84,7 @@
                                 <h3 class="box-title">Proje Görevleri</h3>
 
                                 <div class="pull-right box-tools">
-                                    @if (ViewBag.IsManager && (Model.Status != ProjectStatus.Bitti && Model.Status != ProjectStatus.Iptal))
-                                    {
-                                        @Html.ActionLink("Görev Ekle", "AddTask", "Projects", new { projectId = Model.Id }, new { @class = "btn btn-danger btn-sm" })
-                                    }
+                                    @Html.ActionLink("Görev Ekle", "AddTask", "Projects", new { projectId = Model.Id }, new { @class = "btn btn-danger btn-sm" })
                                 </div>
                             </div>
                             <div class="box-body">
@@ -117,10 +114,7 @@
                                 <h3 class="box-title">Proje Dökümanları</h3>
 
                                 <div class="pull-right box-tools">
-                                    @if (ViewBag.IsManager)
-                                    {
-                                        @Html.ActionLink("Döküman Ekle", "AddDocument", "Projects", new { projectId = Model.Id }, new { @class = "btn btn-danger btn-sm" })
-                                    }
+                                    @Html.ActionLink("Döküman Ekle", "AddDocument", "Projects", new { projectId = Model.Id }, new { @class = "btn btn-danger btn-sm" })
                                 </div>
                             </div>
                             <div class="box-body"> 

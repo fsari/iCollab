@@ -90,6 +90,13 @@
                             </div>
                             
                             <div class="form-group">
+                                @Html.LabelFor(model => model.TaskType, new { @class = "control-label col-md-2" })
+                                <div class="col-md-10">
+                                    @(Html.Kendo().DropDownList().Name("TaskType").BindTo(Enum.GetNames(typeof(TaskType))))
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
                                 @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
                                     @(Html.Kendo().DropDownList().Name("Priority").BindTo(Enum.GetNames(typeof(Priority)))) 

@@ -20,6 +20,7 @@ namespace iCollab.Infra
         AppUserViewModel GetCurrentUser(string username);
         ApplicationUser GetUserInstance(string userName);
         ApplicationUser Find(string userId);
+        ApplicationUser FindByEmail(string email);
         bool IsUserManager(string userId);
         ApplicationUser Delete(ApplicationUser user);
         void AssignManager(string userId);
@@ -31,8 +32,7 @@ namespace iCollab.Infra
         IEnumerable<string> GetOnlineUsers();
         IQueryable<ApplicationUser> GetUsers(IEnumerable<string> userId); 
         bool ChangePassword(string userId, string currentPassword, string newPassword);
-        bool UpdateUser(ApplicationUser user);
-
+        bool UpdateUser(ApplicationUser user); 
         IEnumerable<ProjectUsers> GetProjectUsers(Guid projectId);
     }
 
@@ -110,8 +110,8 @@ namespace iCollab.Infra
             var userCount = _uow.Context.Set<ApplicationUser>().Count();
 
             return userCount;
-        }
-         
+        } 
+
         public bool IsUserManager(string userId)
         {
             return _userManager.IsInRole(userId, "manager");
@@ -148,13 +148,19 @@ namespace iCollab.Infra
             return user;
         }
 
+        public ApplicationUser FindByEmail(string email)
+        {
+            var user = _userManager.FindByEmail(email);
+
+            return user;
+        }
+
         public AppUserViewModel GetCurrentUser(string userName)
         {
             AppUserViewModel appUser = _userCache.Get(userName);
 
             if (appUser == null)
-            {
-                //user = _userManager.FindByName(userName);
+            { 
                 ApplicationUser user = _uow.Context.Set<ApplicationUser>().Include(a=>a.Picture).AsNoTracking().FirstOrDefault(x => x.UserName == userName);
 
                 if (user == null)

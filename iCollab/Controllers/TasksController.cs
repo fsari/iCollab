@@ -58,7 +58,7 @@ namespace iCollab.Controllers
 
             var attachment = _attachmentService.GetAttachment(id);
 
-            if (attachment.CreatedBy == User.Identity.GetUserName())
+            if (attachment.CreatedBy == AppUser.UserName)
             {
                 task.Attachments.Remove(attachment);
 
@@ -135,8 +135,7 @@ namespace iCollab.Controllers
         {
             int pagenumber = page ?? 1;
 
-            IPagedList<Task> tasks = _service.GetTasksByStatus(TaskStatus.Tamamlandı)
-                .ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Task> tasks = _service.GetTasksByStatus(TaskStatus.Tamamlandı).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(tasks);
         }
@@ -145,8 +144,7 @@ namespace iCollab.Controllers
         {
             int pagenumber = page ?? 1;
 
-            IPagedList<Task> tasks = _service.GetTasksByStatus(TaskStatus.İade)
-                .ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Task> tasks = _service.GetTasksByStatus(TaskStatus.İade).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(tasks);
         }
@@ -179,7 +177,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            string username = User.Identity.GetUserName();
+            string username = AppUser.UserName;
 
             /*if (task.TaskOwner != username)
             {
@@ -418,7 +416,7 @@ namespace iCollab.Controllers
 
             Task task = _mapper.ToModel(taskViewModel);
 
-            task.CreatedBy = User.Identity.GetUserName();
+            task.CreatedBy = AppUser.UserName;
 
             if (task.TaskUsers == null)
             {
@@ -455,7 +453,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (task.CreatedBy != User.Identity.GetUserName())
+            if (task.CreatedBy != AppUser.UserName)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
@@ -494,7 +492,7 @@ namespace iCollab.Controllers
             {
                 var instance = _service.GetTask(taskViewModel.Id, true);
 
-                instance.EditedBy = User.Identity.GetUserName();
+                instance.EditedBy = AppUser.UserName;
                 instance.DateEdited = DateTime.Now;
                 instance.Title = taskViewModel.Title;
                 instance.Description = taskViewModel.Description;
@@ -531,7 +529,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (task.CreatedBy != User.Identity.GetUserName())
+            if (task.CreatedBy != AppUser.UserName)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
@@ -548,7 +546,7 @@ namespace iCollab.Controllers
                 return RedirectToAction("View", new {id});
             }
 
-            task.DeletedBy = User.Identity.GetUserName();
+            task.DeletedBy = AppUser.UserName;
 
             _service.SoftDelete(task);
 
