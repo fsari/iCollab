@@ -6,11 +6,7 @@ using System.Web.Mvc;
 namespace Model
 {
     public class Document : BaseEntity
-    { 
-        public Document()
-        {
-            DateCreated = DateTime.Now;
-        }
+    {  
 
         [Display(Name = "Başlık")]
         [Required]

@@ -5,11 +5,7 @@ using System.Web.Mvc;
 namespace Model
 {
     public class ContentPage : BaseEntity
-    {
-        public ContentPage()
-        {
-            DateCreated = DateTime.Now;
-        }
+    { 
 
         [Display(Name = "Başlık")]
         [Required]

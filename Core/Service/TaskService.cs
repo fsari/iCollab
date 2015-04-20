@@ -23,16 +23,14 @@ namespace Core.Service
 
     public class TaskService : BaseCrudService<Task>, ITaskService
     {
-        private readonly IRepository<Task> _repository;
-        private readonly IRepository<TaskUser> _taskUsersRepository; 
+        private readonly IRepository<Task> _repository; 
         private readonly ICacheManager<Guid, Task> _cache;
 
-        public TaskService(IRepository<Task> repository, ICacheManager<Guid, Task> cache, UoW uow, IRepository<TaskUser> taskUsersRepository)
+        public TaskService(IRepository<Task> repository, ICacheManager<Guid, Task> cache, UoW uow)
             : base(repository, cache, uow)
         {
             _repository = repository;
-            _cache = cache;
-            _taskUsersRepository = taskUsersRepository;
+            _cache = cache; 
         }
 
         public IQueryable<Task> GetTasksByStatus(TaskStatus status)

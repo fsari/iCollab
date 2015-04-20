@@ -100,7 +100,7 @@ namespace iCollab.Controllers
 
         public ActionResult Create()
         {
-            var meeting = new Meeting {CreatedBy = AppUser.UserName, DateCreated = DateTime.Now};
+            var meeting = new Meeting {DateCreated = DateTime.Now};
 
             return View(meeting);
         }
@@ -109,9 +109,7 @@ namespace iCollab.Controllers
         public ActionResult Create(Meeting meeting)
         {
             if (ModelState.IsValid)
-            {
-                meeting.CreatedBy = AppUser.UserName; 
-
+            {  
                 _service.Create(meeting);
 
                 TempData["success"] = "Toplantı oluşturuldu.";
@@ -148,9 +146,7 @@ namespace iCollab.Controllers
             }
 
             if (ModelState.IsValid)
-            {
-                meeting.EditedBy = AppUser.UserName;
-
+            { 
                 _service.Update(meeting);
                  
                 TempData["success"] = "Toplantı güncellendi.";
@@ -176,7 +172,8 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            meeting.DeletedBy = AppUser.UserName; 
+            meeting.DeletedBy = AppUser.UserName;
+            meeting.DateDeleted = DateTime.UtcNow;
 
             _service.SoftDelete(meeting);
 
@@ -220,7 +217,7 @@ namespace iCollab.Controllers
             {
                 upload.SaveAs(uploadPath);
 
-                var attachment = new Attachment { Name = upload.Filename, Path = accessPath, CreatedBy = AppUser.UserName};
+                var attachment = new Attachment { Name = upload.Filename, Path = accessPath};
 
                 Meeting meeting = _service.GetMeeting(id.Value, true);
 

@@ -1,7 +1,9 @@
-﻿using System.Data.Entity;
+﻿using System;
+using System.Data.Entity;
 using System.Data.Entity.Validation;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Web;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Model;
@@ -29,7 +31,30 @@ namespace iCollab.Infra
         public override int SaveChanges()
         {
             try
-            {
+            { 
+                var modifiedEntries = ChangeTracker.Entries().Where(x => x.Entity is BaseEntity && (x.State == EntityState.Added || x.State == EntityState.Modified));
+
+                foreach (var entry in modifiedEntries)
+                {
+                    var entity = entry.Entity as BaseEntity;
+                    if (entity != null)
+                    {
+                        string identityName = Thread.CurrentPrincipal.Identity.Name;
+                        DateTime now = DateTime.UtcNow;
+
+                        if (entry.State == EntityState.Added)
+                        {
+                            entity.CreatedBy = identityName;
+                            entity.DateCreated = now;
+                        }
+                        else if(entry.State == EntityState.Modified)
+                        {
+                            entity.DateEdited = now;
+                            entity.EditedBy = identityName;
+                        }
+                    }
+                }
+
                 return base.SaveChanges();
             }
             catch (DbEntityValidationException e)
@@ -42,8 +67,7 @@ namespace iCollab.Infra
 
                     foreach (DbValidationError ve in eve.ValidationErrors)
                     {
-                        string local = string.Format("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName,
-                            ve.ErrorMessage);
+                        string local = string.Format("- Property: \"{0}\", Error: \"{1}\"", ve.PropertyName, ve.ErrorMessage);
 
                         sb.Append(local);
                     }

@@ -6,11 +6,7 @@ using System.Web.Mvc;
 namespace Model
 {
     public class Project : BaseEntity
-    {
-        public Project()
-        {
-            DateCreated = DateTime.Now;
-        }
+    { 
          
         [StringLength(512)]
         [Display(Name = "Başlık")]

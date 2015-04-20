@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System; 
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
@@ -11,8 +10,7 @@ using iCollab.Infra;
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI;
-using Microsoft.AspNet.Identity;
+using Kendo.Mvc.UI; 
 using Model;
 using Model.FineUploader;
 using PagedList;
@@ -176,9 +174,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            Meeting meeting = _meetingMapper.ToModel(meetingViewModel);
-
-            meeting.CreatedBy = AppUser.UserName;
+            Meeting meeting = _meetingMapper.ToModel(meetingViewModel); 
 
             if (project.Meetings == null)
             {
@@ -228,9 +224,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            Document document = _documentMapper.ToModel(documentViewModel);
-
-            document.CreatedBy = AppUser.UserName;
+            Document document = _documentMapper.ToModel(documentViewModel); 
 
             if (project.Documents == null)
             {
@@ -300,9 +294,7 @@ namespace iCollab.Controllers
                 return View(taskViewModel);
             }
 
-            Task task = _taskMapper.ToModel(taskViewModel);
-
-            task.CreatedBy = AppUser.UserName;
+            Task task = _taskMapper.ToModel(taskViewModel); 
 
             if (project.Tasks == null)
             {
@@ -387,8 +379,7 @@ namespace iCollab.Controllers
             {
                 Project project = _mapper.ToModel(viewModel);
                  
-                project.ProjectOwner = AppUser.UserName;
-                project.CreatedBy = AppUser.UserName;
+                project.ProjectOwner = AppUser.UserName; 
 
                 if (project.ProjectUsers == null)
                 {
@@ -591,6 +582,7 @@ namespace iCollab.Controllers
             }
 
             project.DeletedBy = AppUser.UserName;
+            project.DateDeleted = DateTime.UtcNow;
 
             _projectService.SoftDelete(project);
 
@@ -636,8 +628,7 @@ namespace iCollab.Controllers
                 var attachment = new Attachment
                 {
                     Name = upload.Filename,
-                    Path = accessPath,
-                    CreatedBy = AppUser.UserName
+                    Path = accessPath
                 };
 
                 Project project = _projectService.GetProject(id.Value, true);
@@ -661,10 +652,9 @@ namespace iCollab.Controllers
                     Attachments = project.Attachments,
                     UploadPath = "/projects/UploadToProject/?id=" + project.Id,
                     RemovePath = "/projects/RemoveAttachment/?projectId=" + project.Id
-                }
-                    );
+                });
 
-                return new FineUploaderResult(true, new { extraInformation = 12345, attachmentsHtml, accessPath });
+                return new FineUploaderResult(true, new { attachmentsHtml, accessPath });
             }
             catch (Exception ex)
             {

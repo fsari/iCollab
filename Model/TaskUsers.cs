@@ -1,14 +1,8 @@
-﻿using System;
-
-namespace Model
+﻿namespace Model
 {
-    public class TaskUser : BaseEntity
+    public class TaskUser  
     {
-        public TaskUser()
-        {
-            DateCreated = DateTime.Now;
-        }
-
+        public int Id { get; set; }
         public string UserId { get; set; }
     }
 }

@@ -10,8 +10,7 @@ using iCollab.Infra;
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI;
-using Microsoft.AspNet.Identity;
+using Kendo.Mvc.UI; 
 using Model;
 using Model.Activity;
 using Model.FineUploader;
@@ -165,6 +164,14 @@ namespace iCollab.Controllers
 
             var contentPage = document.ContentPages.FirstOrDefault(x => x.Id == contentPageId.Value);
 
+            if (contentPage == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            contentPage.DeletedBy = AppUser.UserName;
+            contentPage.DateDeleted = DateTime.UtcNow;
+
             document.ContentPages.Remove(contentPage);
 
             _service.Update(document);
@@ -245,14 +252,7 @@ namespace iCollab.Controllers
             if (ModelState.IsValid)
             {
                 Document createdItem = _service.Create(document);
-
-                Activity activity = new Activity();
-                activity.ActivityType = ActivityType.Created;
-                activity.CreatedBy = AppUser.FullName;
-                activity.Subject = Subject.Document;
-                activity.Title = createdItem.Title;
-
-
+                 
                 TempData["success"] = "Döküman oluşturuldu.";
                 return RedirectToAction("View", new {id = createdItem.Id});
             }
@@ -283,9 +283,7 @@ namespace iCollab.Controllers
         public ActionResult Edit(Document document)
         {
             if (ModelState.IsValid)
-            {
-                document.EditedBy = AppUser.UserName;
-
+            { 
                 _service.Update(document);
 
                 TempData["success"] = "Döküman güncellendi.";
@@ -316,6 +314,7 @@ namespace iCollab.Controllers
             }
 
             document.DeletedBy = AppUser.UserName;
+            document.DateDeleted = DateTime.UtcNow;
 
             _service.SoftDelete(document);
 
@@ -358,7 +357,7 @@ namespace iCollab.Controllers
             {
                 upload.SaveAs(uploadPath);
 
-                var attachment = new Attachment {Name = upload.Filename, Path = accessPath, CreatedBy = AppUser.UserName};
+                var attachment = new Attachment {Name = upload.Filename, Path = accessPath};
 
                 Document document = _service.GetDocument(id.Value, true);
 

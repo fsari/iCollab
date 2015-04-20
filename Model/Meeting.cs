@@ -6,11 +6,7 @@ using System.Web.Mvc;
 namespace Model
 {
     public class Meeting : BaseEntity
-    {
-        public Meeting()
-        {
-            DateCreated = System.DateTime.Now;
-        }
+    { 
 
         [Required]
         [MinLength(3)]

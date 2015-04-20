@@ -7,12 +7,7 @@ using System.Threading.Tasks;
 namespace Model
 {
     public class Dependency : BaseEntity
-    {
-
-        public Dependency()
-        {
-            DateCreated = DateTime.Now;
-        }
+    { 
          
         public Guid PredecessorId { get; set; }
         public Guid SuccessorId { get; set; }

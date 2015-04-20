@@ -9,11 +9,9 @@ using Core.Service;
 using Core.Settings;
 using iCollab.Infra;
 using iCollab.Infra.Extensions;
-using iCollab.ViewModels;
-using iCollab.ViewModels.Gantt;
+using iCollab.ViewModels; 
 using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI;
-using Microsoft.AspNet.Identity;
+using Kendo.Mvc.UI; 
 using Model;
 using Model.FineUploader;
 using PagedList;
@@ -120,11 +118,9 @@ namespace iCollab.Controllers
 
         public ActionResult MyTasks(int? page)
         {
-            int pagenumber = page ?? 1;
+            int pagenumber = page ?? 1; 
 
-            string userId = AppUser.Id;
-
-            IPagedList<Task> tasks = _service.GetUserTasks(userId).ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Task> tasks = _service.GetUserTasks(AppUser.Id).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(tasks);
         }
@@ -339,9 +335,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Task task = _mapper.ToModel(taskViewModel);
-
-            task.CreatedBy = AppUser.UserName; 
+            Task task = _mapper.ToModel(taskViewModel); 
 
             var parentTask = _service.GetTask(taskViewModel.ParentTaskId.Value, nocache: true);
 
@@ -398,9 +392,7 @@ namespace iCollab.Controllers
                 return View(taskViewModel);
             } 
 
-            Task task = _mapper.ToModel(taskViewModel);
-
-            task.CreatedBy = AppUser.UserName;
+            Task task = _mapper.ToModel(taskViewModel);  
 
             if (task.TaskUsers == null)
             {
@@ -531,6 +523,7 @@ namespace iCollab.Controllers
             }
 
             task.DeletedBy = AppUser.UserName;
+            task.DateEdited = DateTime.UtcNow;
 
             _service.SoftDelete(task);
 

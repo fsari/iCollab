@@ -7,11 +7,7 @@ using System.Web.Mvc;
 namespace Model
 {
     public class Task : BaseEntity
-    {
-        public Task()
-        {
-            DateCreated = DateTime.Now;
-        }
+    { 
 
         [StringLength(512)]
         [Display(Name = "Başlık")]
