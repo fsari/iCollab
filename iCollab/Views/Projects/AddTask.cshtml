@@ -76,8 +76,8 @@
 
                             <div class="form-group">
                                 @Html.LabelFor(model => model.Start, new { @class = "control-label col-md-2" })
-                                <div class="col-md-10">
-                                    @(Html.Kendo().DatePicker().Value(DateTime.Now).Name("Start"))
+                                <div class="col-md-10"> 
+                                    @(Html.Kendo().DatePicker().Value(DateTime.Now).Max(DateTime.Now.AddDays(1)).Name("Start").Events(e => e.Change("startChange")))
                                     @Html.ValidationMessageFor(model => model.Start)
                                 </div>
                             </div>
@@ -85,7 +85,7 @@
                             <div class="form-group">
                                 @Html.LabelFor(model => model.End, new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
-                                    @(Html.Kendo().DatePicker().Value(DateTime.Now.AddDays(2)).Name("End"))
+                                    @(Html.Kendo().DatePicker().Value(DateTime.Now.AddDays(1)).Min(DateTime.Now).Name("End").Events(e => e.Change("endChange")))
                                     @Html.ValidationMessageFor(model => model.End)
                                 </div>
                             </div>
@@ -122,4 +122,26 @@
     $(function () {  
         CKEDITOR.replace('Description');
     });
+
+    function startChange() {
+        var endPicker = $("#end").data("kendoDatePicker"),
+            startDate = this.value();
+
+        if (startDate) {
+            startDate = new Date(startDate);
+            startDate.setDate(startDate.getDate() + 1);
+            endPicker.min(startDate);
+        }
+    }
+
+    function endChange() {
+        var startPicker = $("#start").data("kendoDatePicker"),
+            endDate = this.value();
+
+        if (endDate) {
+            endDate = new Date(endDate);
+            endDate.setDate(endDate.getDate() - 1);
+            startPicker.max(endDate);
+        }
+    }
 </script>

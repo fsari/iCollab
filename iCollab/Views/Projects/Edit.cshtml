@@ -1,5 +1,4 @@
-﻿@using iCollab.ViewModels
-@using Model
+﻿@using Model
 @model iCollab.ViewModels.ProjectViewModel
 
 @{
@@ -30,9 +29,7 @@
 
                         <div class="form-horizontal">
 
-                            @Html.HiddenFor(model => model.Id)
-                            @Html.HiddenFor(model => model.DateCreated)
-                            @Html.HiddenFor(model => model.CreatedBy)
+                            @Html.HiddenFor(model => model.Id) 
 
                             @if (ViewData.ModelState.IsValid == false)
                             {
@@ -86,7 +83,7 @@
                                 @Html.LabelFor(model => model.StartDatetime, new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
 
-                                    @(Html.Kendo().DatePicker().Name("StartDatetime")) 
+                                    @(Html.Kendo().DatePicker().Value(Model.StartDatetime).Max(Model.EndDatetime.HasValue ? Model.EndDatetime.Value : DateTime.Now.AddDays(7)).Name("StartDatetime").Events(e => e.Change("startChange")))
                                     @Html.ValidationMessageFor(model => model.StartDatetime)
                                 </div>
                             </div>
@@ -94,7 +91,7 @@
                             <div class="form-group">
                                 @Html.LabelFor(model => model.EndDatetime, new { @class = "control-label col-md-2" })
                                 <div class="col-md-10">
-                                    @(Html.Kendo().DatePicker().Name("EndDatetime")) 
+                                    @(Html.Kendo().DatePicker().Value(Model.EndDatetime).Min(Model.StartDatetime.HasValue ? Model.StartDatetime.Value : DateTime.Now.AddDays(-7)).Name("EndDatetime").Events(e => e.Change("endChange")))
                                     @Html.ValidationMessageFor(model => model.EndDatetime)
                                 </div>
                             </div>
@@ -125,4 +122,26 @@
     $(function () { 
         CKEDITOR.replace('Description');
     });
+
+    function startChange() {
+        var endPicker = $("#end").data("kendoDatePicker"),
+            startDate = this.value();
+
+        if (startDate) {
+            startDate = new Date(startDate);
+            startDate.setDate(startDate.getDate() + 1);
+            endPicker.min(startDate);
+        }
+    }
+
+    function endChange() {
+        var startPicker = $("#start").data("kendoDatePicker"),
+            endDate = this.value();
+
+        if (endDate) {
+            endDate = new Date(endDate);
+            endDate.setDate(endDate.getDate() - 1);
+            startPicker.max(endDate);
+        }
+    }
 </script>

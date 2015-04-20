@@ -196,7 +196,6 @@
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Controllers\TodosController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
-    <Compile Include="Infra\Extensions\AppBuilderExtensions.cs" />
     <Compile Include="Infra\Extensions\AttachmentHelper.cs" />
     <Compile Include="Infra\Extensions\AuthorizeAttribute.cs" />
     <Compile Include="Infra\Extensions\DateTimeExtensions.cs" />

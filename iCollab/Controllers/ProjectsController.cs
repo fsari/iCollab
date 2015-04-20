@@ -358,22 +358,7 @@ namespace iCollab.Controllers
                 ModelState.AddModelError("Error", "Kullanıcı seçmeniz lazım.");
 
                 return View(viewModel);
-            }
-
-            if (viewModel.EndDatetime.HasValue)
-            {
-                if (viewModel.StartDatetime.HasValue == false)
-                {
-                    viewModel.StartDatetime = DateTime.Now;
-                }
-
-                if (viewModel.EndDatetime.Value < viewModel.StartDatetime.Value)
-                {
-                    ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
-
-                    return View(viewModel);
-                }
-            }
+            } 
 
             if (ModelState.IsValid)
             {

@@ -84,7 +84,7 @@ namespace iCollab.Controllers
             {
                 upload.SaveAs(uploadPath);
 
-                var attachment = new Attachment {Name = upload.Filename, Path = accessPath, CreatedBy = AppUser.UserName};
+                var attachment = new Attachment {Name = upload.Filename, Path = accessPath};
 
                 Task task = _service.GetTask(id.Value,true);
 
@@ -382,16 +382,7 @@ namespace iCollab.Controllers
 
                 return View(taskViewModel);
             }
-
-            if (taskViewModel.End < taskViewModel.Start)
-            {
-                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
-
-                ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
-
-                return View(taskViewModel);
-            } 
-
+             
             Task task = _mapper.ToModel(taskViewModel);  
 
             if (task.TaskUsers == null)
@@ -454,16 +445,7 @@ namespace iCollab.Controllers
                 TempData["error"] = "Kullanıcı seçmeniz lazım.";
                 return View(taskViewModel);
             }
-
-            if (taskViewModel.End < taskViewModel.Start)
-            {
-                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
-
-                TempData["error"] = "Bitiş tarihi başlangıç tarihinden erken olamaz.";
-
-                return View(taskViewModel);
-            } 
-
+              
             if (ModelState.IsValid)
             {
                 var instance = _service.GetTask(taskViewModel.Id, true);
