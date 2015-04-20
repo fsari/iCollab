@@ -1,4 +1,5 @@
-﻿@using iCollab.ViewModels
+﻿@using Core.Extensions
+@using iCollab.ViewModels
 @using Microsoft.AspNet.Identity
 @using Model
 
@@ -11,7 +12,10 @@
 <aside class="right-side">
 
     <section class="content-header">
-        <h1 class="pull-left">@Model.Title</h1>
+        <div class="pull-left">
+            <h1>@Model.Title</h1>
+            <div>Oluşturan :<strong>@Model.CreatedBy</strong> , @Model.DateCreated.FormatDate()</div>
+        </div>
         <div class="pull-right">
             @if (Model.Status != ProjectStatus.Bitti)
             {
@@ -35,8 +39,7 @@
                                 @Html.Raw(HttpUtility.HtmlDecode(Model.Description)) <br />
 
                                 <div style="margin-right: 10px;">
-                                    <div class="pull-left">
-                                        <strong>Oluşturan : </strong><label class="label label-success"> @Model.CreatedBy</label><br />
+                                    <div class="pull-left"> 
                                         <strong>Durumu : </strong> <label class="label label-info">@Model.Status </label><br />
                                         <strong>Önceliği : </strong> <label class="label label-primary">@Model.Priority </label><br />
 
