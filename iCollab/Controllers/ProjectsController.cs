@@ -27,8 +27,7 @@ namespace iCollab.Controllers
         private readonly IMapper<MeetingViewModel, Meeting> _meetingMapper;
         private readonly IProjectService _projectService;
         private readonly IMapper<TaskViewModel, Task> _taskMapper;
-        private readonly IUserService _userService;
-        private readonly IActivityService _activityService;
+        private readonly IUserService _userService; 
 
         public ProjectsController(
             IProjectService projectService,
@@ -38,14 +37,13 @@ namespace iCollab.Controllers
             IUserService userService,
             IMapper<DocumentViewModel, Document> documentMapper,
             IMapper<MeetingViewModel, Meeting> meetingMapper,
-            IAttachmentService attachmentService, IActivityService activityService)
+            IAttachmentService attachmentService)
             : base(userService, appSettings)
 
         {
             _documentMapper = documentMapper;
             _meetingMapper = meetingMapper;
-            _attachmentService = attachmentService;
-            _activityService = activityService;
+            _attachmentService = attachmentService; 
             _projectService = projectService;
             _mapper = mapper;
             _taskMapper = taskMapper;
@@ -378,15 +376,13 @@ namespace iCollab.Controllers
 
                 project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers { UserId = x }));
 
-                _projectService.Update(project); 
+                _projectService.Update(project);
 
-                var activity = new ProjectActivity();
-                activity.Verb = Verb.Created;
-                activity.User = _userService.GetUserInstance(AppUser.UserName);
-                activity.Project = project;
-
-                _activityService.Create(activity);
-                
+                if (project.Activities == null)
+                {
+                    project.Activities = new Collection<Activity>();
+                }
+  
                 TempData["success"] = "Proje oluşturuldu.";
                 return RedirectToAction("View", new {id = project.Id});
             }

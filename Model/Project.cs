@@ -34,7 +34,9 @@ namespace Model
         public ICollection<Document> Documents { set; get; }
         public ICollection<Attachment> Attachments { set; get; }
         public ICollection<Meeting> Meetings { set; get; }
-        public ICollection<ProjectUsers> ProjectUsers { set; get; } 
+        public ICollection<ProjectUsers> ProjectUsers { set; get; }
+
+        public ICollection<Model.Activity.Activity> Activities { set; get; }
 
     }
 }

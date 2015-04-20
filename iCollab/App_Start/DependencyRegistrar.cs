@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Core.Caching;
+using Core.Logging;
 using Core.Mappers;
 using Core.Repository;
 using Core.Service;
@@ -14,6 +15,8 @@ using iCollab.Infra;
 using MemoryCacheT; 
 using Microsoft.Owin.Security;
 using Model;
+using Serilog;
+using ILogger = Core.Logging.ILogger;
 
 namespace iCollab
 {
@@ -52,8 +55,18 @@ namespace iCollab
             builder.RegisterType<MeetingService>().As<IMeetingService>().InstancePerRequest();
             builder.RegisterType<TaskService>().As<ITaskService>().InstancePerRequest();
             builder.RegisterType<ProjectService>().As<IProjectService>().InstancePerRequest(); 
-            builder.RegisterType<AttachmentServıce>().As<IAttachmentService>().InstancePerRequest();
+            builder.RegisterType<AttachmentService>().As<IAttachmentService>().InstancePerRequest();
             builder.RegisterType<DependencyService>().As<IDependencyService>().InstancePerRequest();
+
+            builder.RegisterGeneric(typeof(ActivityService<>)).As(typeof(IActivityService<>)).InstancePerRequest();
+
+            builder.Register<Serilog.ILogger>((c, p) =>
+            {
+                return new LoggerConfiguration().ReadFrom.AppSettings().WriteTo.RollingFile(AppDomain.CurrentDomain.GetData("DataDirectory").ToString() + "/Log-{Date}.txt").CreateLogger();
+            }).SingleInstance();
+
+            builder.RegisterType<Logger>().As<ILogger>().SingleInstance();
+
 
             builder.RegisterType<ApplicationUserStore<ApplicationUser>>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();

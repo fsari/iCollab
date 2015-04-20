@@ -14,7 +14,7 @@ namespace iCollab.Controllers
     [Authorize]
     public class TodosController : ApiController
     {
-        private readonly DataContext _db = new DataContext();
+        private readonly DataContext _db = new DataContext(null);
 
         public IEnumerable<TodoDto> Get()
         {

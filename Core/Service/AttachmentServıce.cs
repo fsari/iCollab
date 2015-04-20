@@ -12,10 +12,10 @@ namespace Core.Service
     }
 
 
-    public class AttachmentServıce: IAttachmentService
+    public class AttachmentService: IAttachmentService
     {
-        private readonly IRepository<Attachment> _repository; 
-        public AttachmentServıce(IRepository<Attachment> repository)
+        private readonly IRepository<Attachment> _repository;
+        public AttachmentService(IRepository<Attachment> repository)
         {
             _repository = repository;
         }

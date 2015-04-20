@@ -9,16 +9,19 @@ using Model.Activity;
 namespace Core.Service
 {
 
-    public interface IActivityService : ICrudService<ProjectActivity>
+    public interface IActivityService<T> : ICrudService<T> where T : Activity 
     {
 
     }
 
-    public class ActivityService : BaseCrudService<ProjectActivity>, IActivityService
+    public class ActivityService<T> : BaseCrudService<T>, IActivityService<T> where T: Activity, new()
     {
-        public ActivityService(IRepository<ProjectActivity> repository, ICacheManager<Guid, ProjectActivity> cache, UoW uow)
+        private readonly IRepository<T> _repository; 
+
+        public ActivityService(IRepository<T> repository, ICacheManager<Guid, T> cache, UoW uow)
             : base(repository, cache, uow)
         {
+            _repository = repository;
         }
     }
 }

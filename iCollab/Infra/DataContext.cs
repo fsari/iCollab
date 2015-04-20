@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Web;
+using Core.Logging;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Model;
 using Model.Activity;
@@ -14,8 +15,10 @@ namespace iCollab.Infra
 {
     public class DataContext : IdentityDbContext<ApplicationUser>
     {
-        public DataContext() : base("DefaultConnection")
+        private readonly ILogger _logger;
+        public DataContext(ILogger logger) : base("DefaultConnection")
         {
+            _logger = logger;
         }
 
         public IDbSet<Todo> Todos { set; get; }
@@ -62,7 +65,7 @@ namespace iCollab.Infra
                 foreach (DbEntityValidationResult eve in e.EntityValidationErrors)
                 {
                     string error = string.Format("Entity of type \"{0}\" in state \"{1}\" has the following validation errors:", eve.Entry.Entity.GetType().Name, eve.Entry.State);
-
+                    _logger.Error(error);
                     var sb = new StringBuilder();
 
                     foreach (DbValidationError ve in eve.ValidationErrors)
@@ -71,6 +74,8 @@ namespace iCollab.Infra
 
                         sb.Append(local);
                     }
+
+                    _logger.Error(sb.ToString());
                 }
                 throw;
             }

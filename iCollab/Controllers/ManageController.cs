@@ -87,7 +87,7 @@ namespace iCollab.Controllers
                     TempData["success"] = "Fotograf güncellendi.";
                     return RedirectToAction("Index", "Manage");
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     TempData["error"] = "Hata oluştu.";
                     return RedirectToAction("Index", "Manage"); 

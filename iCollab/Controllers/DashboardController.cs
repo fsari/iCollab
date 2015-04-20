@@ -3,6 +3,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using Core.Logging;
 using Core.Mappers;
 using Core.Service;
 using Core.Service.CrudService;
@@ -27,6 +28,7 @@ namespace iCollab.Controllers
         private readonly IMeetingService _meetingService;
         private readonly IDocumentService _documentService;
         private readonly ICrudService<Activity> _activityService;
+        private readonly ILogger _logger;
 
         public DashboardController(
             IProjectService projectService,
@@ -37,7 +39,7 @@ namespace iCollab.Controllers
             ITaskService taskService, 
             IMeetingService meetingService,
             IDocumentService documentService,
-            ICrudService<Activity> activityService)
+            ICrudService<Activity> activityService, ILogger logger)
             : base(userService, appSettings)
         {
             _projectService = projectService;
@@ -48,6 +50,7 @@ namespace iCollab.Controllers
             _meetingService = meetingService;
             _documentService = documentService;
             _activityService = activityService;
+            _logger = logger;
         } 
 
         [ChildActionOnly]
@@ -233,6 +236,7 @@ namespace iCollab.Controllers
 
         public ActionResult Index()
         {
+            _logger.Info("test");
             return View();
         }
     }

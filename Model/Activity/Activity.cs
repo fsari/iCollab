@@ -7,29 +7,28 @@ namespace Model.Activity
     {  
         public ApplicationUser User{ get; set; }
         public Verb Verb { get; set; }
-  
-
-       /* public override string ToString()
+         
+        /*public override string ToString()
         {
             string action = string.Empty;
             string subject = string.Empty;
 
-            if (ActivityType == ActivityType.Created)
+            if (Verb == Verb.Created)
             {
                 action = "oluşturdu";
             }
 
-            if (ActivityType == ActivityType.Read)
+            if (Verb == Verb.Read)
             {
                 action = "okudu";
             }
 
-            if (ActivityType == ActivityType.Deleted)
+            if (Verb == Verb.Deleted)
             {
                 action = "sildi.";
             }
 
-            if (ActivityType == ActivityType.Updated)
+            if (Verb == Verb.Updated)
             {
                 action = "düzenledi.";
             }
@@ -72,7 +71,7 @@ namespace Model.Activity
             activity = textInfo.ToTitleCase(activity);
 
             return activity;
-        }*/
+        } */
 
         public static string FormatDate(DateTime dateTime)
         {
