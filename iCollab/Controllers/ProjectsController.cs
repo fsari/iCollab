@@ -12,6 +12,7 @@ using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI; 
 using Model;
+using Model.Activity;
 using Model.FineUploader;
 using PagedList;
 
@@ -27,6 +28,7 @@ namespace iCollab.Controllers
         private readonly IProjectService _projectService;
         private readonly IMapper<TaskViewModel, Task> _taskMapper;
         private readonly IUserService _userService;
+        private readonly IActivityService _activityService;
 
         public ProjectsController(
             IProjectService projectService,
@@ -36,13 +38,14 @@ namespace iCollab.Controllers
             IUserService userService,
             IMapper<DocumentViewModel, Document> documentMapper,
             IMapper<MeetingViewModel, Meeting> meetingMapper,
-            IAttachmentService attachmentService)
+            IAttachmentService attachmentService, IActivityService activityService)
             : base(userService, appSettings)
 
         {
             _documentMapper = documentMapper;
             _meetingMapper = meetingMapper;
             _attachmentService = attachmentService;
+            _activityService = activityService;
             _projectService = projectService;
             _mapper = mapper;
             _taskMapper = taskMapper;
@@ -375,10 +378,16 @@ namespace iCollab.Controllers
 
                 project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers { UserId = x }));
 
-                _projectService.Update(project);
+                _projectService.Update(project); 
 
+                var activity = new ProjectActivity();
+                activity.Verb = Verb.Created;
+                activity.User = _userService.GetUserInstance(AppUser.UserName);
+                activity.Project = project;
+
+                _activityService.Create(activity);
+                
                 TempData["success"] = "Proje oluşturuldu.";
-
                 return RedirectToAction("View", new {id = project.Id});
             }
 

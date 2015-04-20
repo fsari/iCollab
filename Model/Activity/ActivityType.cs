@@ -2,7 +2,7 @@
 
 namespace Model.Activity
 {
-    public enum ActivityType
+    public enum Verb
     {
         [Display(Name="olusturdu",Description = "olusturdu")]
         Created=0,

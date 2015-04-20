@@ -4,16 +4,12 @@ using System.Globalization;
 namespace Model.Activity
 {
     public class Activity : BaseEntity
-    { 
+    {  
+        public ApplicationUser User{ get; set; }
+        public Verb Verb { get; set; }
+  
 
-        public string Username{ get; set; }
-        public ActivityType ActivityType { get; set; }
-        public string Title { set; get; }
-        public string Url { set; get; }
-
-        public Subject Subject { set; get; }
-
-        public override string ToString()
+       /* public override string ToString()
         {
             string action = string.Empty;
             string subject = string.Empty;
@@ -76,7 +72,7 @@ namespace Model.Activity
             activity = textInfo.ToTitleCase(activity);
 
             return activity;
-        }
+        }*/
 
         public static string FormatDate(DateTime dateTime)
         {

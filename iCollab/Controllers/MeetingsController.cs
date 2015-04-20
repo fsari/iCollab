@@ -11,6 +11,7 @@ using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI; 
 using Model;
+using Model.Activity;
 using Model.FineUploader;
 using PagedList;
 

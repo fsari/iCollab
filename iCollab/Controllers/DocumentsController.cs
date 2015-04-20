@@ -253,13 +253,7 @@ namespace iCollab.Controllers
             if (ModelState.IsValid)
             {
                 Document createdItem = _service.Create(document);
-
-                Activity activity = new Activity();
-                activity.ActivityType = ActivityType.Created;
-                activity.Username = User.Identity.GetUserName();
-                activity.Title = createdItem.Title;
-                activity.Subject = Subject.Document;
-                 
+                  
                 TempData["success"] = "Döküman oluşturuldu.";
                 return RedirectToAction("View", new {id = createdItem.Id});
             }
