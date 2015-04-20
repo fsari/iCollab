@@ -1,12 +1,32 @@
 ﻿using System;
 using System.Globalization;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Model.Activity
 {
-    public class Activity : BaseEntity
+
+    public interface IActivity
+    {
+        void HandleActivity(ApplicationUser user, Verb verb, object obj);
+    }
+
+    public static class ActivityExtentions
+    {
+        public static void Created(this Activity activity, ApplicationUser user)
+        {
+            activity.HandleActivity(user, Verb.Created, null);
+        }
+    }
+
+    public class Activity : BaseEntity, IActivity
     {  
         public ApplicationUser User{ get; set; }
         public Verb Verb { get; set; }
+
+        public void HandleActivity(ApplicationUser user, Verb verb, object obj)
+        {
+            throw new NotImplementedException();
+        }
          
         /*public override string ToString()
         {
@@ -115,6 +135,7 @@ namespace Model.Activity
             int years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));
             return years <= 1 ? "bir sene önce" : years + " sene önce";
 
-        }
+        } 
+         
     }
 }
