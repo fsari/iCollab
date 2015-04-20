@@ -10,7 +10,8 @@ using iCollab.Infra;
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI; 
+using Kendo.Mvc.UI;
+using Microsoft.AspNet.Identity;
 using Model;
 using Model.Activity;
 using Model.FineUploader;
@@ -241,7 +242,7 @@ namespace iCollab.Controllers
          
         public ActionResult Create()
         {
-            var document = new Document {CreatedBy = AppUser.UserName, DateCreated = DateTime.Now};
+            var document = new Document ();
 
             return View(document);
         }
@@ -252,6 +253,12 @@ namespace iCollab.Controllers
             if (ModelState.IsValid)
             {
                 Document createdItem = _service.Create(document);
+
+                Activity activity = new Activity();
+                activity.ActivityType = ActivityType.Created;
+                activity.Username = User.Identity.GetUserName();
+                activity.Title = createdItem.Title;
+                activity.Subject = Subject.Document;
                  
                 TempData["success"] = "Döküman oluşturuldu.";
                 return RedirectToAction("View", new {id = createdItem.Id});

@@ -4,11 +4,7 @@ using System.Globalization;
 namespace Model.Activity
 {
     public class Activity : BaseEntity
-    {
-        public Activity()
-        {
-            DateCreated = DateTime.Now;
-        }
+    { 
 
         public string Username{ get; set; }
         public ActivityType ActivityType { get; set; }
