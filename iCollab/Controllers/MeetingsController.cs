@@ -9,8 +9,7 @@ using iCollab.Infra;
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI;
-using Microsoft.AspNet.Identity;
+using Kendo.Mvc.UI; 
 using Model;
 using Model.FineUploader;
 using PagedList;
@@ -101,7 +100,7 @@ namespace iCollab.Controllers
 
         public ActionResult Create()
         {
-            var meeting = new Meeting {CreatedBy = User.Identity.GetUserName(), DateCreated = DateTime.Now};
+            var meeting = new Meeting {CreatedBy = AppUser.UserName, DateCreated = DateTime.Now};
 
             return View(meeting);
         }
@@ -111,7 +110,7 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
-                meeting.CreatedBy = User.Identity.GetUserName(); 
+                meeting.CreatedBy = AppUser.UserName; 
 
                 _service.Create(meeting);
 
@@ -150,7 +149,7 @@ namespace iCollab.Controllers
 
             if (ModelState.IsValid)
             {
-                meeting.EditedBy = User.Identity.GetUserName();
+                meeting.EditedBy = AppUser.UserName;
 
                 _service.Update(meeting);
                  
@@ -177,7 +176,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            meeting.DeletedBy = User.Identity.GetUserName(); 
+            meeting.DeletedBy = AppUser.UserName; 
 
             _service.SoftDelete(meeting);
 
@@ -191,7 +190,7 @@ namespace iCollab.Controllers
 
             var attachment = _attachmentService.GetAttachment(id);
 
-            if (attachment.CreatedBy == User.Identity.GetUserName())
+            if (attachment.CreatedBy == AppUser.UserName)
             {
                 meeting.Attachments.Remove(attachment);
 
@@ -221,7 +220,7 @@ namespace iCollab.Controllers
             {
                 upload.SaveAs(uploadPath);
 
-                var attachment = new Attachment { Name = upload.Filename, Path = accessPath, CreatedBy = User.Identity.GetUserName() };
+                var attachment = new Attachment { Name = upload.Filename, Path = accessPath, CreatedBy = AppUser.UserName};
 
                 Meeting meeting = _service.GetMeeting(id.Value, true);
 

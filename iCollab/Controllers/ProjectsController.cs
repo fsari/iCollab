@@ -178,7 +178,7 @@ namespace iCollab.Controllers
 
             Meeting meeting = _meetingMapper.ToModel(meetingViewModel);
 
-            meeting.CreatedBy = User.Identity.GetUserName();
+            meeting.CreatedBy = AppUser.UserName;
 
             if (project.Meetings == null)
             {
@@ -230,7 +230,7 @@ namespace iCollab.Controllers
 
             Document document = _documentMapper.ToModel(documentViewModel);
 
-            document.CreatedBy = User.Identity.GetUserName();
+            document.CreatedBy = AppUser.UserName;
 
             if (project.Documents == null)
             {
@@ -605,7 +605,7 @@ namespace iCollab.Controllers
 
             Attachment attachment = _attachmentService.GetAttachment(id);
 
-            if (attachment.CreatedBy == User.Identity.GetUserName())
+            if (attachment.CreatedBy == AppUser.UserName)
             {
                 task.Attachments.Remove(attachment);
 
@@ -637,7 +637,7 @@ namespace iCollab.Controllers
                 {
                     Name = upload.Filename,
                     Path = accessPath,
-                    CreatedBy = User.Identity.GetUserName()
+                    CreatedBy = AppUser.UserName
                 };
 
                 Project project = _projectService.GetProject(id.Value, true);

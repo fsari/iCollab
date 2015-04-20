@@ -234,7 +234,7 @@ namespace iCollab.Controllers
          
         public ActionResult Create()
         {
-            var document = new Document {CreatedBy = User.Identity.GetUserName(), DateCreated = DateTime.Now};
+            var document = new Document {CreatedBy = AppUser.UserName, DateCreated = DateTime.Now};
 
             return View(document);
         }
@@ -284,7 +284,7 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
-                document.EditedBy = User.Identity.GetUserName();
+                document.EditedBy = AppUser.UserName;
 
                 _service.Update(document);
 
@@ -310,12 +310,12 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (document.CreatedBy != User.Identity.GetUserName())
+            if (document.CreatedBy != AppUser.UserName)
             {
                 return new HttpUnauthorizedResult();
             }
 
-            document.DeletedBy = User.Identity.GetUserName();
+            document.DeletedBy = AppUser.UserName;
 
             _service.SoftDelete(document);
 
@@ -329,7 +329,7 @@ namespace iCollab.Controllers
 
             var attachment = _attachmentService.GetAttachment(id);
 
-            if (attachment.CreatedBy == User.Identity.GetUserName())
+            if (attachment.CreatedBy == AppUser.UserName)
             {
                 document.Attachments.Remove(attachment);
 
@@ -358,7 +358,7 @@ namespace iCollab.Controllers
             {
                 upload.SaveAs(uploadPath);
 
-                var attachment = new Attachment {Name = upload.Filename, Path = accessPath, CreatedBy = User.Identity.GetUserName()};
+                var attachment = new Attachment {Name = upload.Filename, Path = accessPath, CreatedBy = AppUser.UserName};
 
                 Document document = _service.GetDocument(id.Value, true);
 

@@ -24,8 +24,7 @@ namespace iCollab.Controllers
     [Authorize]
     public class TasksController : BaseController
     {
-        private readonly IMapper<TaskViewModel, Task> _mapper;
-        private readonly IProjectService _projectService;
+        private readonly IMapper<TaskViewModel, Task> _mapper; 
         private readonly ITaskService _service;
         private readonly IUserService _userService;
         private readonly IAttachmentService _attachmentService;
@@ -41,8 +40,7 @@ namespace iCollab.Controllers
         {
             _service = service;
             _mapper = mapper;
-            _userService = userService;
-            _projectService = projectService;
+            _userService = userService; 
             _attachmentService = attachmentService;
         }
           
@@ -88,7 +86,7 @@ namespace iCollab.Controllers
             {
                 upload.SaveAs(uploadPath);
 
-                var attachment = new Attachment {Name = upload.Filename, Path = accessPath, CreatedBy = User.Identity.GetUserName()};
+                var attachment = new Attachment {Name = upload.Filename, Path = accessPath, CreatedBy = AppUser.UserName};
 
                 Task task = _service.GetTask(id.Value,true);
 
@@ -124,7 +122,7 @@ namespace iCollab.Controllers
         {
             int pagenumber = page ?? 1;
 
-            string userId = User.Identity.GetUserId();
+            string userId = AppUser.Id;
 
             IPagedList<Task> tasks = _service.GetUserTasks(userId).ToPagedList(pagenumber, AppSettings.PageSize);
 
@@ -176,14 +174,7 @@ namespace iCollab.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            string username = AppUser.UserName;
-
-            /*if (task.TaskOwner != username)
-            {
-                return RedirectToAction("Unauthorized", "Error");
-            }*/
-
+              
             task.TaskStatus = TaskStatus.Tamamlandı;
             task.IsProcessed = true;
             task.DateCompleted = DateTime.Now;
@@ -212,14 +203,7 @@ namespace iCollab.Controllers
             if (task.IsDeleted)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            string username = User.Identity.GetUserName();
-
-            /*if (task.TaskOwner != username)
-            {
-                return RedirectToAction("Unauthorized", "Error");
-            }*/
+            } 
 
             ApplicationUser user = _userService.GetUserInstance(task.CreatedBy);
 
@@ -357,7 +341,7 @@ namespace iCollab.Controllers
 
             Task task = _mapper.ToModel(taskViewModel);
 
-            task.CreatedBy = User.Identity.GetUserName(); 
+            task.CreatedBy = AppUser.UserName; 
 
             var parentTask = _service.GetTask(taskViewModel.ParentTaskId.Value, nocache: true);
 
