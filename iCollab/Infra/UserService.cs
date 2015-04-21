@@ -221,7 +221,7 @@ namespace iCollab.Infra
 
         public IPagedList<ApplicationUser> GetPageOf(int pagenumber, int pagesize)
         {
-            var users = _uow.Context.Set<ApplicationUser>().AsNoTracking().OrderByDescending(x => x.Id).ToPagedList(pagenumber, pagesize);
+            var users = _uow.Context.Set<ApplicationUser>().Include(p=>p.Picture).AsNoTracking().OrderByDescending(x => x.Id).ToPagedList(pagenumber, pagesize);
 
             return users;
         }  
