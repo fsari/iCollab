@@ -51,7 +51,7 @@ namespace iCollab.Controllers
         [Authorize(Roles = "manager")]
         public ActionResult AssignAsManager(string userId)
         {
-            ApplicationUser user = _userService.Find(userId);
+            ApplicationUser user = _userService.FindById(userId);
 
             if (user == null)
             {
@@ -67,7 +67,7 @@ namespace iCollab.Controllers
 
         public ActionResult DisableUser(string userId)
         {
-            ApplicationUser user = _userService.Find(userId);
+            ApplicationUser user = _userService.FindById(userId);
 
             if (user == null)
             {
@@ -76,7 +76,7 @@ namespace iCollab.Controllers
 
             user.Disabled = true;
 
-            _userService.UpdateUser(user);
+            _userService.Update(user);
 
             TempData["success"] = "Kullanıcı disable edildi.";
 
@@ -85,7 +85,7 @@ namespace iCollab.Controllers
 
         public ActionResult EnableUser(string userId)
         {
-            ApplicationUser user = _userService.Find(userId);
+            ApplicationUser user = _userService.FindById(userId);
 
             if (user == null)
             {
@@ -94,7 +94,7 @@ namespace iCollab.Controllers
 
             user.Disabled = false;
 
-            _userService.UpdateUser(user);
+            _userService.Update(user);
 
             TempData["success"] = "Kullanıcı disable edildi.";
 
@@ -104,7 +104,7 @@ namespace iCollab.Controllers
         [Authorize(Roles = "manager")]
         public ActionResult RemoveUser(string userId)
         {
-            ApplicationUser user = _userService.Find(userId);
+            ApplicationUser user = _userService.FindById(userId);
 
             if (user == null)
             {

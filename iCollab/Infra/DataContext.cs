@@ -19,7 +19,13 @@ namespace iCollab.Infra
         public DataContext(ILogger logger) : base("DefaultConnection")
         {
             _logger = logger;
-        } 
+        }
+
+/*        public DataContext()
+            : base("DefaultConnection")
+        {
+            
+        }*/
 
         public IDbSet<Todo> Todos { set; get; }
         public IDbSet<Project> Projects { set; get; }

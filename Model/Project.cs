@@ -5,7 +5,7 @@ using System.Web.Mvc;
 
 namespace Model
 {
-    public class Project : BaseEntity
+    public class Project : BaseEntity 
     { 
          
         [StringLength(512)]
@@ -37,6 +37,6 @@ namespace Model
         public ICollection<ProjectUsers> ProjectUsers { set; get; }
 
         public ICollection<Model.Activity.Activity> Activities { set; get; }
-
+         
     }
 }

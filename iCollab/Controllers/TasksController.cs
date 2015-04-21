@@ -201,7 +201,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             } 
 
-            ApplicationUser user = _userService.GetUserInstance(task.CreatedBy);
+            ApplicationUser user = _userService.FindByUsername(task.CreatedBy);
 
             task.TaskStatus = TaskStatus.İade;
             task.IsProcessed = true;
@@ -356,7 +356,7 @@ namespace iCollab.Controllers
                 task.TaskUsers = new Collection<TaskUser>();
             }
 
-            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser() { UserId = x }));
+            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser { UserId = x }));
 
             _service.Update(task);
 
@@ -392,7 +392,7 @@ namespace iCollab.Controllers
 
             _service.Create(task);
 
-            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser() { UserId = x }));
+            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser { UserId = x }));
 
             _service.Update(task);
             
@@ -431,7 +431,7 @@ namespace iCollab.Controllers
 
             var users = _userService.GetUsers(userIds);
 
-            taskviewmodel.SelectedProjectUsers = users.Select(x => new UserSelectViewModel() { FullName = x.FullName, Id = x.Id });
+            taskviewmodel.SelectedProjectUsers = users.Select(x => new UserSelectViewModel { FullName = x.FullName, Id = x.Id });
 
             return View(taskviewmodel);
         }
@@ -460,7 +460,7 @@ namespace iCollab.Controllers
                 _service.Update(instance);
 
                 instance.TaskUsers.Clear();
-                instance.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser() { UserId = x }));
+                instance.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser { UserId = x }));
 
                 _service.Update(instance);
 

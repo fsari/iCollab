@@ -17,23 +17,23 @@ namespace iCollab.Infra
 
     public interface IUserService
     {
-        AppUserViewModel GetCurrentUser(string username);
-        ApplicationUser GetUserInstance(string userName);
-        ApplicationUser Find(string userId);
+        AppUserViewModel GetCurrentUser(string username); 
+        ApplicationUser FindById(string userId);
         ApplicationUser FindByEmail(string email);
         bool IsUserManager(string userId);
         ApplicationUser Delete(ApplicationUser user);
         void AssignManager(string userId);
         IQueryable<ApplicationUser> GetAllUsers();
-        IPagedList<ApplicationUser> GetPageOf(int pagenumber, int pagesize);
-        IQueryable<ApplicationUser> GetTable();
+        IPagedList<ApplicationUser> GetPageOf(int pagenumber, int pagesize); 
         IEnumerable<SelectListItem> GetUsersDropDown();
         int GetUserCount();
         IEnumerable<string> GetOnlineUsers();
         IQueryable<ApplicationUser> GetUsers(IEnumerable<string> userId); 
-        bool ChangePassword(string userId, string currentPassword, string newPassword);
-        bool UpdateUser(ApplicationUser user); 
+        bool ChangePassword(string userId, string currentPassword, string newPassword); 
         IEnumerable<ProjectUsers> GetProjectUsers(Guid projectId);
+        bool Update(ApplicationUser user);
+
+        ApplicationUser FindByUsername(string userName);
     }
 
     public class UserService : IUserService
@@ -62,25 +62,10 @@ namespace iCollab.Infra
             }
 
             return false;
-        }
-
-        public bool UpdateUser(ApplicationUser user)
-        {
-            var result = _userManager.Update(user);
-
-            if (result.Succeeded)
-            {
-                _userCache.Remove(user.Email);
-
-                return true;
-            }
-
-            return true;
-        }
+        } 
 
         public IEnumerable<ProjectUsers> GetProjectUsers(Guid projectId)
-        {
-            //var users = _uow.Context.Set<ApplicationUser>().AsNoTracking().Where(x => userId.Contains(x.Id));
+        { 
             var project = _uow.Context.Set<Project>().Include(u=>u.ProjectUsers).FirstOrDefault(x => x.Id == projectId);
 
             if (project == null)
@@ -141,9 +126,9 @@ namespace iCollab.Infra
             return users;
         }
 
-        public ApplicationUser GetUserInstance(string userName)
+        public ApplicationUser FindByUsername(string userName)
         {
-            var user = _userManager.FindByName(userName);
+            var user = _uow.Context.Set<ApplicationUser>().Include(p=>p.Picture).FirstOrDefault(x => x.UserName == userName);
 
             return user;
         }
@@ -151,6 +136,13 @@ namespace iCollab.Infra
         public ApplicationUser FindByEmail(string email)
         {
             var user = _userManager.FindByEmail(email);
+
+            return user;
+        } 
+
+        public ApplicationUser FindById(string userId)
+        {
+            var user = _uow.Context.Set<ApplicationUser>().FirstOrDefault(x => x.Id == userId);
 
             return user;
         }
@@ -197,24 +189,22 @@ namespace iCollab.Infra
             }
            
             return null;
+        } 
+
+        public bool Update(ApplicationUser user)
+        { 
+            var result = _userManager.Update(user);
+
+            if (result.Succeeded)
+            {
+                _userCache.Remove(user.Email);
+
+                return true;
+            }
+
+            return true;
         }
-
-        public ApplicationUser Find(Guid id)
-        {
-            var user = _uow.Context.Set<ApplicationUser>().Find(id);
-
-            return user;
-        }
-
-        public ApplicationUser Update(ApplicationUser item)
-        {
-
-            _uow.Context.Entry(item).State = EntityState.Modified;
-
-            _uow.Context.SaveChanges();
-
-            return item;
-        }
+         
 
         public ApplicationUser Delete(ApplicationUser item)
         {
@@ -234,18 +224,6 @@ namespace iCollab.Infra
             var users = _uow.Context.Set<ApplicationUser>().AsNoTracking().OrderByDescending(x => x.Id).ToPagedList(pagenumber, pagesize);
 
             return users;
-        }
-
-        public IQueryable<ApplicationUser> GetTable()
-        {
-            return _uow.Context.Set<ApplicationUser>().AsNoTracking();
-        }
-
-        public ApplicationUser Find(string userId)
-        {
-            var user = _uow.Context.Set<ApplicationUser>().FirstOrDefault(x => x.Id == userId);
-
-            return user;
-        }
+        }  
     }
 }

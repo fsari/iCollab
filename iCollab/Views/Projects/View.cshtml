@@ -12,20 +12,7 @@
 <aside class="right-side">
 
     <section class="content-header">
-        <div class="pull-left">
-            <h1>@Model.Title</h1>
-            <div>Oluşturan :<strong>@Model.CreatedBy</strong> , @Model.DateCreated.FormatDate()</div>
-        </div>
-        <div class="pull-right">
-            @if (Model.Status != ProjectStatus.Bitti)
-            {
-                @Html.ActionLink("Düzenle", "Edit", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm" })
-                @Html.ActionLink("Sil", "Delete", "Projects", new { id = Model.Id }, new { @class = "btn btn-info btn-sm", onclick = "return confirm('Silmek istediğinize emin misiniz?');" })
-            }
-
-            @Html.ActionLink("Tüm Projeler", "Index", "Projects", new { id = Model.Id }, new { @class = "btn btn-success btn-sm" })
-        </div>
-        <div class="clearfix"></div>
+        
     </section>
 
     <section class="content">
@@ -33,8 +20,35 @@
             <div class="col-md-7">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="box">
+                        <div class="box"> 
                             <div class="box-body table-responsive no-padding" style="margin-left: 10px;">
+                                
+                                <div class="pull-left">
+                                    <h1>@Model.Title</h1>
+                                    <div>
+                                        Oluşturan : 
+                                        @if (Model.CreatedBy.Picture != null)
+                                        {
+                                            <img src="@Model.CreatedBy.Picture.Path" class="img-rounded img-responsive" alt="User Image" width="30" />
+                                        }
+                                        else
+                                        {
+                                            <text>@Model.CreatedBy.UserName</text>
+                                        }
+                                        , 
+                                        @Model.DateCreated.FormatDate()
+                                    </div>
+                                </div>
+                                <div class="pull-right">
+                                    @if (Model.Status != ProjectStatus.Bitti)
+                                    {
+                                        <a href="/Projects/Edit/@Model.Id"><i class="glyphicon glyphicon-edit"></i></a>
+                                        <a href="/Projects/Delete/@Model.Id" onclick="return confirm('Silmek istediğinize emin misiniz?');"><i class="glyphicon glyphicon-trash btn-lg"></i></a>
+                                    }
+                                    <a href="/Projects/Index"><i class="glyphicon glyphicon-list btn-lg"></i></a>
+
+                                </div>
+                                <div class="clearfix"></div>
 
                                 @Html.Raw(HttpUtility.HtmlDecode(Model.Description)) <br />
 
@@ -67,13 +81,30 @@
                                     <div class="clearfix"></div>
                                 </div>
 
-                                <div style="margin: 10px;">
-                                    @if (Model.CreatedBy == User.Identity.GetUserName() && (Model.Status != ProjectStatus.Bitti || Model.Status != ProjectStatus.Iptal))
-                                    {
-                                        @Html.ActionLink("Projeyi Bitir", "Finish", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Projeyi bitirmek istediginizden emin misiniz?');" })
-                                        @Html.ActionLink("Projeyi iptal et", "CancelProject", new { id = Model.Id }, new { @class = "btn btn-warning btn-sm", onclick = "return confirm('Projeyi iptal etmek istediginizden emin misiniz?');" })
-                                    }
+                                <div class="clearfix"></div>
+
+                                <div> 
+                                    <div class="pull-left">
+                                        @if (Model.PreviousProject != null)
+                                        {
+                                            <a href="/Projects/View/@Model.PreviousProject.Id" class="btn btn-primary btn-sm">@Model.PreviousProject.Title</a>
+                                        }
+
+                                        @if (Model.NextProject != null)
+                                        {
+                                            <a href="/Projects/View/@Model.NextProject.Id" class="btn btn-primary btn-sm">@Model.NextProject.Title</a>
+                                        }
+                                    </div>
+                                    <div class="pull-right">
+                                        @if (Model.CreatedBy.UserName == User.Identity.GetUserName() && (Model.Status != ProjectStatus.Bitti || Model.Status != ProjectStatus.Iptal))
+                                        {
+                                            @Html.ActionLink("Projeyi Bitir", "Finish", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Projeyi bitirmek istediginizden emin misiniz?');" })
+                                            @Html.ActionLink("Projeyi iptal et", "CancelProject", new { id = Model.Id }, new { @class = "btn btn-warning btn-sm", onclick = "return confirm('Projeyi iptal etmek istediginizden emin misiniz?');" })
+                                        }
+                                    </div>
+                                    <div class="clearfix"></div>
                                 </div>
+
                             </div>
                         </div>
                     </div>

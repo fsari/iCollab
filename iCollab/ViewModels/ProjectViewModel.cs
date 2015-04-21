@@ -63,15 +63,15 @@ namespace iCollab.ViewModels
         public Priority Priority { set; get; }
 
         [Display(Name = "Oluşturan")]
-        public string CreatedBy { set; get; }
+        public AppUserViewModel CreatedBy { set; get; }
         [Display(Name = "Oluşturan")]
         public string ProjectOwner { get; set; }
 
         [Display(Name = "Sonraki Proje")]
-        public Guid? NextProjectId { get; set; }
+        public Project NextProject { get; set; }
 
         [Display(Name = "Önceki Proje")]
-        public Guid? PreviousProjectId { set; get; }
+        public Project PreviousProject { set; get; }
 
         public ICollection<Task> Tasks { get; set; }
         public ICollection<Document> Documents{ get; set; }

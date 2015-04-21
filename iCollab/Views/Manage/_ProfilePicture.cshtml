@@ -4,7 +4,12 @@
     <div class="box-body">
          
         <div class="info-box">
-            <span class="info-box-icon bg-aqua"><img src="@Model.Attachment.Path" class="img-responsive img-rounded" width="200" /></span>
+            <span class="info-box-icon bg-aqua">
+                @if (Model.Attachment != null)
+                {
+                    <img src="@Model.Attachment.Path" class="img-responsive img-rounded" width="200" />
+                }
+            </span>
             <div class="info-box-content">
                 @using (Html.BeginForm("UploadPicture", "Manage", FormMethod.Post, new { enctype = "multipart/form-data" }))
                 {

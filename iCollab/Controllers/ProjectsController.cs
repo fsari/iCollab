@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using Core.Extensions;
 using Core.Mappers;
 using Core.Service;
 using Core.Settings;
@@ -27,6 +28,7 @@ namespace iCollab.Controllers
         private readonly IMapper<MeetingViewModel, Meeting> _meetingMapper;
         private readonly IProjectService _projectService;
         private readonly IMapper<TaskViewModel, Task> _taskMapper;
+        private readonly IMapper<AppUserViewModel, ApplicationUser> _userMapper; 
         private readonly IUserService _userService; 
 
         public ProjectsController(
@@ -37,13 +39,15 @@ namespace iCollab.Controllers
             IUserService userService,
             IMapper<DocumentViewModel, Document> documentMapper,
             IMapper<MeetingViewModel, Meeting> meetingMapper,
-            IAttachmentService attachmentService)
+            IAttachmentService attachmentService, 
+            IMapper<AppUserViewModel, ApplicationUser> userMapper)
             : base(userService, appSettings)
 
         {
             _documentMapper = documentMapper;
             _meetingMapper = meetingMapper;
-            _attachmentService = attachmentService; 
+            _attachmentService = attachmentService;
+            _userMapper = userMapper;
             _projectService = projectService;
             _mapper = mapper;
             _taskMapper = taskMapper;
@@ -337,7 +341,16 @@ namespace iCollab.Controllers
 
             var users = _userService.GetUsers(projectUsers.AsEnumerable());
 
+            var nextProject = _projectService.GetProjects().GetNext(project);
+            var previousProject = _projectService.GetProjects().GetPrevious(project);
+             
             ProjectViewModel viewModel = _mapper.ToEntity(project);
+            viewModel.NextProject = nextProject;
+            viewModel.PreviousProject = previousProject;
+
+            var createdBy = _userService.FindByUsername(project.CreatedBy);
+
+            viewModel.CreatedBy = _userMapper.ToEntity(createdBy);
 
             viewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
 

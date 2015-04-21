@@ -16,6 +16,7 @@ namespace iCollab.ViewModels
         public string UserName { set; get; }
 
 
+
         [Display(Name = "Oluşturulma Zamanı")]
         public string DateCreated { set; get; }
 
@@ -23,7 +24,7 @@ namespace iCollab.ViewModels
         public DateTime? LastLogin { set; get; }
 
         [Display(Name = "Resim")]
-        public virtual Attachment Picture { get; set; }
+        public Attachment Picture { get; set; }
         [Display(Name = "Adı Soyadı")]
         public string FullName { get; set; }
         [Display(Name = "Telefon")]
@@ -36,7 +37,6 @@ namespace iCollab.ViewModels
 
         [NotMapped]
         public bool IsManager { get; set; }
-
-        public virtual ICollection<Todo> Todos { set; get; }
+         
     }
 }

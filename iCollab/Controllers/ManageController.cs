@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Core.Logging;
 using Core.Settings;
 using iCollab.Infra;
 using iCollab.Infra.Extensions;
@@ -21,10 +22,13 @@ namespace iCollab.Controllers
     [Authorize]
     public class ManageController : BaseController
     {
-        public ManageController(IUserService userService, IApplicationSettings appSettings) : base(userService, appSettings)
+        private readonly ILogger _logger;
+
+        public ManageController(IUserService userService, IApplicationSettings appSettings, ILogger logger) : base(userService, appSettings)
         {
+            _logger = logger;
         }
-  
+
         public ActionResult Index()
         {  
             var model = new ProfileViewModel
@@ -75,20 +79,22 @@ namespace iCollab.Controllers
                     {
                         Name = file.FileName,
                         Path = accessPath,
-                        CreatedBy = User.Identity.GetUserName()
+                        CreatedBy = User.Identity.GetUserName(),
+                        DateCreated = DateTime.Now
                     };
 
-                    var user = UserService.GetUserInstance(User.Identity.GetUserName());
+                    var user = UserService.FindByUsername(AppUser.UserName);
 
                     user.Picture = attachment;
 
-                    UserService.UpdateUser(user);
+                    UserService.Update(user);
 
                     TempData["success"] = "Fotograf güncellendi.";
                     return RedirectToAction("Index", "Manage");
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
+                    _logger.Error(e);
                     TempData["error"] = "Hata oluştu.";
                     return RedirectToAction("Index", "Manage"); 
                 }
@@ -118,12 +124,12 @@ namespace iCollab.Controllers
                 return RedirectToAction("Index");
             }
 
-            var user = UserService.GetUserInstance(User.Identity.GetUserName());
+            var user = UserService.FindByUsername(AppUser.UserName);
 
             user.Phone = model.PhoneNumber;
             user.FullName = model.FullName;
 
-            var result = UserService.UpdateUser(user);
+            var result = UserService.Update(user);
 
             if (result)
             {

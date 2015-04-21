@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Model
 {
-    public abstract class BaseEntity
+    public abstract class BaseEntity : IEquatable<BaseEntity>
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Display(Name = "Id")]
@@ -29,5 +29,15 @@ namespace Model
         public string EditedBy { set; get; }
         [Display(Name = "Silen")]
         public string DeletedBy { set; get; }
+
+        public bool Equals(BaseEntity other)
+        {
+            if (other.Id == Id)
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }

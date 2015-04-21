@@ -60,7 +60,7 @@ namespace iCollab.Controllers
 
                 user.LastLogin = DateTime.Now;
 
-                _service.UpdateUser(user);
+                _service.Update(user);
 
                 return RedirectToLocal(returnUrl);
             }
