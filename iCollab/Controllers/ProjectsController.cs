@@ -61,7 +61,7 @@ namespace iCollab.Controllers
          
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var projects = _projectService.GetProjects();
+            var projects = _projectService.GetUserProjects(AppUser.Id);
             return Json(projects.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 
@@ -69,7 +69,7 @@ namespace iCollab.Controllers
         public ActionResult Search(string query, int? page)
         {
             int pagenumber = page ?? 1;
-            IPagedList<Project> resultset = _projectService.Search(query).ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Project> resultset = _projectService.SearchUserProjects(query, AppUser.Id).ToPagedList(pagenumber, AppSettings.PageSize);
 
             var searchViewModel = new SearchViewModel<Project>
             {
@@ -85,7 +85,7 @@ namespace iCollab.Controllers
         public ActionResult NavigateSearch(string query, int? page)
         {
             int pagenumber = page ?? 1;
-            IPagedList<Project> resultset = _projectService.Search(query).ToPagedList(pagenumber, AppSettings.PageSize);
+            IPagedList<Project> resultset = _projectService.SearchUserProjects(query, AppUser.Id).ToPagedList(pagenumber, AppSettings.PageSize);
 
             var searchViewModel = new SearchViewModel<Project>
             {
@@ -157,6 +157,11 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
+            if (_projectService.ProjectUser(AppUser.Id, projectId.Value) == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             var documentViewModel = new MeetingViewModel {ProjectId = project.Id, DateTime = DateTime.Now.Date};
 
             return View(documentViewModel);
@@ -177,6 +182,11 @@ namespace iCollab.Controllers
             if (project == null)
             {
                 return HttpNotFound();
+            }
+
+            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             Meeting meeting = _meetingMapper.ToModel(meetingViewModel); 
@@ -209,6 +219,11 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
+            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             var documentViewModel = new DocumentViewModel {ProjectId = project.Id};
 
             return View(documentViewModel);
@@ -227,6 +242,11 @@ namespace iCollab.Controllers
             if (project == null)
             {
                 return HttpNotFound();
+            }
+
+            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             Document document = _documentMapper.ToModel(documentViewModel); 
@@ -265,6 +285,11 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             if (project.Status == ProjectStatus.Bitti || project.Status == ProjectStatus.Iptal)
             {
                 ViewData["error"] = "Proje bitince veya iptal edilince görev ekleyemezsiniz.";
@@ -287,6 +312,11 @@ namespace iCollab.Controllers
             }
 
             if (project.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -337,12 +367,17 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             var projectUsers = project.ProjectUsers.Select(x=>x.UserId);
 
             var users = _userService.GetUsers(projectUsers.AsEnumerable());
 
-            var nextProject = _projectService.GetProjects().GetNext(project);
-            var previousProject = _projectService.GetProjects().GetPrevious(project);
+            var nextProject = _projectService.GetUserProjects(AppUser.Id).GetNext(project);
+            var previousProject = _projectService.GetUserProjects(AppUser.Id).GetPrevious(project);
              
             ProjectViewModel viewModel = _mapper.ToEntity(project);
             viewModel.NextProject = nextProject;
@@ -378,7 +413,8 @@ namespace iCollab.Controllers
             {
                 Project project = _mapper.ToModel(viewModel);
                  
-                project.ProjectOwner = AppUser.UserName; 
+                project.ProjectOwner = _userService.FindById(AppUser.Id);
+                project.ProjectOwnerId = AppUser.Id;
 
                 if (project.ProjectUsers == null)
                 {
@@ -418,7 +454,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (project.ProjectOwner != AppUser.Id)
+            if (project.ProjectOwnerId != AppUser.Id)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
@@ -447,7 +483,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (project.ProjectOwner != AppUser.Id)
+            if (project.ProjectOwnerId != AppUser.Id)
             {
                 return RedirectToAction("Unauthorized", "Error");
             }
@@ -480,9 +516,9 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (project.CreatedBy != AppUser.UserName)
+            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
             {
-                return RedirectToAction("Unauthorized", "Error");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             ProjectViewModel viewModel = _mapper.ToEntity(project);
@@ -505,22 +541,7 @@ namespace iCollab.Controllers
                 TempData["error"] = "Kullanıcı seçmeniz lazım.";
 
                 return View(viewModel);
-            }
-
-            if (viewModel.EndDatetime.HasValue)
-            {
-                if (viewModel.StartDatetime.HasValue == false)
-                {
-                    viewModel.StartDatetime = DateTime.Now;
-                }
-
-                if (viewModel.EndDatetime.Value < viewModel.StartDatetime.Value)
-                { 
-                    TempData["error"] = "Bitiş tarihi başlangıç tarihinden erken olamaz.";
-
-                    return View(viewModel);
-                }
-            }
+            } 
 
             Project project = _projectService.GetProject(viewModel.Id, true);
 
@@ -530,6 +551,11 @@ namespace iCollab.Controllers
             }
 
             if (project.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -579,9 +605,9 @@ namespace iCollab.Controllers
                 return RedirectToAction("View", new {id});
             }
 
-            if (project.ProjectOwner != AppUser.UserName)
+            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
             {
-                return RedirectToAction("Unauthorized", "Error");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             project.DeletedBy = AppUser.UserName;

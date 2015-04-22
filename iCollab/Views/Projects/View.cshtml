@@ -70,16 +70,16 @@
                                         
                                     </div>
                                     <div class="pull-right">
-                                        <strong>Oluşturulma Zamanı : </strong> @Html.DisplayFor(model => model.DateCreated) <br />
+                                        <strong>Oluşturulma Zamanı : </strong> @Model.DateCreated.FormatDate() <br />
                                         
                                         @if (Model.StartDatetime.HasValue)
                                         {
-                                            <strong>Başlangıç : </strong> @Html.DisplayFor(model => model.StartDatetime) <br />
+                                            <strong>Başlangıç : </strong> @Model.StartDatetime.Value.FormatDate() <br />
                                         }
                                         
                                         @if (Model.EndDatetime.HasValue)
                                         {
-                                            <strong>Bitiş : </strong> @Html.DisplayFor(model => model.EndDatetime) <br />
+                                            <strong>Bitiş : </strong> @Model.EndDatetime.Value <br />
                                         } 
                                     </div>
 

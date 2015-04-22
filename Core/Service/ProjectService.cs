@@ -24,6 +24,8 @@ namespace Core.Service
         IQueryable<Project> GetUserProjects(string username); 
         ICollection<Task> GetProjectTasks(Guid id);  
         IQueryable<Project> Search(string query);
+        IQueryable<Project> SearchUserProjects(string query, string userId);
+        bool ProjectUser(string userId, Guid id);
     }
 
     public class ProjectService : BaseCrudService<Project>, IProjectService
@@ -57,6 +59,7 @@ namespace Core.Service
                     Include(t => t.Tasks).
                     Include(m=>m.Meetings). 
                     Include(u=>u.ProjectUsers).
+                    Include(p=>p.ProjectOwner).
                     FirstOrDefault(m => m.Id == id);
 
             if (project == null)
@@ -136,9 +139,26 @@ namespace Core.Service
 
         public IQueryable<Project> GetUserProjects(string userId)
         {  
-            var projects = _repository.CollectionUntracked.Include(p=>p.ProjectUsers).Where(x => x.ProjectUsers.Any(e=>e.UserId == userId)).OrderByDescending(x => x.DateCreated);
+            var projects = _repository.CollectionUntracked.Include(u=>u.ProjectOwner).Include(p=>p.ProjectUsers).Where(x => x.ProjectUsers.Any(e=>e.UserId == userId) || x.ProjectOwnerId == userId).OrderByDescending(x => x.DateCreated);
 
             return projects;
+        }
+
+        public bool ProjectUser(string userId, Guid id)
+        {
+            var project = GetProject(id, true);
+
+            if (project.ProjectOwnerId == userId)
+            {
+                return true;
+            }
+
+            if (project.ProjectUsers.Any(x => x.UserId == userId))
+            {
+                return true;
+            }
+
+            return false;
         }
   
         public ICollection<Task> GetProjectTasks(Guid id)
@@ -157,7 +177,17 @@ namespace Core.Service
         {
             var projects = _repository
                 .CollectionUntracked 
-                .Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(x=>x.Id);
+                .Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(x=>x.DateCreated);
+
+            return projects;
+        }
+
+        public IQueryable<Project> SearchUserProjects(string query, string userId)
+        {
+            var projects = _repository.CollectionUntracked.Include(u => u.ProjectOwner).Include(p => p.ProjectUsers)
+                .Where(x => x.ProjectUsers.Any(e => e.UserId == userId) || x.ProjectOwnerId == userId)
+                .Where(x => x.Title.Contains(query) || x.Description.Contains(query))
+                .OrderByDescending(x => x.DateCreated);
 
             return projects;
         }

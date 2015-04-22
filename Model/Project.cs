@@ -23,19 +23,17 @@ namespace Model
         public ProjectStatus Status { set; get; }
         [Display(Name = "Önceliği")]
         public Priority Priority { set; get; }
-
         [Display(Name="Tamamlanma Tarihi")]
         public DateTime? DateCompleted { set; get; }
         [Display(Name = "İptal Tarihi")]
         public DateTime? DateCancelled { set; get; }
-           
-        public string ProjectOwner { get; set; }
+        public string ProjectOwnerId { set; get; }
+        public ApplicationUser ProjectOwner { get; set; }
         public ICollection<Task> Tasks { get; set; }
         public ICollection<Document> Documents { set; get; }
         public ICollection<Attachment> Attachments { set; get; }
         public ICollection<Meeting> Meetings { set; get; }
         public ICollection<ProjectUsers> ProjectUsers { set; get; }
-
         public ICollection<Model.Activity.Activity> Activities { set; get; }
          
     }
