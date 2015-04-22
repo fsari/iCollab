@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Web.Mvc; 
+using System.Web.Mvc;
+using Core.Extensions;
 using Core.Mappers;
 using Core.Service;
 using Core.Settings;
@@ -26,6 +27,8 @@ namespace iCollab.Controllers
         private readonly ITaskService _service;
         private readonly IUserService _userService;
         private readonly IAttachmentService _attachmentService;
+        private readonly IMapper<AppUserViewModel, ApplicationUser> _userMapper;
+        private readonly IProjectService _projectService;
 
         public TasksController(
             ITaskService service,
@@ -33,18 +36,21 @@ namespace iCollab.Controllers
             IMapper<TaskViewModel, Task> mapper,
             IUserService userService,
             IProjectService projectService, 
-            IAttachmentService attachmentService)
+            IAttachmentService attachmentService, 
+            IMapper<AppUserViewModel, ApplicationUser> userMapper)
             : base(userService, appSettings)
         {
             _service = service;
             _mapper = mapper;
             _userService = userService; 
             _attachmentService = attachmentService;
+            _userMapper = userMapper;
+            _projectService = projectService;
         }
           
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var tasks = _service.GetTasks();
+            var tasks = _service.GetUserTasks(AppUser.Id);
             return Json(tasks.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         } 
          
@@ -114,16 +120,7 @@ namespace iCollab.Controllers
             {
                 return new FineUploaderResult(false, error: ex.Message);
             }
-        }
-
-        public ActionResult MyTasks(int? page)
-        {
-            int pagenumber = page ?? 1; 
-
-            IPagedList<Task> tasks = _service.GetUserTasks(AppUser.Id).ToPagedList(pagenumber, AppSettings.PageSize);
-
-            return View(tasks);
-        }
+        } 
 
         public ActionResult CompletedTasks(int? page)
         {
@@ -132,22 +129,22 @@ namespace iCollab.Controllers
             IPagedList<Task> tasks = _service.GetTasksByStatus(TaskStatus.Tamamlandı).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(tasks);
-        }
-
-        public ActionResult RejectedTasks(int? page)
-        {
-            int pagenumber = page ?? 1;
-
-            IPagedList<Task> tasks = _service.GetTasksByStatus(TaskStatus.İade).ToPagedList(pagenumber, AppSettings.PageSize);
-
-            return View(tasks);
-        }
+        } 
 
         public ActionResult LateTasks(int? page)
         {
             int pagenumber = page ?? 1;
 
             IPagedList<Task> tasks = _service.GetLateTasks().ToPagedList(pagenumber, AppSettings.PageSize);
+
+            return View(tasks);
+        }
+
+        public ActionResult My(int? page)
+        {
+            int pagenumber = page ?? 1;
+
+            IPagedList<Task> tasks = _service.GetTasksUserCreated(AppUser.Id).ToPagedList(pagenumber, AppSettings.PageSize);
 
             return View(tasks);
         }
@@ -177,6 +174,11 @@ namespace iCollab.Controllers
 
             _service.Update(task);
 
+            if (task.ProjectId.HasValue)
+            {
+                _projectService.InvalidateCache(task.ProjectId.Value);
+            }
+
             TempData["success"] = "Görev tamamlandı.";
 
             return RedirectToAction("View", new {id = id.Value});
@@ -200,7 +202,7 @@ namespace iCollab.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             } 
-
+            // TODO : Alert user.
             ApplicationUser user = _userService.FindByUsername(task.CreatedBy);
 
             task.TaskStatus = TaskStatus.İade;
@@ -235,6 +237,11 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            if (task.TaskUsers.Any(x => x.UserId == AppUser.Id) == false && task.TaskOwnerId != AppUser.Id)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             TaskViewModel taskViewModel = _mapper.ToEntity(task);
             if (task.ProjectId != null) taskViewModel.ProjectId = task.ProjectId.Value;
 
@@ -245,6 +252,14 @@ namespace iCollab.Controllers
             var users = _userService.GetUsers(taskUsers.AsEnumerable());
 
             taskViewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
+
+            var next = _service.GetUserTasks(AppUser.Id).GetNext(task);
+            var previous = _service.GetUserTasks(AppUser.Id).GetPrevious(task);
+
+            taskViewModel.Next = next;
+            taskViewModel.Previous = previous;
+
+            taskViewModel.TaskOwner = _userMapper.ToEntity(task.TaskOwner);
 
             return View(taskViewModel);
         }
@@ -376,9 +391,15 @@ namespace iCollab.Controllers
         public ActionResult CreateTask(TaskViewModel taskViewModel)
         {
 
+            if (ModelState.IsValid == false)
+            {
+                TempData["error"] = "Bir hata olustu formu kontrol edip tekrar deneyiniz.";
+                return View(taskViewModel);
+            }
+
             if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
             {
-                ModelState.AddModelError("Error", "Kullanıcı seçmeniz lazım.");
+                TempData["error"] = "Bir hata olustu formu kontrol edip tekrar deneyiniz.";
 
                 return View(taskViewModel);
             }
@@ -388,7 +409,12 @@ namespace iCollab.Controllers
             if (task.TaskUsers == null)
             {
                 task.TaskUsers = new Collection<TaskUser>();
-            } 
+            }
+
+            var taskUser = _userService.FindById(AppUser.Id);
+
+            task.TaskOwner = taskUser;
+            task.TaskOwnerId = taskUser.Id;
 
             _service.Create(task);
 
@@ -449,13 +475,13 @@ namespace iCollab.Controllers
             if (ModelState.IsValid)
             {
                 var instance = _service.GetTask(taskViewModel.Id, true);
-
-                instance.EditedBy = AppUser.UserName;
-                instance.DateEdited = DateTime.Now;
+                 
                 instance.Title = taskViewModel.Title;
                 instance.Description = taskViewModel.Description;
                 instance.End = taskViewModel.End;
                 instance.Start = taskViewModel.Start;
+                instance.Priority = taskViewModel.Priority;
+
 
                 _service.Update(instance);
 

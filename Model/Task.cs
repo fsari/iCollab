@@ -54,6 +54,9 @@ namespace Model
         public int OrderId { get; set; }
         public TaskType TaskType { set; get; }
 
+        public string TaskOwnerId { set; get; }
+        public ApplicationUser TaskOwner { set; get; }
+
         [NotMapped]
         public bool IsLate {
             get

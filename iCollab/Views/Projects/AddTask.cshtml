@@ -26,16 +26,7 @@
                         @Html.HiddenFor(model => model.ProjectId)
                         @Html.AntiForgeryToken()
 
-                        <div class="form-horizontal">
-                            @if (ViewData.ModelState.IsValid == false)
-                            {
-                                <div class="alert alert-danger alert-dismissable">
-                                    <i class="fa fa-ban"></i>
-                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                    @Html.ValidationSummary(true)
-                                    @Html.ValidationMessage("Error")
-                                </div>
-                            }
+                        <div class="form-horizontal"> 
 
                             <div class="form-group">
                                 <label class="control-label col-md-2 required">Kullanıcılar</label>

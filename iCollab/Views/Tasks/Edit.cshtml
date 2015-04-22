@@ -28,8 +28,7 @@
                             @Html.ValidationSummary(true)
                             @Html.HiddenFor(model => model.Id)
                             @Html.HiddenFor(model => model.ProjectId)
-                            @Html.HiddenFor(model => model.DateCreated)
-                            @Html.HiddenFor(model => model.CreatedBy)
+                            @Html.HiddenFor(model => model.DateCreated) 
 
                             @if (ViewData.ModelState.IsValid == false)
                             {

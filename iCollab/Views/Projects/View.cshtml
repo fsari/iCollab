@@ -33,7 +33,6 @@
                                         <a href="/Projects/Delete/@Model.Id" onclick="return confirm('Silmek istediğinize emin misiniz?');"><i class="glyphicon glyphicon-trash btn-lg"></i></a>
                                     }
                                     <a href="/Projects/Index"><i class="glyphicon glyphicon-list btn-lg"></i></a>
-
                                 </div>
                                 <div class="clearfix"></div>
                                 
@@ -53,7 +52,17 @@
                                     </div>
                                 </div>
 
-
+                                <div class="progress">
+                                    @if (Model.Status == ProjectStatus.Bitti)
+                                    {
+                                        <div class="progress-bar progress-bar-aqua" style="width: 100%"><span class="badge bg-navy">100%</span></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="progress-bar progress-bar-aqua" style="width:  @Model.Progress()%"><span class="badge bg-navy">@Model.Progress()%</span></div>
+                                    }
+                                </div>
+                                <br/>
 
                                 @Html.Raw(HttpUtility.HtmlDecode(Model.Description)) <br />
 
@@ -74,12 +83,12 @@
                                         
                                         @if (Model.StartDatetime.HasValue)
                                         {
-                                            <strong>Başlangıç : </strong> @Model.StartDatetime.Value.FormatDate() <br />
+                                            <strong>Başlangıç : </strong> @Html.DisplayFor(m => m.StartDatetime) <br />
                                         }
                                         
                                         @if (Model.EndDatetime.HasValue)
                                         {
-                                            <strong>Bitiş : </strong> @Model.EndDatetime.Value <br />
+                                            <strong>Bitiş : </strong> @Html.DisplayFor(m => m.EndDatetime) <br />
                                         } 
                                     </div>
 

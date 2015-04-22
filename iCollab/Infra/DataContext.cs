@@ -29,8 +29,7 @@ namespace iCollab.Infra
 
         public IDbSet<Todo> Todos { set; get; }
         public IDbSet<Project> Projects { set; get; }
-        public IDbSet<Task> Tasks { set; get; }
-        public IDbSet<Announcement> Announcements { get; set; } 
+        public IDbSet<Task> Tasks { set; get; } 
         public IDbSet<Meeting> Meetings { get; set; }
         public IDbSet<Document> Documents { get; set; }
         public IDbSet<ContentPage> ContentPages { set; get; }

@@ -50,8 +50,7 @@ namespace iCollab
 
             builder.RegisterGeneric(typeof(BaseCrudService<>)).As(typeof(ICrudService<>)).InstancePerRequest();
 
-            builder.RegisterType<DocumentService>().As<IDocumentService>().InstancePerRequest();
-            builder.RegisterType<AnnouncementService>().As<IAnnouncementService>().InstancePerRequest();
+            builder.RegisterType<DocumentService>().As<IDocumentService>().InstancePerRequest(); 
             builder.RegisterType<MeetingService>().As<IMeetingService>().InstancePerRequest();
             builder.RegisterType<TaskService>().As<ITaskService>().InstancePerRequest();
             builder.RegisterType<ProjectService>().As<IProjectService>().InstancePerRequest(); 

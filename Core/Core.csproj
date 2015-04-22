@@ -137,7 +137,6 @@
     <Compile Include="Repository\RepositoryExtensions.cs" />
     <Compile Include="Repository\UoW.cs" />
     <Compile Include="Service\ActivityService.cs" />
-    <Compile Include="Service\AnnouncementService.cs" />
     <Compile Include="Service\AttachmentServıce.cs" />
     <Compile Include="Service\CrudService\BaseCrudService.cs" />
     <Compile Include="Service\CrudService\ICrudService.cs" />

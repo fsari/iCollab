@@ -64,8 +64,7 @@ namespace iCollab.ViewModels
         public ICollection<Attachment> Attachments { get; set; }
         public List<Task> SubTasks { set; get; }
         public Task ParentTask { set; get; }
-        public Guid? ParentTaskId { set; get; }
-        public string CreatedBy { get; set; } 
+        public Guid? ParentTaskId { set; get; } 
         public string SelectedUserId { get; set; }
         public IEnumerable<SelectListItem> UserSelectList { get; set; }
 
@@ -75,7 +74,10 @@ namespace iCollab.ViewModels
         public IEnumerable<UserSelectViewModel> SelectedProjectUsers { set; get; }
         public List<string> SelectedUsers { set; get; }
 
+        public Task Next { set; get; }
+        public Task Previous { set; get; }
 
+        public AppUserViewModel TaskOwner { set; get; }
 
         public bool IsLate
         {

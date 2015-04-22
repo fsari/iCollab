@@ -83,9 +83,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AnnouncementMailer.cs" />
     <Compile Include="AppMailer.cs" />
-    <Compile Include="IAnnouncementMailer.cs" />
     <Compile Include="IAppMailer.cs" />
     <Compile Include="IProjectMailer.cs" />
     <Compile Include="ITaskMailer.cs" />

@@ -61,8 +61,11 @@ namespace iCollab.Controllers
          
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var projects = _projectService.GetUserProjects(AppUser.Id);
-            return Json(projects.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+            var projects = _projectService.GetUserProjects(AppUser.Id).ToPagedList(1, AppSettings.IndexPageSize);
+
+            var pageOfprojectViewModels = _mapper.ToEntities(projects);
+
+            return Json(pageOfprojectViewModels.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -304,6 +307,13 @@ namespace iCollab.Controllers
         [HttpPost]
         public ActionResult AddTask(TaskViewModel taskViewModel)
         {
+
+            if (ModelState.IsValid == false)
+            {
+                TempData["error"] = "Bir hata olustu formu kontrol edip tekrar deneyiniz.";
+                return View(taskViewModel);
+            }
+
             Project project = _projectService.GetProject(taskViewModel.ProjectId, true);
 
             if (project == null)
@@ -316,12 +326,13 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            // TODO ; ADD THIS TO TASK ALSO, MAY BE NOT??
             if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (ModelState.IsValid == false || taskViewModel.SelectedUsers.Any() == false)
+            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
             {
                 taskViewModel.ProjectViewModel = _mapper.ToEntity(project);
                 ModelState.AddModelError("Error", "Bir kullanıcı seçmeniz gerekli.");
@@ -338,6 +349,18 @@ namespace iCollab.Controllers
 
             task.ProjectId = project.Id;
             task.Project = project;
+
+            var taskUser = _userService.FindById(AppUser.Id);
+
+            task.TaskOwner = taskUser;
+            task.TaskOwnerId = taskUser.Id;
+
+            if (task.TaskUsers == null)
+            {
+               task.TaskUsers = new Collection<TaskUser>();
+            }
+
+            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser { UserId = x }));
 
             project.Tasks.Add(task);
 
@@ -436,7 +459,7 @@ namespace iCollab.Controllers
                 return RedirectToAction("View", new {id = project.Id});
             }
 
-            ModelState.AddModelError("Error", "Formu kontrol edip tekrar deneyiniz.");
+            TempData["error"] = "Formu kontrol edip tekrar deneyiniz.";
             return View(viewModel);
         }
 
@@ -581,7 +604,7 @@ namespace iCollab.Controllers
                 return RedirectToAction("View", new {project.Id});
             }
 
-            TempData["error"] = "Bir hata oluştu formu kontrol edip tekrar deneyiniz.";
+            TempData["error"] = "Bir hata oluştu. Formu kontrol edip tekrar deneyiniz.";
             return View(viewModel);
         }
 

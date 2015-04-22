@@ -139,7 +139,7 @@ namespace Core.Service
 
         public IQueryable<Project> GetUserProjects(string userId)
         {  
-            var projects = _repository.CollectionUntracked.Include(u=>u.ProjectOwner).Include(p=>p.ProjectUsers).Where(x => x.ProjectUsers.Any(e=>e.UserId == userId) || x.ProjectOwnerId == userId).OrderByDescending(x => x.DateCreated);
+            var projects = _repository.CollectionUntracked.Include(t=>t.Tasks).Include(u=>u.ProjectOwner).Include(p=>p.ProjectUsers).Where(x => x.ProjectUsers.Any(e=>e.UserId == userId) || x.ProjectOwnerId == userId).OrderByDescending(x => x.DateCreated);
 
             return projects;
         }

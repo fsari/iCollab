@@ -87,7 +87,6 @@
   <ItemGroup>
     <Compile Include="Activity\Activity.cs" />
     <Compile Include="Activity\ActivityType.cs" />
-    <Compile Include="Announcement.cs" />
     <Compile Include="Attachment.cs" />
     <Compile Include="Audit.cs" />
     <Compile Include="BaseEntity.cs" />

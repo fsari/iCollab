@@ -25,34 +25,25 @@
                         @Html.AntiForgeryToken()
 
                         <div class="form-horizontal">
-                            @if (ViewData.ModelState.IsValid == false)
-                            {
-                                <div class="alert alert-danger alert-dismissable">
-                                    <i class="fa fa-ban"></i>
-                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                    @Html.ValidationSummary(true)
-                                    @Html.ValidationMessage("Error")
-                                </div>
-                            }
-
+                             
                             <div class="form-group">
                                 <label class="control-label col-md-2 required">Kullanıcı</label>
                                 <div class="col-md-10">
                                     @(Html.Kendo().MultiSelect()
-                                      .Name("SelectedUsers")
-                                      .DataTextField("FullName")
-                                      .DataValueField("Id")
-                                      .Placeholder("Kullanıcı seçiniz...")
-                                      .AutoBind(false)
-                                      .DataSource(source =>
-                                      {
-                                          source.Read(read =>
+                                          .Name("SelectedUsers")
+                                          .DataTextField("FullName")
+                                          .DataValueField("Id")
+                                          .Placeholder("Kullanıcı seçiniz...")
+                                          .AutoBind(false)
+                                          .DataSource(source =>
                                           {
-                                              read.Action("GetUsers", "Users");
+                                              source.Read(read =>
+                                              {
+                                                  read.Action("GetUsers", "Users");
+                                              })
+                                                  .ServerFiltering(true);
                                           })
-                                          .ServerFiltering(true);
-                                      })
-                                    )
+                                          )
                                 </div>
                             </div>
 

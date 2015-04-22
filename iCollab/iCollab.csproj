@@ -192,7 +192,6 @@
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
-    <Compile Include="Controllers\AnnouncementsController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\DashboardController.cs" />
     <Compile Include="Controllers\DocumentsController.cs" />
@@ -1816,16 +1815,10 @@
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Announcements\Create.cshtml" />
-    <Content Include="Views\Announcements\Edit.cshtml" />
-    <Content Include="Views\Announcements\Index.cshtml" />
-    <Content Include="Views\Announcements\View.cshtml" />
-    <Content Include="Views\Announcements\_Form.cshtml" />
     <Content Include="Views\Dashboard\GetOnlineUsers.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Dashboard\QuickReports.cshtml" />
     <Content Include="Views\Dashboard\ViewActivities.cshtml" />
-    <Content Include="Views\Dashboard\ViewAnnouncements.cshtml" />
     <Content Include="Views\Dashboard\ViewDocuments.cshtml" />
     <Content Include="Views\Dashboard\ViewMeetings.cshtml" />
     <Content Include="Views\Dashboard\ViewProjects.cshtml" />
@@ -1865,8 +1858,6 @@
     <Content Include="Views\Tasks\Edit.cshtml" />
     <Content Include="Views\Tasks\Index.cshtml" />
     <Content Include="Views\Tasks\LateTasks.cshtml" />
-    <Content Include="Views\Tasks\MyTasks.cshtml" />
-    <Content Include="Views\Tasks\RejectedTasks.cshtml" />
     <Content Include="Views\Tasks\View.cshtml" />
     <Content Include="Views\Tasks\_TaskMenu.cshtml" />
     <Content Include="Views\Users\Index.cshtml" />
@@ -1889,7 +1880,6 @@
     <Content Include="Views\Tasks\AddSubTask.cshtml" />
     <Content Include="Views\Projects\MyProjects.cshtml" />
     <Content Include="Views\Projects\Search.cshtml" />
-    <Content Include="Views\Announcements\Search.cshtml" />
     <Content Include="Views\Documents\Search.cshtml" />
     <Content Include="Views\Meetings\Search.cshtml" />
     <Content Include="Views\Tasks\Search.cshtml" />
@@ -1922,6 +1912,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Gantt\Index.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Tasks\My.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

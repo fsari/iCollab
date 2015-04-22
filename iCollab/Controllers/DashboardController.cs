@@ -22,8 +22,7 @@ namespace iCollab.Controllers
     {
         private readonly IProjectService _projectService;
         private readonly IMapper<ProjectViewModel, Project> _mapper;
-        private readonly ITaskService _taskService;
-        private readonly IAnnouncementService _announcementsService; 
+        private readonly ITaskService _taskService; 
         private readonly IUserService _userService;
         private readonly IMeetingService _meetingService;
         private readonly IDocumentService _documentService;
@@ -33,8 +32,7 @@ namespace iCollab.Controllers
         public DashboardController(
             IProjectService projectService,
             IApplicationSettings appSettings,
-            IMapper<ProjectViewModel, Project> mapper,
-            IAnnouncementService announcementsService,
+            IMapper<ProjectViewModel, Project> mapper, 
             IUserService userService,
             ITaskService taskService, 
             IMeetingService meetingService,
@@ -43,8 +41,7 @@ namespace iCollab.Controllers
             : base(userService, appSettings)
         {
             _projectService = projectService;
-            _mapper = mapper;
-            _announcementsService = announcementsService;
+            _mapper = mapper; 
             _userService = userService;
             _taskService = taskService; 
             _meetingService = meetingService;
@@ -141,14 +138,12 @@ namespace iCollab.Controllers
         public ActionResult QuickReports()
         {
             var userCount = _userService.GetUserCount();
-            var projectCount = _projectService.ProjectsCount();
-            var announcementCount = _announcementsService.AnnouncementsCount();
+            var projectCount = _projectService.ProjectsCount(); 
             var taskCount = _taskService.TasksCount(); 
             var meetingCount = _meetingService.MeetingsCount();
 
             var quickReportViewModel = new QuickReportsViewModel
-            {
-                AnnouncementsCount = announcementCount,
+            { 
                 TasskCount = taskCount,
                 ProjectsCount = projectCount,
                 UsersCount = userCount, 
@@ -160,19 +155,17 @@ namespace iCollab.Controllers
 
         [ChildActionOnly]
         public ActionResult ViewTasks()
-        {
-            var userId = AppUser.Id;
-            var tasks = _taskService.GetUserTasks(userId).Take(AppSettings.IndexPageSize);
+        { 
+            var tasks = _taskService.GetUserTasks(AppUser.Id).Take(AppSettings.IndexPageSize);
 
             return PartialView(tasks);
         }
 
         [ChildActionOnly]
         public ActionResult ViewProjects()
-        {
-            string user = AppUser.Id;
+        { 
 
-            var projects = _projectService.GetUserProjects(user).ToPagedList(1, AppSettings.IndexPageSize);
+            var projects = _projectService.GetUserProjects(AppUser.Id).ToPagedList(1, AppSettings.IndexPageSize);
 
             var pageOfprojectViewModels = _mapper.ToEntities(projects);
 
@@ -185,22 +178,13 @@ namespace iCollab.Controllers
             var activities = _activityService.GetTable().AsNoTracking().OrderByDescending(x => x.Id).Take(AppSettings.IndexPageSize);
 
             return PartialView(activities);
-        }
-
-        [ChildActionOnly]
-        public ActionResult ViewAnnouncements()
-        {
-            var announcements = _announcementsService.GetPublishedAnnouncements().ToPagedList(1, AppSettings.IndexPageSize);
-
-            return PartialView(announcements);
-        }
+        } 
 
         [ChildActionOnly]
         public ActionResult ViewDocuments()
         {
-            string username = User.Identity.GetUserName();
 
-            var documents = _documentService.UserDocuments(username).ToPagedList(1, AppSettings.IndexPageSize);
+            var documents = _documentService.UserDocuments(AppUser.UserName).ToPagedList(1, AppSettings.IndexPageSize);
 
             return PartialView(documents);
         }
@@ -209,9 +193,8 @@ namespace iCollab.Controllers
         [ChildActionOnly]
         public ActionResult ViewMeetings()
         {
-            string username = User.Identity.GetUserName();
 
-            var meetings = _meetingService.GetUserMeetings(username).ToPagedList(1, AppSettings.IndexPageSize);
+            var meetings = _meetingService.GetUserMeetings(AppUser.UserName).ToPagedList(1, AppSettings.IndexPageSize);
 
             return PartialView(meetings);
         }

@@ -1,6 +1,5 @@
 ﻿@using iCollab.Infra.Extensions
-@using iCollab.ViewModels
-@using Microsoft.AspNet.Identity
+@using iCollab.ViewModels 
 @using Model 
 @model TaskViewModel
 @{
@@ -35,6 +34,17 @@
                     <div class="box-body table-responsive no-padding" style="margin-left: 10px;">
                         <div>
                             @Html.Raw(HttpUtility.HtmlDecode(Model.Description))<br />
+                            
+
+                            @if (Model.Previous != null)
+                            {
+                                <a href="/Tasks/View/@Model.Previous.Id" class="btn btn-primary btn-sm">@Model.Previous.Title</a>
+                            }
+
+                            @if (Model.Next != null)
+                            {
+                                <a href="/Tasks/View/@Model.Next.Id" class="btn btn-primary btn-sm">@Model.Next.Title</a>
+                            }
                         </div>
 
                         <div class="pull-left">
@@ -50,12 +60,10 @@
                             @foreach (var u in Model.SelectedUsers)
                             {
                                 <label class="label label-default">@u</label>
-                            }
-                            <br />
-                            <strong><i class="fa fa-asterisk"></i> Oluşturan : </strong> <label class="label label-info">@Model.CreatedBy</label><br />
+                            } 
                         </div>
                         <div class="pull-right">
-                            <strong><i class="fa fa-clock-o"></i> Oluşturulma Zamanı : </strong> @Html.DisplayFor(m => m.DateCreated) <br />
+                            <strong><i class="fa fa-clock-o"></i> Oluşturulma Zamanı : </strong> @Model.DateCreated.FormatDate() <br />
                             <strong><i class="fa fa-clock-o"></i> Başlangıç Zamanı : </strong> @Html.DisplayFor(m => m.Start) <br />
                             <strong><i class="fa fa-clock-o"></i> Bitiş Zamanı : </strong> @Html.DisplayFor(m => m.End) <br />
                         </div>

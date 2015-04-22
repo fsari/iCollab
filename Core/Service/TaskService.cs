@@ -2,6 +2,7 @@
 using System.Data.Entity;
 using System.Linq;  
 using Core.Caching;
+using Core.Extensions;
 using Core.Repository;
 using Core.Service.CrudService;
 using Model;
@@ -16,9 +17,18 @@ namespace Core.Service
         IQueryable<Task> GetUserTasks(string userId);
         IQueryable<Task> GetTasks();
         IQueryable<Task> GetLateTasks();
+
+        IQueryable<Task> GetTasksUserCreated(string userId); 
+
         int TasksCount();
         bool UserHasAnyTasks(string userId); 
-        IQueryable<Task> Search(string query); 
+        IQueryable<Task> Search(string query);
+
+        Task GetNext(Task task);
+        Task GetPrevious(Task task);
+
+        IQueryable<Task> SearchUserTaks(string query, string userId);
+        bool TaskUser(string userId, Guid id);
     } 
 
     public class TaskService : BaseCrudService<Task>, ITaskService
@@ -48,6 +58,7 @@ namespace Core.Service
                             .Include(t=>t.SubTasks)
                             .Include(p=>p.ParentTask) 
                             .Include(t=>t.TaskUsers)
+                            .Include(t=>t.TaskOwner)
                             .FirstOrDefault(x => x.Id == id);
 
             return task;
@@ -86,13 +97,7 @@ namespace Core.Service
 
         public IQueryable<Task> GetUserTasks(string userId)
         {
-            /*var tasks = _repository.CollectionUntracked
-                            .Include(p => p.Project)  
-                            .Include(a => a.Attachments)
-                            .Where(x => x.TaskOwner == username)
-                            .OrderByDescending(t => t.DateCreated);*/
-
-            var userTasks = _repository.CollectionUntracked.Include(t => t.TaskUsers).Where(x => x.TaskUsers.Any(r => r.UserId == userId));
+            var userTasks = _repository.CollectionUntracked.Include(t => t.TaskUsers).Where(x => x.TaskUsers.Any(r => r.UserId == userId)).OrderByDescending(x=>x.DateCreated);
 
             return userTasks;
         }
@@ -111,6 +116,13 @@ namespace Core.Service
             return tasks;
         }
 
+        public IQueryable<Task> GetTasksUserCreated(string userId)
+        {
+            var tasks = _repository.CollectionUntracked.Where(x => x.TaskOwnerId == userId).OrderByDescending(x=>x.DateCreated);
+
+            return tasks;
+        }
+
         public int TasksCount()
         {
             var count = _repository.CollectionUntracked.Count();
@@ -120,7 +132,9 @@ namespace Core.Service
 
         public bool UserHasAnyTasks(string userId)
         {
-            return false; //_repository.CollectionUntracked.Any(x => x.TaskOwner == userId);
+            var result = _repository.CollectionUntracked.Any(x => x.TaskUsers.Any(u => u.UserId == userId));
+            //CHECK THIS if user has any tasks
+            return result;
         }
 
         public IQueryable<Task> Search(string query)
@@ -129,6 +143,42 @@ namespace Core.Service
 
             return tasks;
         }
-         
+
+        public Task GetNext(Task task)
+        {
+            var next = _repository.CollectionUntracked.GetNext(task);
+
+            return next;
+        }
+
+        public Task GetPrevious(Task task)
+        {
+            var previous = _repository.CollectionUntracked.GetPrevious(task);
+
+            return previous;
+        }
+
+        public IQueryable<Task> SearchUserTaks(string query, string userId)
+        {
+            var tasks = _repository.CollectionUntracked.Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(t => t.DateCreated);
+            return tasks;
+        }
+
+        public bool TaskUser(string userId, Guid id)
+        {
+            var task = GetTask(id, true);
+
+            if (task.TaskOwnerId == userId)
+            {
+                return true;
+            }
+
+            if (task.TaskUsers.Any(x => x.UserId == userId))
+            {
+                return true;
+            }
+
+            return false;
+        }
     }
 }
