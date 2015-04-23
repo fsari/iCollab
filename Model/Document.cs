@@ -20,5 +20,8 @@ namespace Model
 
         public ICollection<ContentPage> ContentPages { set; get; }
 
+        public ApplicationUser Owner { set; get; }
+        public string OwnerId { set; get; }
+
     }
 }

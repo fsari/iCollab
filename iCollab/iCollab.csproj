@@ -244,6 +244,12 @@
     <Content Include="Assets\bootstrap\js\npm.js" />
     <Content Include="Assets\dist\css\AdminLTE.css" />
     <Content Include="Assets\dist\css\AdminLTE.min.css" />
+    <Content Include="Assets\dist\css\MyBundle.css">
+      <DependentUpon>MyBundle.css.bundle</DependentUpon>
+    </Content>
+    <Content Include="Assets\dist\css\MyBundle.min.css">
+      <DependentUpon>MyBundle.css</DependentUpon>
+    </Content>
     <Content Include="Assets\dist\css\skins\skin-black.css" />
     <Content Include="Assets\dist\css\skins\skin-black.min.css" />
     <Content Include="Assets\dist\css\skins\skin-blue.css" />
@@ -1915,6 +1921,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Tasks\My.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\dist\css\MyBundle.css.bundle" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

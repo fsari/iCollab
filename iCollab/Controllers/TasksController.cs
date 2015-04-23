@@ -328,22 +328,18 @@ namespace iCollab.Controllers
         [HttpPost]
         public ActionResult AddSubTask(TaskViewModel taskViewModel)
         {
-            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
+            if (ModelState.IsValid == false)
             {
-                ModelState.AddModelError("Error", "Kullanıcı seçmeniz lazım.");
-
+                TempData["error"] = "Bir hata olustu formu kontrol edip tekrar deneyiniz.";
                 return View(taskViewModel);
             }
 
-
-            if (taskViewModel.End < taskViewModel.Start)
+            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
             {
-                taskViewModel.UserSelectList = _userService.GetUsersDropDown();
-
-                ModelState.AddModelError("Error", "Bitiş tarihi başlangıç tarihinden erken olamaz.");
+                TempData["error"] = "Bir hata olustu formu kontrol edip tekrar deneyiniz.";
 
                 return View(taskViewModel);
-            } 
+            }
 
             if (taskViewModel.ParentTaskId.HasValue == false)
             {
@@ -361,6 +357,11 @@ namespace iCollab.Controllers
 
             task.ParentTaskId = taskViewModel.ParentTaskId;
             task.ParentTask = parentTask;
+
+            var taskUser = _userService.FindById(AppUser.Id);
+
+            task.TaskOwner = taskUser;
+            task.TaskOwnerId = taskUser.Id;
 
             parentTask.SubTasks.Add(task);
 
