@@ -135,6 +135,11 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            if (meeting.CreatedBy != AppUser.UserName)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             return View(meeting);
         }
 
@@ -142,6 +147,11 @@ namespace iCollab.Controllers
         public ActionResult Edit(Meeting meeting)
         {
             if (meeting.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (meeting.CreatedBy != AppUser.UserName)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -171,6 +181,11 @@ namespace iCollab.Controllers
             if (meeting == null)
             {
                 return HttpNotFound();
+            }
+
+            if (meeting.CreatedBy != AppUser.UserName)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             meeting.DeletedBy = AppUser.UserName;

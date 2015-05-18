@@ -1,4 +1,5 @@
 ﻿@using iCollab.ViewModels
+@using Microsoft.AspNet.Identity
 @model Model.Meeting
 
 @{
@@ -6,52 +7,48 @@
 }
 <aside class="right-side">
     <section class="content-header">
-        <h1 class="pull-left">@Model.Title</h1>
+        <h1 class="pull-left"><a href="/Meetings">Toplantilar</a> <i class="fa fa-angle-double-right"></i> @Model.Title</h1>
         <div class="pull-right">
-            @Html.ActionLink("Duzenle", "Edit", "Meetings", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm" })
-            @Html.ActionLink("Sil", "Delete", "Meetings", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Silmek istediğinizden emin misiniz ?');" })
-            @Html.ActionLink("Toplantılar", "Index", "Meetings", null, new { @class = "btn btn-info btn-sm" })
+
+            @if (Model.CreatedBy == User.Identity.GetUserName())
+            {
+                @Html.ActionLink("Duzenle", "Edit", "Meetings", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm" })
+                @Html.ActionLink("Sil", "Delete", "Meetings", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Silmek istediğinizden emin misiniz ?');" })
+                @Html.ActionLink("Toplantılar", "Index", "Meetings", null, new { @class = "btn btn-info btn-sm" })
+            }
+
         </div>
         <div class="clearfix"></div>
     </section>
 
     <section class="content">
-        @if (string.IsNullOrEmpty(Model.Description) == false)
-        {
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box">
-                        <div class="box-body">
-                            <div>
-                                @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
-                            </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="box">
+                    <div class="box-body">
+                        <div>
+                            @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
+
+                            <br />
+                            <i class="glyphicon glyphicon-user"> </i> <label class="label label-info">@Model.CreatedBy</label><br />
+                            <i class="fa fa-location-arrow"></i> <label class="label label-danger">@Model.Location</label><br />
+                            <i class="glyphicon glyphicon-calendar"></i> <label class="label label-success"> @Model.DateTime </label><br />
+                            <i class="fa fa-users"></i> <label class="label label-primary">@Model.Attendees </label> <br />
                         </div>
                     </div>
                 </div>
             </div>
-        }
 
-        <div class="row">
-            <div class="col-xs-7">
-                <div class="box box-danger">
+            <div class="col-md-4">
+                <div class="box">
                     <div class="box-body">
-                        <strong>Oluşturan : </strong><label class="label label-info">@Model.CreatedBy</label><br />
-                        <strong>Lokasyon : </strong><label class="label label-danger">@Model.Location</label><br />
-                        <strong>Tarih : </strong>@Model.DateTime <br />
-                        <strong>Katılımcılar :</strong> <label class="label label-primary">@Model.Attendees </label> <br />
-                    </div>
-                </div>
-            </div> 
-
-            <div class="col-xs-5">
-                <div class="box box-danger">
-                    <div class="box-body"> 
-                        @{Html.RenderPartial("_Attachment", new AttachmentViewModel
+                          @{Html.RenderPartial("_Attachment", new AttachmentViewModel
                           {
                               Attachments = Model.Attachments,
                               UploadPath = "/Meetings/Upload/?id=" + Model.Id,
                               RemovePath = "/Meetings/RemoveAttachment/?meetingId=" + Model.Id
-                          });} 
+                          });}
                     </div>
                 </div>
             </div>

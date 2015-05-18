@@ -11,9 +11,7 @@ using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
-using Microsoft.AspNet.Identity;
 using Model;
-using Model.Activity;
 using Model.FineUploader;
 using PagedList;
 
@@ -33,8 +31,7 @@ namespace iCollab.Controllers
             IUserService userService, 
             IAttachmentService attachmentService,
             IMapper<ContentPage, DocumentContentPageViewModel> contentPageMapper
-            )
-            : base(userService, appSettings)
+            ) : base(userService, appSettings)
         {
             _service = service;
             _attachmentService = attachmentService;

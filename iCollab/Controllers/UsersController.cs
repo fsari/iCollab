@@ -39,6 +39,14 @@ namespace iCollab.Controllers
             return Json(users, JsonRequestBehavior.AllowGet);
         }
 
+        [ChildActionOnly]
+        public ActionResult RenderUserImage(string username)
+        {
+            var user = _userService.GetCurrentUser(username);
+
+            return PartialView("_RenderUserImage",user);
+        }
+
         public ActionResult GetProjectUsers(Guid projectId)
         {
             var userIds = _userService.GetProjectUsers(projectId);

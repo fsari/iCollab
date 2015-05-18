@@ -101,7 +101,7 @@ namespace iCollab.Infra
         {
             return _userManager.IsInRole(userId, "manager");
         }
-
+         
         public IQueryable<ApplicationUser> GetAllUsers()
         {
             return _uow.Context.Set<ApplicationUser>();

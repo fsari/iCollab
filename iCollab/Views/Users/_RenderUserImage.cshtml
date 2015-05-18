@@ -1,0 +1,10 @@
+﻿@model iCollab.ViewModels.AppUserViewModel
+
+@if (Model.Picture != null)
+{
+    <img src="@Model.Picture.Path" class="direct-chat-img" alt="User Image" />
+}
+else
+{
+    <img src="/Assets/dist/img/sb.png" class="direct-chat-img" alt="User Image" />
+}
