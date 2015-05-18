@@ -1,4 +1,5 @@
-﻿@using iCollab.ViewModels 
+﻿@using Core.Extensions
+@using iCollab.ViewModels 
 @using Microsoft.AspNet.Identity
 @model Model.Document
 
@@ -27,13 +28,17 @@
                 <div class="box">
                     <div class="box-body">
                         <div>
-                            @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
-
-                             
                             <div class="pull-left">
-                                <i class="glyphicon glyphicon-calendar"></i> @Html.DisplayFor(model => model.DateCreated) <br /> 
-                                @{ Html.RenderAction("RenderUserImage", "Users", new { username = Model.CreatedBy });}  
+                                @{ Html.RenderAction("RenderUserDetails", "Users", new { username = Model.CreatedBy });}
                             </div>
+                            <div class="pull-right">
+                                <strong>@Model.DateCreated.FormatDate()</strong>
+                            </div> 
+                            <div class="clearfix"></div>
+                            <br /> 
+                            
+                            @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
+                             
                             <div class="pull-right">
                                 @Html.ActionLink("Pdf'e aktar", "ExportAsPdf", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-danger" })
                                 @Html.ActionLink("İçerik ekle", "AddContentPage", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-primary" })

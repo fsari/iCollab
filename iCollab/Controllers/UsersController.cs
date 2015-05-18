@@ -40,7 +40,7 @@ namespace iCollab.Controllers
         }
 
         [ChildActionOnly]
-        public ActionResult RenderUserImage(string username)
+        public ActionResult RenderUserDetails(string username)
         {
             var user = _userService.GetCurrentUser(username);
 

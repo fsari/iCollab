@@ -1,10 +1,20 @@
 ﻿@model iCollab.ViewModels.AppUserViewModel
+<h4>
+    
+    <div class="pull-left">
+        @if (Model.Picture != null)
+        {
+            <img src="@Model.Picture.Path" class="direct-chat-img" alt="User Image" />
+        }
+        else
+        {
+            <img src="/Assets/dist/img/sb.png" class="direct-chat-img" alt="User Image" />
+        }
+    </div>
 
-@if (Model.Picture != null)
-{
-    <img src="@Model.Picture.Path" class="direct-chat-img" alt="User Image" />
-}
-else
-{
-    <img src="/Assets/dist/img/sb.png" class="direct-chat-img" alt="User Image" />
-}
+    <div class="pull-right" style="padding-left: 5px; padding-top: 10px;">
+        @Model.FullName
+    </div> 
+    
+</h4>
+<div class="clearfix"></div>
