@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Data.Entity; 
+using System.Data.Entity;
 using System.Web;
 using System.Web.Mvc;
 using Autofac;
@@ -11,8 +11,8 @@ using Core.Repository;
 using Core.Service;
 using Core.Service.CrudService;
 using Core.Settings;
-using iCollab.Infra; 
-using MemoryCacheT; 
+using iCollab.Infra;
+using MemoryCacheT;
 using Microsoft.Owin.Security;
 using Model;
 using Serilog;
@@ -23,7 +23,7 @@ namespace iCollab
     public class DependencyRegistrar
     {
         public static void RegisterDependencies()
-        {  
+        {
             var builder = new ContainerBuilder();
             builder.RegisterControllers(typeof(MvcApplication).Assembly);
             builder.RegisterAssemblyTypes(typeof(MvcApplication).Assembly).AsImplementedInterfaces();
@@ -41,24 +41,22 @@ namespace iCollab
 
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerRequest();
 
-           
+
             //builder.RegisterType<AppMailer>().As<IAppMailer>().InstancePerRequest();
 
-            /*builder.RegisterGeneric(typeof(CacheManager<,>)).As(typeof(ICacheManager<,>)).SingleInstance();
-            TimeSpan expiration = TimeSpan.FromHours(1);
-
-            builder.RegisterGeneric(typeof(Cache<,>)).As(typeof(ICache<,>)).WithParameter("timerInterval", expiration).SingleInstance();*/
 
             builder.RegisterGeneric(typeof(Mapper<,>)).As(typeof(IMapper<,>)).InstancePerRequest();
 
             builder.RegisterGeneric(typeof(BaseCrudService<>)).As(typeof(ICrudService<>)).InstancePerRequest();
 
-            builder.RegisterType<DocumentService>().As<IDocumentService>().InstancePerRequest(); 
+            builder.RegisterType<DocumentService>().As<IDocumentService>().InstancePerRequest();
             builder.RegisterType<MeetingService>().As<IMeetingService>().InstancePerRequest();
             builder.RegisterType<TaskService>().As<ITaskService>().InstancePerRequest();
-            builder.RegisterType<ProjectService>().As<IProjectService>().InstancePerRequest(); 
+            builder.RegisterType<ProjectService>().As<IProjectService>().InstancePerRequest();
             builder.RegisterType<AttachmentService>().As<IAttachmentService>().InstancePerRequest();
             builder.RegisterType<DependencyService>().As<IDependencyService>().InstancePerRequest();
+
+            builder.RegisterType<SettingService>().As<ISettingService>().InstancePerRequest();
 
             builder.RegisterGeneric(typeof(ActivityService<>)).As(typeof(IActivityService<>)).InstancePerRequest();
 
@@ -73,14 +71,14 @@ namespace iCollab
             builder.RegisterType<ApplicationUserStore<ApplicationUser>>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationSignInManager>().AsSelf().InstancePerLifetimeScope();
-            builder.Register<IAuthenticationManager>(c => HttpContext.Current.GetOwinContext().Authentication).AsSelf(); 
- 
+            builder.Register<IAuthenticationManager>(c => HttpContext.Current.GetOwinContext().Authentication).AsSelf();
+
             var container = builder.Build();
-            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));  
+            DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
 
 
-         
+
     }
 
     public class CachingModule : Module
@@ -99,7 +97,7 @@ namespace iCollab
                 .SingleInstance();
             builder.RegisterType<CacheManager<AspNetCache>>()
                 .Named<ICacheManager>("aspnet")
-                .SingleInstance(); 
+                .SingleInstance();
 
             // Register resolving delegate
             builder.Register<Func<Type, ICache>>(c =>

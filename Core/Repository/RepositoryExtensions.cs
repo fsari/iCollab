@@ -6,8 +6,7 @@ using Model;
 namespace Core.Repository
 {
     public static class RepositoryExtensions
-    {
-
+    { 
         public static IEnumerable<T> LoadAll<T>(this IRepository<T> rs) where T : BaseEntity
         {
             return rs.Collection.AsEnumerable();

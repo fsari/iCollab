@@ -9,6 +9,7 @@ using Core.Logging;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Model;
 using Model.Activity;
+using Model.Settings;
 using Model.TodoList;
 
 namespace iCollab.Infra
@@ -35,6 +36,8 @@ namespace iCollab.Infra
         public IDbSet<ContentPage> ContentPages { set; get; }
         public IDbSet<Activity> Activities { set; get; }
         public IDbSet<Dependency> Dependencies{ set; get; }
+
+        public IDbSet<Setting> Settings { set; get; }
 
         public override int SaveChanges()
         {

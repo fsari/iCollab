@@ -1,0 +1,40 @@
+﻿@model Model.Settings.AppSetting
+
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<aside class="right-side">
+
+    <section class="content-header">
+        <h1> Yeni Toplantı </h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well well-sm">
+                    @using (Html.BeginForm())
+                    {
+                        <div class="form-horizontal">
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.AttachmentPath, new { @class = "control-label col-md-2 required" })
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.AttachmentPath, new { @class = "form-control" })
+                                    @Html.ValidationMessageFor(model => model.AttachmentPath)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Kaydet" class="btn btn-primary" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+</aside>

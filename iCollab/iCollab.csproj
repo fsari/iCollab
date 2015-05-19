@@ -45,6 +45,10 @@
     <Reference Include="Autofac.Integration.Mvc">
       <HintPath>..\packages\Autofac.Mvc5.3.3.3\lib\net45\Autofac.Integration.Mvc.dll</HintPath>
     </Reference>
+    <Reference Include="Fasterflect, Version=2.1.3.0, Culture=neutral, PublicKeyToken=38d18473284c1ca7, processorArchitecture=MSIL">
+      <HintPath>..\packages\fasterflect.2.1.3\lib\net40\Fasterflect.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Kendo.Mvc">
       <HintPath>C:\Program Files (x86)\Telerik\UI for ASP.NET MVC Q1 2015\wrappers\aspnetmvc\Binaries\Mvc5\Kendo.Mvc.dll</HintPath>
     </Reference>
@@ -198,6 +202,7 @@
     <Compile Include="Controllers\MeetingsController.cs" />
     <Compile Include="Controllers\ProjectsController.cs" />
     <Compile Include="Controllers\GanttController.cs" />
+    <Compile Include="Controllers\SettingsController.cs" />
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Controllers\TodosController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
@@ -213,6 +218,8 @@
     <Compile Include="Infra\ApplicationUserStore.cs" />
     <Compile Include="Infra\DataContext.cs" />
     <Compile Include="Infra\IUserService.cs" />
+    <Compile Include="Infra\StoreDependingSettingData.cs" />
+    <Compile Include="Infra\StoreDependingSettingHelper.cs" />
     <Compile Include="Infra\UserService.cs" />
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
@@ -1925,6 +1932,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Views\Users\_RenderUserImage.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Views\Settings\Index.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -11,6 +14,183 @@ namespace Core.Extensions
 {
     public static class ConversionExtensions
     { 
+		private readonly static IDictionary<Type, TypeConverter> s_customTypeConverters;
+
+		static ConversionExtensions() 
+		{
+			var intConverter = new GenericListTypeConverter<int>();
+			var decConverter = new GenericListTypeConverter<decimal>();
+			var stringConverter = new GenericListTypeConverter<string>();  
+
+			s_customTypeConverters = new Dictionary<Type, TypeConverter>();
+			s_customTypeConverters.Add(typeof(List<int>), intConverter);
+			s_customTypeConverters.Add(typeof(IList<int>), intConverter);
+			s_customTypeConverters.Add(typeof(List<decimal>), decConverter);
+			s_customTypeConverters.Add(typeof(IList<decimal>), decConverter);
+			s_customTypeConverters.Add(typeof(List<string>), stringConverter);
+			s_customTypeConverters.Add(typeof(IList<string>), stringConverter); 
+		}
+
+
+        internal static TypeConverter GetTypeConverter(Type type)
+        {
+            TypeConverter converter;
+            if (s_customTypeConverters.TryGetValue(type, out converter))
+            {
+                return converter;
+            }
+            return TypeDescriptor.GetConverter(type);
+        }
+
+
+        public static T Convert<T>(this object value)
+        {
+            return (T)Convert(value, typeof(T));
+        }
+
+        public static T Convert<T>(this object value, CultureInfo culture)
+        {
+            return (T)Convert(value, typeof(T), culture);
+        }
+
+        public static object Convert(this object value, Type to)
+        {
+            return value.Convert(to, CultureInfo.InvariantCulture);
+        }
+
+
+        public static object Convert(this object value, Type to, CultureInfo culture)
+        {
+            Guard.ArgumentNotNull(to, "to");
+
+            if (value == null || to.IsInstanceOfType(value))
+            {
+                return value;
+            }
+
+            // array conversion results in four cases, as below
+            Array valueAsArray = value as Array;
+            if (to.IsArray)
+            {
+                Type destinationElementType = to.GetElementType();
+                if (valueAsArray != null)
+                {
+                    // case 1: both destination + source type are arrays, so convert each element
+                    IList valueAsList = (IList)valueAsArray;
+                    IList converted = Array.CreateInstance(destinationElementType, valueAsList.Count);
+                    for (int i = 0; i < valueAsList.Count; i++)
+                    {
+                        converted[i] = valueAsList[i].Convert(destinationElementType, culture);
+                    }
+                    return converted;
+                }
+                else
+                {
+                    // case 2: destination type is array but source is single element, so wrap element in array + convert
+                    object element = value.Convert(destinationElementType, culture);
+                    IList converted = Array.CreateInstance(destinationElementType, 1);
+                    converted[0] = element;
+                    return converted;
+                }
+            }
+            else if (valueAsArray != null)
+            {
+                // case 3: destination type is single element but source is array, so extract first element + convert
+                IList valueAsList = (IList)valueAsArray;
+                if (valueAsList.Count > 0)
+                {
+                    value = valueAsList[0];
+                }
+                // .. fallthrough to case 4
+            }
+            // case 4: both destination + source type are single elements, so convert
+
+            Type fromType = value.GetType();
+
+            //if (to.IsInterface || to.IsGenericTypeDefinition || to.IsAbstract)
+            //	throw Error.Argument("to", "Target type '{0}' is not a value type or a non-abstract class.", to.FullName);
+
+            // use Convert.ChangeType if both types are IConvertible
+            if (value is IConvertible && typeof(IConvertible).IsAssignableFrom(to))
+            {
+                if (to.IsEnum)
+                {
+                    if (value is string)
+                        return Enum.Parse(to, value.ToString(), true);
+                    else if (fromType.IsInteger())
+                        return Enum.ToObject(to, value);
+                }
+
+                return System.Convert.ChangeType(value, to, culture);
+            }
+
+            if (value is DateTime && to == typeof(DateTimeOffset))
+                return new DateTimeOffset((DateTime)value);
+
+            if (value is string && to == typeof(Guid))
+                return new Guid((string)value);
+
+            // see if source or target types have a TypeConverter that converts between the two
+            TypeConverter toConverter = GetTypeConverter(fromType);
+
+            Type nonNullableTo = to.GetNonNullableType();
+            bool isNullableTo = to != nonNullableTo;
+
+            if (toConverter != null && toConverter.CanConvertTo(nonNullableTo))
+            {
+                object result = toConverter.ConvertTo(null, culture, value, nonNullableTo);
+                return isNullableTo ? Activator.CreateInstance(typeof(Nullable<>).MakeGenericType(nonNullableTo), result) : result;
+            }
+
+            TypeConverter fromConverter = GetTypeConverter(nonNullableTo);
+
+            if (fromConverter != null && fromConverter.CanConvertFrom(fromType))
+            {
+                object result = fromConverter.ConvertFrom(null, culture, value);
+                return isNullableTo ? Activator.CreateInstance(typeof(Nullable<>).MakeGenericType(nonNullableTo), result) : result;
+            }
+
+            // TypeConverter doesn't like Double to Decimal
+            if (fromType == typeof(double) && nonNullableTo == typeof(decimal))
+            {
+                decimal result = new Decimal((double)value);
+                return isNullableTo ? Activator.CreateInstance(typeof(Nullable<>).MakeGenericType(nonNullableTo), result) : result;
+            }
+
+            throw Error.InvalidCast(fromType, to);
+
+            #region OBSOLETE
+            //            TypeConverter converter = TypeDescriptor.GetConverter(to);
+            //            bool canConvertFrom = converter.CanConvertFrom(value.GetType());
+            //            if (!canConvertFrom)
+            //            {
+            //                converter = TypeDescriptor.GetConverter(value.GetType());
+            //            }
+            //            if (!(canConvertFrom || converter.CanConvertTo(to)))
+            //            {
+            //                throw Error.InvalidOperation(@"The parameter conversion from type '{0}' to type '{1}' failed 
+            //                                         because no TypeConverter can convert between these types.",
+            //                                         value.GetType().FullName,
+            //                                         to.FullName);
+            //            }
+
+            //            try
+            //            {
+            //                CultureInfo cultureToUse = culture ?? CultureInfo.CurrentCulture;
+            //                object convertedValue = (canConvertFrom) ?
+            //                     converter.ConvertFrom(null /* context */, cultureToUse, value) :
+            //                     converter.ConvertTo(null /* context */, cultureToUse, value, to);
+            //                return convertedValue;
+            //            }
+            //            catch (Exception ex)
+            //            {
+            //                throw Error.InvalidOperation(@"The parameter conversion from type '{0}' to type '{1}' failed. 
+            //                                         See the inner exception for more information.", ex,
+            //                                         value.GetType().FullName,
+            //                                         to.FullName);
+            //            }
+            #endregion
+        }
 
         #region int
 
