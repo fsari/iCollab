@@ -42,8 +42,9 @@
     <Reference Include="EntityFramework.SqlServer">
       <HintPath>..\packages\EntityFramework.6.1.2\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="MemoryCacheT">
+    <Reference Include="MemoryCacheT, Version=0.2.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MemoryCacheT.0.2.3\lib\net45\MemoryCacheT.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.AspNet.Identity.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -81,6 +82,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Caching" />
     <Reference Include="System.Web" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -114,8 +116,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activities\IActivityService.cs" />
-    <Compile Include="Caching\CacheManager.cs" />
+    <Compile Include="Caching\AspNetCache.cs" />
+    <Compile Include="Caching\DefaultCacheManager.cs" />
+    <Compile Include="Caching\ICache.cs" />
     <Compile Include="Caching\ICacheManager.cs" />
+    <Compile Include="Caching\RequestCache.cs" />
+    <Compile Include="Caching\StaticCache.cs" />
     <Compile Include="Extensions\ConversionExtensions.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
@@ -123,9 +129,14 @@
     <Compile Include="Extensions\QueryableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
+    <Compile Include="Infrastructure\ActionDisposable.cs" />
     <Compile Include="Infrastructure\Error.cs" />
     <Compile Include="Infrastructure\Guard.cs" />
+    <Compile Include="Infrastructure\Threading\LockExtensions.cs" />
+    <Compile Include="Infrastructure\Threading\ReadLockDisposable.cs" />
     <Compile Include="Infrastructure\RegularExpressions.cs" />
+    <Compile Include="Infrastructure\Threading\UpgradeableReadLockDisposable.cs" />
+    <Compile Include="Infrastructure\Threading\WriteLockDisposable.cs" />
     <Compile Include="Logging\ILogger.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Mappers\IMapper.cs" />

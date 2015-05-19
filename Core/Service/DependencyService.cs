@@ -26,8 +26,8 @@ namespace Core.Service
         private readonly IRepository<Dependency> _repository;
 
         public DependencyService(
-            IRepository<Dependency> repository, 
-            ICacheManager<Guid, Dependency> cache,
+            IRepository<Dependency> repository,
+            Func<string, ICacheManager> cache,
             UoW uow)
             : base(repository, cache, uow)
         {

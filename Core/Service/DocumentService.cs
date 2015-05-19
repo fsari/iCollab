@@ -20,18 +20,16 @@ namespace Core.Service
 
     public class DocumentService : BaseCrudService<Document>,IDocumentService
     {
-        private readonly IRepository<Document> _repository;
-        private readonly ICacheManager<Guid, Document> _cache; 
+        private readonly IRepository<Document> _repository; 
         public DocumentService
             (
-                IRepository<Document> repository, 
-                ICacheManager<Guid, Document> cache, 
+                IRepository<Document> repository,
+                Func<string, ICacheManager> cache, 
                 UoW uoW
             )
                 : base(repository, cache, uoW)
             {
-                _repository = repository;
-                _cache = cache; 
+                _repository = repository; 
             }
 
         private Document GetDocumentInstance(Guid id)
@@ -51,19 +49,8 @@ namespace Core.Service
                 return document;
             }
 
-            document = _cache.Get(id);
+            document = Cache.Get(id.ToString(), () => GetDocumentInstance(id));
 
-            if (document == null)
-            {
-                document = GetDocumentInstance(id);
-
-                if (document == null)
-                {
-                    return null; 
-                }
-                _cache.Set(id, document);
-            }
-            
             return document;
         }
 

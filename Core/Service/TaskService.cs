@@ -34,13 +34,13 @@ namespace Core.Service
     public class TaskService : BaseCrudService<Task>, ITaskService
     {
         private readonly IRepository<Task> _repository; 
-        private readonly ICacheManager<Guid, Task> _cache;
+        private readonly ICacheManager _cache;
 
-        public TaskService(IRepository<Task> repository, ICacheManager<Guid, Task> cache, UoW uow)
+        public TaskService(IRepository<Task> repository, Func<string, ICacheManager> cache, UoW uow)
             : base(repository, cache, uow)
         {
             _repository = repository;
-            _cache = cache; 
+            _cache = cache("static"); 
         }
 
         public IQueryable<Task> GetTasksByStatus(TaskStatus status)
@@ -71,16 +71,16 @@ namespace Core.Service
 
             if (nocache)
             {
-                _cache.InvalidateCacheItem(id);
+                _cache.Remove(id.ToString());
 
                 task = GetTaskInstance(id);
                   
                 return task;
             }
 
-            task = _cache.Get(id);
+            task = _cache.Get(id.ToString(), () => GetTaskInstance(id));
 
-            if (task == null)
+            /*if (task == null)
             {
                 task = GetTaskInstance(id);
 
@@ -90,7 +90,7 @@ namespace Core.Service
                 }
 
                 _cache.Set(id, task);
-            }
+            }*/
 
             return task;
         }

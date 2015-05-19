@@ -19,14 +19,12 @@ namespace Core.Service
 
     public class MeetingService : BaseCrudService<Meeting>, IMeetingService
     {
-        private readonly IRepository<Meeting> _repository;
-        private readonly ICacheManager<Guid, Meeting> _cache;
+        private readonly IRepository<Meeting> _repository; 
 
-        public MeetingService(IRepository<Meeting> repository, ICacheManager<Guid, Meeting> cache, UoW uow)
+        public MeetingService(IRepository<Meeting> repository, Func<string, ICacheManager> cache, UoW uow)
             : base(repository, cache, uow)
         {
-            _repository = repository;
-            _cache = cache;
+            _repository = repository; 
         }
 
         private Meeting GetMeetingInstance(Guid id)
@@ -47,20 +45,8 @@ namespace Core.Service
                 return meeting;
             }
 
-            meeting = _cache.Get(id);
-
-            if (meeting == null)
-            {
-                meeting = GetMeetingInstance(id);
-
-                if (meeting == null)
-                {
-                    return null;
-                }
-
-                _cache.Set(id, meeting);
-            }
-
+            meeting = Cache.Get(id.ToString(), () => GetMeetingInstance(id));
+             
             return meeting;
         }
 

@@ -10,17 +10,17 @@ namespace Core.Service.CrudService
     public class BaseCrudService<T> : ICrudService<T> where T : BaseEntity, new()
     {
         private readonly IRepository<T> _repository;
-        private readonly ICacheManager<Guid, T> _cache;
+        protected readonly ICacheManager Cache;
         private readonly UoW _uow;
 
         public BaseCrudService
         (
             IRepository<T> repository,
-            ICacheManager<Guid, T> cache, 
+            Func<string, ICacheManager> cache, 
             UoW uow)
         {
             _repository = repository;
-            _cache = cache;
+            Cache = cache("static");
             _uow = uow;
         }
 
@@ -33,7 +33,7 @@ namespace Core.Service.CrudService
              
             var instance = _repository.Add(item);
 
-            _cache.Set(item.Id, item);
+            Cache.Set(item.Id.ToString(), item);
 
             _uow.Commit();
 
@@ -61,7 +61,7 @@ namespace Core.Service.CrudService
                 return default(T);
             }
 
-            _cache.InvalidateCacheItem(item.Id);
+            Cache.Remove(item.Id.ToString());
 
             item.DateEdited = DateTime.Now;
             var instance = _repository.Update(item);
@@ -78,7 +78,7 @@ namespace Core.Service.CrudService
                 throw new ArgumentNullException();
             }
 
-            _cache.InvalidateCacheItem(item.Id);
+            Cache.Remove(item.Id.ToString());
 
             item.DateDeleted = DateTime.Now;
             item.IsDeleted = true;
@@ -96,7 +96,7 @@ namespace Core.Service.CrudService
                 throw new ArgumentNullException();
             }
 
-            _cache.InvalidateCacheItem(item.Id);
+            Cache.Remove(item.Id.ToString());
 
             item.DateDeleted = DateTime.Now;
             item.IsDeleted = true;
@@ -132,7 +132,7 @@ namespace Core.Service.CrudService
 
         public void InvalidateCache(Guid id)
         {
-            _cache.InvalidateCacheItem(id);
+            Cache.Remove(id.ToString());
         }
     }
 }

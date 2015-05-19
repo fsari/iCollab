@@ -40,14 +40,14 @@ namespace iCollab.Infra
     {
         private readonly UoW _uow;
         private readonly ApplicationUserManager _userManager; 
-        private readonly ICacheManager<string, AppUserViewModel> _userCache; 
+        private readonly ICacheManager _userCache; 
 
         public UserService(
                            UoW uow,
                            ApplicationUserManager usermanager,
-                           ICacheManager<string, AppUserViewModel> userCache)
+                           Func<string, ICacheManager> cache)
         {
-            _userCache = userCache;
+            _userCache = cache("static");
             _uow = uow;
             _userManager = usermanager;  
         }
@@ -149,35 +149,34 @@ namespace iCollab.Infra
 
         public AppUserViewModel GetCurrentUser(string userName)
         {
-            AppUserViewModel appUser = _userCache.Get(userName);
+            AppUserViewModel appUser = _userCache.Get(userName, () => GetUserInstance(userName));
+              
+            return appUser;
+        }
 
-            if (appUser == null)
-            { 
-                ApplicationUser user = _uow.Context.Set<ApplicationUser>().Include(a=>a.Picture).AsNoTracking().FirstOrDefault(x => x.UserName == userName);
+        public AppUserViewModel GetUserInstance(string userName)
+        {
+            ApplicationUser user = _uow.Context.Set<ApplicationUser>().Include(a => a.Picture).AsNoTracking().FirstOrDefault(x => x.UserName == userName);
 
-                if (user == null)
-                {
-                    return null;
-                }
-
-                appUser = new AppUserViewModel
-                {
-                    FullName = user.FullName,
-                    Email = user.Email,
-                    IsManager = user.IsManager,
-                    Phone = user.Phone,
-                    Id = user.Id,
-                    Picture = user.Picture,
-                    UserName =  user.UserName
-                };
-
-                appUser.Phone = user.Phone;
-
-                _userCache.Set(userName, appUser);
+            if (user == null)
+            {
+                return null;
             }
+
+            var appUser = new AppUserViewModel
+            {
+                FullName = user.FullName,
+                Email = user.Email,
+                IsManager = user.IsManager,
+                Phone = user.Phone,
+                Id = user.Id,
+                Picture = user.Picture,
+                UserName = user.UserName,
+            };
 
             return appUser;
         }
+
 
         public ApplicationUser Create(ApplicationUser user)
         {

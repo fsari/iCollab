@@ -30,6 +30,8 @@ namespace iCollab
 
             builder.RegisterModule(new AutofacWebTypesModule());
 
+            builder.RegisterModule(new CachingModule());
+
             builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>();
 
             builder.RegisterType<DataContext>().As<DbContext>().InstancePerRequest();
@@ -39,12 +41,13 @@ namespace iCollab
 
             builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerRequest();
 
-            builder.RegisterGeneric(typeof(CacheManager<,>)).As(typeof(ICacheManager<,>)).SingleInstance();
+           
             //builder.RegisterType<AppMailer>().As<IAppMailer>().InstancePerRequest();
 
+            /*builder.RegisterGeneric(typeof(CacheManager<,>)).As(typeof(ICacheManager<,>)).SingleInstance();
             TimeSpan expiration = TimeSpan.FromHours(1);
 
-            builder.RegisterGeneric(typeof(Cache<,>)).As(typeof(ICache<,>)).WithParameter("timerInterval", expiration).SingleInstance();
+            builder.RegisterGeneric(typeof(Cache<,>)).As(typeof(ICache<,>)).WithParameter("timerInterval", expiration).SingleInstance();*/
 
             builder.RegisterGeneric(typeof(Mapper<,>)).As(typeof(IMapper<,>)).InstancePerRequest();
 
@@ -75,6 +78,47 @@ namespace iCollab
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));  
         }
+
+
          
+    }
+
+    public class CachingModule : Module
+    {
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.RegisterType<StaticCache>().Keyed<ICache>(typeof(StaticCache)).SingleInstance();
+            builder.RegisterType<AspNetCache>().Keyed<ICache>(typeof(AspNetCache)).SingleInstance();
+            builder.RegisterType<RequestCache>().Keyed<ICache>(typeof(RequestCache)).InstancePerRequest();
+
+            builder.RegisterType<CacheManager<RequestCache>>()
+                .As<ICacheManager>()
+                .InstancePerRequest();
+            builder.RegisterType<CacheManager<StaticCache>>()
+                .Named<ICacheManager>("static")
+                .SingleInstance();
+            builder.RegisterType<CacheManager<AspNetCache>>()
+                .Named<ICacheManager>("aspnet")
+                .SingleInstance(); 
+
+            // Register resolving delegate
+            builder.Register<Func<Type, ICache>>(c =>
+            {
+                var cc = c.Resolve<IComponentContext>();
+                return keyed => cc.ResolveKeyed<ICache>(keyed);
+            });
+
+            builder.Register<Func<string, ICacheManager>>(c =>
+            {
+                var cc = c.Resolve<IComponentContext>();
+                return named => cc.ResolveNamed<ICacheManager>(named);
+            });
+
+            builder.Register<Func<string, Lazy<ICacheManager>>>(c =>
+            {
+                var cc = c.Resolve<IComponentContext>();
+                return named => cc.ResolveNamed<Lazy<ICacheManager>>(named);
+            });
+        }
     }
 }

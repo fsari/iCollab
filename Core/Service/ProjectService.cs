@@ -30,17 +30,15 @@ namespace Core.Service
 
     public class ProjectService : BaseCrudService<Project>, IProjectService
     {
-        private readonly IRepository<Project> _repository;
-        private readonly ICacheManager<Guid, Project> _cache; 
+        private readonly IRepository<Project> _repository; 
 
         public ProjectService(
-            IRepository<Project> repository, 
-            ICacheManager<Guid, Project> cache, 
+            IRepository<Project> repository,
+            Func<string, ICacheManager> cache, 
             UoW uow
             )
             : base(repository, cache, uow)
-        {
-            _cache = cache; 
+        { 
             _repository = repository;
         }
          
@@ -80,21 +78,9 @@ namespace Core.Service
 
                 return project;
             }
-            
-            project = _cache.Get(id);
 
-            if (project == null)
-            {
-                project = GetProjectInstance(id);
-
-                if (project == null)
-                {
-                    return null;
-                }
-
-                _cache.Set(id, project);
-            }
-
+            project = Cache.Get(id.ToString(), () => GetProjectInstance(id));
+             
             return project;
         }
 
