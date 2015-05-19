@@ -63,9 +63,7 @@ namespace iCollab.Controllers
         {
             var projects = _projectService.GetUserProjects(AppUser.Id).ToPagedList(1, AppSettings.IndexPageSize);
 
-            var pageOfprojectViewModels = _mapper.ToEntities(projects);
-
-            return Json(pageOfprojectViewModels.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+            return Json(projects.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]
@@ -408,7 +406,7 @@ namespace iCollab.Controllers
 
             var createdBy = _userService.FindByUsername(project.CreatedBy);
 
-            viewModel.CreatedBy = _userMapper.ToEntity(createdBy);
+            viewModel.CreatedBy = createdBy.UserName;
 
             viewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
 

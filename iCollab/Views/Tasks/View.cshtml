@@ -1,5 +1,6 @@
 ﻿@using iCollab.Infra.Extensions
 @using iCollab.ViewModels 
+@using Microsoft.AspNet.Identity
 @using Model 
 @model TaskViewModel
 @{
@@ -9,7 +10,7 @@
 <aside class="right-side">
     <section class="content-header">
         <h1 class="pull-left">
-            @Model.Title 
+            <a href="/Tasks">Görevler </a> <i class="fa fa-angle-double-right"></i> @Model.Title 
             
             @if (Model.IsLate)
             {
@@ -17,12 +18,14 @@
             }
         </h1>
         <div class="pull-right">
-            @if (Model.TaskStatus != TaskStatus.Tamamlandı)
+            
+            @if (Model.TaskOwner.UserName == User.Identity.GetUserName())
             {
-                @Html.ActionLink("Düzenle", "Edit", new { id = Model.Id }, new { @class = "btn btn-default btn-sm" })
-                @Html.ActionLink("Sil", "Delete", "Tasks", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Silmek istediğinize emin misiniz?');" })
+                <a href="/Tasks/Edit/@Model.Id"><i class="glyphicon glyphicon-edit"></i></a>
+                <a href="/Tasks/Delete/@Model.Id" onclick="return confirm('Silmek istediğinize emin misiniz?');"><i class="glyphicon glyphicon-trash btn-lg"></i></a>
             }
-            @Html.ActionLink("Tüm Görevler", "Index", null, new { @class = "btn btn-primary btn-sm" })
+            <a href="/Tasks/Index"><i class="glyphicon glyphicon-list btn-lg"></i></a> 
+
         </div>
         <div class="clearfix"></div>
     </section>

@@ -12,7 +12,16 @@
 <aside class="right-side">
 
     <section class="content-header">
-        
+        <h1 class="pull-left"><a href="/Projects">Projeler</a> <i class="fa fa-angle-double-right"></i> @Model.Title</h1>
+        <div class="pull-right">
+            @if (Model.CreatedBy == User.Identity.GetUserName())
+            {
+                <a href="/Projects/Edit/@Model.Id"><i class="glyphicon glyphicon-edit"></i></a>
+                <a href="/Projects/Delete/@Model.Id" onclick="return confirm('Silmek istediğinize emin misiniz?');"><i class="glyphicon glyphicon-trash btn-lg"></i></a>
+            }
+            <a href="/Projects/Index"><i class="glyphicon glyphicon-list btn-lg"></i></a>
+        </div>
+        <div class="clearfix"></div>
     </section>
 
     <section class="content">
@@ -22,35 +31,14 @@
                     <div class="col-md-12">
                         <div class="box"> 
                             <div class="box-body table-responsive no-padding" style="margin-left: 10px;">
-                                
+
                                 <div class="pull-left">
-                                    <h1>@Model.Title</h1> 
+                                    @{ Html.RenderAction("RenderUserDetails", "Users", new { username = Model.CreatedBy });}
                                 </div>
                                 <div class="pull-right">
-                                    @if (Model.Status != ProjectStatus.Bitti)
-                                    {
-                                        <a href="/Projects/Edit/@Model.Id"><i class="glyphicon glyphicon-edit"></i></a>
-                                        <a href="/Projects/Delete/@Model.Id" onclick="return confirm('Silmek istediğinize emin misiniz?');"><i class="glyphicon glyphicon-trash btn-lg"></i></a>
-                                    }
-                                    <a href="/Projects/Index"><i class="glyphicon glyphicon-list btn-lg"></i></a>
+                                    <strong>@Model.DateCreated.FormatDate()</strong>
                                 </div>
-                                <div class="clearfix"></div>
-                                
-                                <div class="info-box">
-                                    <div class="info-box-content">
-                                        Oluşturan :
-                                        @if (Model.CreatedBy.Picture != null)
-                                        {
-                                            <img src="@Model.CreatedBy.Picture.Path" class="img-rounded img-responsive" alt="User Image" width="30" />
-                                        }
-                                        else
-                                        {
-                                            <text>@Model.CreatedBy.UserName</text>
-                                        }
-                                        ,
-                                        @Model.DateCreated.FormatDate()
-                                    </div>
-                                </div>
+                                <div class="clearfix"></div> 
 
                                 <div class="progress">
                                     @if (Model.Status == ProjectStatus.Bitti)
@@ -62,9 +50,8 @@
                                         <div class="progress-bar progress-bar-aqua" style="width:  @Model.Progress()%"><span class="badge bg-navy">@Model.Progress()%</span></div>
                                     }
                                 </div>
-                                <br/>
 
-                                @Html.Raw(HttpUtility.HtmlDecode(Model.Description)) <br />
+                                <br/>  
 
                                 <div style="margin-right: 10px;">
                                     <div class="pull-left"> 
@@ -79,8 +66,7 @@
                                         
                                     </div>
                                     <div class="pull-right">
-                                        <strong>Oluşturulma Zamanı : </strong> @Model.DateCreated.FormatDate() <br />
-                                        
+                                         
                                         @if (Model.StartDatetime.HasValue)
                                         {
                                             <strong>Başlangıç : </strong> @Html.DisplayFor(m => m.StartDatetime) <br />
@@ -94,6 +80,8 @@
 
                                     <div class="clearfix"></div>
                                 </div>
+                                <br/>
+                                @Html.Raw(HttpUtility.HtmlDecode(Model.Description)) <br />
 
                                 <div class="clearfix"></div>
 
@@ -110,7 +98,7 @@
                                         }
                                     </div>
                                     <div class="pull-right">
-                                        @if (Model.CreatedBy.UserName == User.Identity.GetUserName() && (Model.Status != ProjectStatus.Bitti || Model.Status != ProjectStatus.Iptal))
+                                        @if (Model.CreatedBy == User.Identity.GetUserName() && (Model.Status != ProjectStatus.Bitti || Model.Status != ProjectStatus.Iptal))
                                         {
                                             @Html.ActionLink("Projeyi Bitir", "Finish", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Projeyi bitirmek istediginizden emin misiniz?');" })
                                             @Html.ActionLink("Projeyi iptal et", "CancelProject", new { id = Model.Id }, new { @class = "btn btn-warning btn-sm", onclick = "return confirm('Projeyi iptal etmek istediginizden emin misiniz?');" })

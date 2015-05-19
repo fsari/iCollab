@@ -8,16 +8,14 @@
 } 
 <aside class="right-side">
     <section class="content-header">
-        <h1 class="pull-left"><a href="/Documents">Dokumanlar</a> <i class="fa fa-angle-double-right"></i> @Model.Title</h1>
-        <div class="pull-right">
-            
+        <h1 class="pull-left"><a href="/Documents">Dökümanlar</a> <i class="fa fa-angle-double-right"></i> @Model.Title</h1>
+        <div class="pull-right"> 
             @if (Model.CreatedBy == User.Identity.GetUserName())
             {
-                @Html.ActionLink("Duzenle", "Edit", "Documents", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm" })
-                @Html.ActionLink("Sil", "Delete", "Documents", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Silmek istediğinizden emin misiniz ?');" })
-                @Html.ActionLink("Dökümanlar", "Index", "Documents", new { id = Model.Id }, new { @class = "btn btn-info btn-sm" })
-            } 
-
+                <a href="/Documents/Edit/@Model.Id"><i class="glyphicon glyphicon-edit"></i></a>
+                <a href="/Documents/Delete/@Model.Id" onclick="return confirm('Silmek istediğinize emin misiniz?');"><i class="glyphicon glyphicon-trash btn-lg"></i></a> 
+            }  
+            <a href="/Documents/Index"><i class="glyphicon glyphicon-list btn-lg"></i></a>
         </div>
         <div class="clearfix"></div>
     </section>
@@ -75,10 +73,18 @@
                                     <button class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-plus"></i></button>
                                 </div> 
                             </div>
-                            <div class="box-body">
+                            <div class="box-body"> 
+                                <div class="pull-left">
+                                    @{ Html.RenderAction("RenderUserDetails", "Users", new { username = Model.CreatedBy });}
+                                </div>
+                                <div class="pull-right">
+                                    <strong>@Model.DateCreated.FormatDate()</strong>
+                                </div>
+                                <div class="clearfix"></div>
+
                                 @Html.Raw(HttpUtility.HtmlDecode(item.Description))
                                 @Html.ActionLink("Düzenle", "EditContentPage", "Documents", new { documentId = Model.Id, contentPageId = item.Id }, new { @class = "btn btn-sm btn-warning" })
-                                @Html.ActionLink("Sil", "DeleteContentPage", "Documents", new { documentId = Model.Id, contentPageId = item.Id }, new { @class = "btn btn-sm btn-warning", onclick = "return confirm('Silmek istediğinizden emin misiniz ?');" })
+                                @Html.ActionLink("Sil", "DeleteContentPage", "Documents", new { documentId = Model.Id, contentPageId = item.Id }, new { @class = "btn btn-sm btn-danger", onclick = "return confirm('Silmek istediğinizden emin misiniz ?');" })
                             </div> 
                         </div> 
                     </div>

@@ -35,7 +35,7 @@
                             .Name("grid")
                             .Columns(columns =>
                             {
-                                columns.Bound(p => p.Title).Groupable(false).Filterable(true).ClientTemplate("<a href='/Tasks/View/#= Id#'>#=Title#</a>").Title("Proje");
+                                columns.Bound(p => p.Title).Groupable(false).Filterable(true).ClientTemplate("<a href='/Tasks/View/#= Id#'>#=Title#</a>").Title("Görev");
                                 columns.Bound(c => c.Start).Width(220).Title("Başlangıç");
                                 columns.Bound(c => c.End).Width(220).Title("Bitiş"); 
                                 columns.Bound(c => c.Priority).Width(220).Title("Öncelik");

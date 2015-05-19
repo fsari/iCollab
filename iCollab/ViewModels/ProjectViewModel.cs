@@ -63,7 +63,8 @@ namespace iCollab.ViewModels
         public Priority Priority { set; get; }
 
         [Display(Name = "Oluşturan")]
-        public AppUserViewModel CreatedBy { set; get; }
+        public string CreatedBy { set; get; }
+
         [Display(Name = "Oluşturan")]
         public string ProjectOwner { get; set; }
 
