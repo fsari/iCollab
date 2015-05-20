@@ -191,7 +191,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            Task task = _service.GetTask(id.Value);
+            Task task = _service.GetTask(id.Value, true);
 
             if (task == null)
             {
@@ -203,14 +203,12 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             } 
             // TODO : Alert user.
-            ApplicationUser user = _userService.FindByUsername(task.CreatedBy);
 
             task.TaskStatus = TaskStatus.İade;
             task.IsProcessed = true;
             task.DateCompleted = DateTime.Now;
 
-            //TODO : alert task owner
-            //task.TaskOwner = user.UserName;
+            //TODO : alert task owner 
 
             _service.Update(task);
 
