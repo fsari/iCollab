@@ -1,0 +1,48 @@
+﻿@model IPagedList<Model.Task>
+@{
+    ViewBag.Title = "Geciken Görevler";
+}
+@using System.Linq
+@using Model
+@using PagedList.Mvc;
+@using PagedList;
+
+<aside class="right-side">
+
+    <section class="content-header">
+        <h1>Oluşturdugum Görevler</h1>
+    </section>
+
+    <section class="content">
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="box">
+                    <div class="box-header">
+
+                        @{Html.RenderPartial("_TaskMenu");}
+
+                        <div class="pull-right" style="margin:10px;"><label class="label label-info">@Model.TotalItemCount Görev</label></div>
+                    </div>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        { Html.RenderPartial("_TaskTable", Model); }
+                    }
+                    else
+                    {
+                        <div class="callout callout-info">
+                            Geç kalan bir görev yok.
+                        </div>
+                    }
+
+                    <div class="box-footer">
+                        @Html.PagedListPager(Model, page => Url.Action("My", "Tasks", new { page }))
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</aside>
+
+
+

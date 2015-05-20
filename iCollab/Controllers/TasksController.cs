@@ -50,7 +50,7 @@ namespace iCollab.Controllers
           
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var tasks = _service.GetUserTasks(AppUser.Id);
+            var tasks = _service.GetTasks();
             return Json(tasks.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         } 
          
@@ -141,6 +141,15 @@ namespace iCollab.Controllers
         }
 
         public ActionResult My(int? page)
+        {
+            int pagenumber = page ?? 1;
+
+            IPagedList<Task> tasks = _service.GetUserTasks(AppUser.Id).ToPagedList(pagenumber, AppSettings.PageSize);
+
+            return View(tasks);
+        }
+
+        public ActionResult ByMe(int? page)
         {
             int pagenumber = page ?? 1;
 

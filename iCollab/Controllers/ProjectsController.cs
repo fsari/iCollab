@@ -61,7 +61,7 @@ namespace iCollab.Controllers
          
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var projects = _projectService.GetUserProjects(AppUser.Id).ToPagedList(1, AppSettings.IndexPageSize);
+            var projects = _projectService.GetProjects();
 
             return Json(projects.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
