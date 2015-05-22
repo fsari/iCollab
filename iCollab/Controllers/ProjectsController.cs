@@ -156,12 +156,7 @@ namespace iCollab.Controllers
             if (project == null)
             {
                 return HttpNotFound();
-            }
-
-            if (_projectService.ProjectUser(AppUser.Id, projectId.Value) == false)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            } 
 
             var documentViewModel = new MeetingViewModel {ProjectId = project.Id, DateTime = DateTime.Now.Date};
 
@@ -183,12 +178,7 @@ namespace iCollab.Controllers
             if (project == null)
             {
                 return HttpNotFound();
-            }
-
-            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            } 
 
             Meeting meeting = _meetingMapper.ToModel(meetingViewModel); 
 
@@ -218,12 +208,7 @@ namespace iCollab.Controllers
             if (project == null)
             {
                 return HttpNotFound();
-            }
-
-            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            } 
 
             var documentViewModel = new DocumentViewModel {ProjectId = project.Id};
 
@@ -243,11 +228,6 @@ namespace iCollab.Controllers
             if (project == null)
             {
                 return HttpNotFound();
-            }
-
-            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             Document document = _documentMapper.ToModel(documentViewModel); 
@@ -284,12 +264,7 @@ namespace iCollab.Controllers
             if (project.IsDeleted)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            } 
 
             if (project.Status == ProjectStatus.Bitti || project.Status == ProjectStatus.Iptal)
             {
@@ -323,12 +298,7 @@ namespace iCollab.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-
-            // TODO ; ADD THIS TO TASK ALSO, MAY BE NOT??
-            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+             
 
             if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
             {
@@ -386,12 +356,7 @@ namespace iCollab.Controllers
             if (project.IsDeleted)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            if (_projectService.ProjectUser(AppUser.Id, project.Id) == false)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
+            } 
 
             var projectUsers = project.ProjectUsers.Select(x=>x.UserId);
 

@@ -16,8 +16,7 @@ namespace iCollab
             app.UseCookieAuthentication(new CookieAuthenticationOptions
             {
                 AuthenticationType = DefaultAuthenticationTypes.ApplicationCookie,
-                LoginPath = new PathString("/Account/Login"),
-                ExpireTimeSpan = TimeSpan.FromHours(30),
+                LoginPath = new PathString("/Account/Login"), 
                 SlidingExpiration = true,
                 CookieName = "dev",
                 Provider = new CookieAuthenticationProvider
@@ -27,7 +26,13 @@ namespace iCollab
                         validateInterval: TimeSpan.FromMinutes(30),
                         regenerateIdentity: (manager, user) => user.GenerateUserIdentityAsync(manager))
                 }
-            });        
+            });
+
+            app.UseExternalSignInCookie(DefaultAuthenticationTypes.ExternalCookie);
+
+            app.UseTwoFactorSignInCookie(DefaultAuthenticationTypes.TwoFactorCookie, TimeSpan.FromMinutes(60));
+
+            app.UseTwoFactorRememberBrowserCookie(DefaultAuthenticationTypes.TwoFactorRememberBrowserCookie);
              
         }
     }
