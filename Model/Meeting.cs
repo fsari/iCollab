@@ -33,6 +33,10 @@ namespace Model
         [Display(Name = "Lokasyon")]
         public string Location{ get; set; }
 
+        public Guid ProjectId { set; get; }
+
+        public Project Project { set; get; }
+
         public ICollection<Attachment> Attachments { get; set; }
           
     }

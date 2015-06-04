@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Core.Logging;
+using Core.Service;
 using Core.Settings;
 using iCollab.Infra;
 using iCollab.Infra.Extensions;

@@ -29,7 +29,7 @@ namespace Core.Service
 
         private Meeting GetMeetingInstance(Guid id)
         {
-            Meeting meeting = _repository.Collection.Include(a => a.Attachments).FirstOrDefault(i => i.Id == id);
+            Meeting meeting = _repository.Collection.Include(p => p.Project).Include(a => a.Attachments).FirstOrDefault(i => i.Id == id);
 
             return meeting;
         }

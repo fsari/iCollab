@@ -5,6 +5,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Core.Infrastructure;
+using Core.Service;
 using iCollab.Infra;
 using iCollab.ViewModels;
 using Microsoft.AspNet.Identity;

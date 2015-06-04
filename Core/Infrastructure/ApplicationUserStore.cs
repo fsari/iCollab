@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Entity;
-using System.Linq;
-using System.Web;
+﻿using System.Data.Entity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Model;
 
-namespace iCollab.Infra
+namespace Core.Infrastructure
 {
     public class ApplicationUserStore<TUser> : UserStore<TUser> where TUser : ApplicationUser
     {

@@ -1,4 +1,5 @@
 ﻿using System;
+using Core.Infrastructure;
 using iCollab.Infra;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;

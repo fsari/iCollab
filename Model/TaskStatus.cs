@@ -1,11 +1,18 @@
-﻿namespace Model
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Model
 {
     public enum TaskStatus
     {
-        Planlandı = 1,
-        Aktif = 2,
-        Tamamlandı = 4, 
-        Durduruldu = 8,
-        İptal = 16
+        [Display(Name = "Planlandı")]
+        Planlandı = 0,
+        [Display(Name = "Aktif")]
+        Aktif = 1,
+        [Display(Name = "Tamamlandı")]
+        Tamamlandı = 2,
+        [Display(Name = "Durduruldu")]
+        Durduruldu = 4,
+        [Display(Name = "İptal")]
+        Iptal = 8
     }
 }

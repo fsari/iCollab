@@ -20,7 +20,7 @@ namespace iCollab.Infra.Extensions
                 return "label label-primary";
             }
 
-            if (status == TaskStatus.İptal)
+            if (status == TaskStatus.Iptal)
             {
                 return "label label-danger";
             }

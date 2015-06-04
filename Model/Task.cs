@@ -52,10 +52,12 @@ namespace Model
         public Guid? ParentTaskId { set; get; }
         public decimal PercentComplete { get; set; }
         public int OrderId { get; set; }
-        public TaskType TaskType { set; get; }
-
+        public TaskType TaskType { set; get; } 
         public string TaskOwnerId { set; get; }
         public ApplicationUser TaskOwner { set; get; }
+
+        [NotMapped]
+        public List<string> SelectedUsers { set; get; }
 
         [NotMapped]
         public bool IsLate {
@@ -74,16 +76,21 @@ namespace Model
 
     public enum TaskType
     {
+        [Display(Name = "Genel")]
         General = 0,
-        Development = 1, 
+        [Display(Name = "Geliştirme")]
+        Development = 1,
+        [Display(Name = "Bug")]
         Bug = 2,
-        Update = 3,
+        [Display(Name = "Değişiklik isteği")]
         ChangeRequest = 4,
-        Idea = 5,
-        Enhancement = 6,
-        Research = 7,
-        Maintenance = 8,
-        QualityAssurance = 9,
-        Release = 10
+        [Display(Name = "İyileştirme")]
+        Enhancement = 8,
+        [Display(Name = "Bakım")]
+        Maintenance = 16,
+        [Display(Name = "Q/A")]
+        QualityAssurance = 32,
+        [Display(Name = "Deploy")]
+        Release = 64
     }
 }

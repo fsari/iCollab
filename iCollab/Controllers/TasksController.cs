@@ -321,16 +321,21 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Task task = _mapper.ToModel(taskViewModel); 
+            Task task = _mapper.ToModel(taskViewModel);
 
-            var parentTask = _service.GetTask(taskViewModel.ParentTaskId.Value, nocache: true);
+            if (task.ParentTaskId.HasValue == false)
+            {
+                throw new Exception("Parent task Id can not be null.");
+            }
+
+            var parentTask = _service.GetTask(task.ParentTaskId.Value, nocache: true);
 
             if (parentTask.SubTasks == null)
             {
                 parentTask.SubTasks = new List<Task>();
             }
 
-            task.ParentTaskId = taskViewModel.ParentTaskId;
+            task.ParentTaskId = task.ParentTaskId.Value;
             task.ParentTask = parentTask;
 
             var taskUser = _userService.FindById(AppUser.Id);
@@ -380,21 +385,22 @@ namespace iCollab.Controllers
                 return View(taskViewModel);
             }
              
-            Task task = _mapper.ToModel(taskViewModel);  
+            Task task = _mapper.ToModel(taskViewModel);
+            task.TaskOwnerId = AppUser.Id;
+
+            var taskOwner = _userService.FindById(task.TaskOwnerId);
+            task.TaskOwner = taskOwner;
+
+            task.TaskOwnerId = taskOwner.Id; 
+
+            _service.Create(task);
 
             if (task.TaskUsers == null)
             {
                 task.TaskUsers = new Collection<TaskUser>();
             }
 
-            var taskUser = _userService.FindById(AppUser.Id);
-
-            task.TaskOwner = taskUser;
-            task.TaskOwnerId = taskUser.Id;
-
-            _service.Create(task);
-
-            task.TaskUsers.AddRange(taskViewModel.SelectedUsers.Select(x => new TaskUser { UserId = x }));
+            task.TaskUsers.AddRange(task.SelectedUsers.Select(x => new TaskUser { UserId = x }));
 
             _service.Update(task);
             

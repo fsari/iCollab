@@ -42,6 +42,10 @@
                             @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
                             
                             <br />
+                            @if (Model.Project != null)
+                            {
+                               <strong>ilgili proje: </strong> <a href="/Projects/View/@Model.ProjectId">@Model.Project.Title</a><br />
+                            }
                             <i class="fa fa-location-arrow"></i> <label class="label label-danger">@Model.Location</label><br />
                             <i class="glyphicon glyphicon-calendar"></i> <label class="label label-success"> @Model.DateTime </label><br />
                             <i class="fa fa-users"></i> <label class="label label-primary">@Model.Attendees </label> <br />

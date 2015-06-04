@@ -2,6 +2,8 @@
 @using iCollab.ViewModels 
 @using Microsoft.AspNet.Identity
 @using Model 
+@using Core.Extensions
+
 @model TaskViewModel
 @{
     ViewBag.Title = Model.Title;
@@ -56,7 +58,7 @@
                                 <strong>Proje : </strong>
                                 @Html.ActionLink(Model.Project.Title, "View", "Projects", new { id = Model.Project.Id }, null)<br />
                             }
-                            <strong>Durumu : </strong><span class="@Model.TaskStatus.CssClass()"> @Model.TaskStatus</span> <br />
+                            <strong>Durumu : </strong><span class="@Model.TaskStatus.CssClass()"> @Model.TaskStatus.DisplayName()</span> <br />
                             <strong>Önceliği :</strong><span class="@Model.Priority.CssClass()">@Model.Priority </span> <br />
                             <strong>Türü :</strong><span class="label label-primary">@Model.TaskType </span> <br />
                             <strong><i class="fa fa-user"></i> Atananlar: </strong>

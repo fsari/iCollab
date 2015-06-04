@@ -1,10 +1,13 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Data.Entity;
 using System.Linq;  
 using Core.Caching;
 using Core.Extensions;
 using Core.Repository;
 using Core.Service.CrudService;
+using Kendo.Mvc.Extensions;
+using Microsoft.AspNet.Identity;
 using Model;
 
 namespace Core.Service
@@ -16,17 +19,13 @@ namespace Core.Service
         Task GetTask(Guid id, bool nocache = false);
         IQueryable<Task> GetUserTasks(string userId);
         IQueryable<Task> GetTasks();
-        IQueryable<Task> GetLateTasks();
-
-        IQueryable<Task> GetTasksUserCreated(string userId); 
-
+        IQueryable<Task> GetLateTasks(); 
+        IQueryable<Task> GetTasksUserCreated(string userId);  
         int TasksCount();
         bool UserHasAnyTasks(string userId); 
-        IQueryable<Task> Search(string query);
-
+        IQueryable<Task> Search(string query); 
         Task GetNext(Task task);
-        Task GetPrevious(Task task);
-
+        Task GetPrevious(Task task); 
         IQueryable<Task> SearchUserTaks(string query, string userId);
         bool TaskUser(string userId, Guid id);
     } 
@@ -34,14 +33,14 @@ namespace Core.Service
     public class TaskService : BaseCrudService<Task>, ITaskService
     {
         private readonly IRepository<Task> _repository; 
-        private readonly ICacheManager _cache;
+        private readonly ICacheManager _cache; 
 
         public TaskService(IRepository<Task> repository, Func<string, ICacheManager> cache, UoW uow)
             : base(repository, cache, uow)
         {
             _repository = repository;
             _cache = cache("static"); 
-        }
+        } 
 
         public IQueryable<Task> GetTasksByStatus(TaskStatus status)
         {

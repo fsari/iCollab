@@ -1,19 +1,21 @@
-﻿using System; 
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
-using System.Threading.Tasks; 
-using iCollab.Infra;
-using Microsoft.AspNet.Identity; 
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
-using Microsoft.Owin.Security; 
-using Model; 
+using Microsoft.Owin.Security;
+using Model;
 
-namespace iCollab
+namespace Core.Infrastructure
 {
-    
     public class ApplicationUserManager : UserManager<ApplicationUser>
     {
-        public ApplicationUserManager(ApplicationUserStore<ApplicationUser> store ) : base(store)
+        public ApplicationUserManager(ApplicationUserStore<ApplicationUser> store)
+            : base(store)
         {
         }
 

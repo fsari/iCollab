@@ -1,6 +1,8 @@
 ﻿using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
+using Core.Mappers;
+using Core.Service;
 using Core.Settings;
 using iCollab.Infra;
 using iCollab.Infra.Extensions;
@@ -15,19 +17,23 @@ namespace iCollab.Controllers
 
         protected readonly IUserService UserService;
         protected AppUserViewModel AppUser;
-        protected IApplicationSettings AppSettings;
+        protected IApplicationSettings AppSettings; 
 
         public BaseController(IUserService userService, IApplicationSettings appSettings)
         {
             UserService = userService;
-            AppSettings = appSettings;
+            AppSettings = appSettings; 
         }
 
         protected override void OnActionExecuting(ActionExecutingContext filterContext)
         {
             HttpContext.Response.Headers.Add("p3p", "CP=\"IDC DSP COR ADM DEVi TAIi PSA PSD IVAi IVDi CONi HIS OUR IND CNT\"");
 
-            AppUser = UserService.GetCurrentUser(User.Identity.GetUserName());
+            var user = UserService.GetCurrentUser(User.Identity.GetUserName());
+
+            IMapper<ApplicationUser, AppUserViewModel> mapper = new Mapper<ApplicationUser, AppUserViewModel>();
+
+            AppUser = mapper.ToModel(user);
 
             if (UserService.IsUserManager(AppUser.Id))
             {

@@ -24,7 +24,7 @@ namespace Core.Service.CrudService
             _uow = uow;
         }
 
-        public T Create(T item)
+        public virtual T Create(T item)
         {
             if (item == null)
             {

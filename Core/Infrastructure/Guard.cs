@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Net;
+using System.Web.Mvc;
 using Core.Extensions;
 
 namespace Core.Infrastructure
@@ -19,7 +21,7 @@ namespace Core.Infrastructure
 
         private Guard()
         {
-        }
+        } 
 
         /// <summary>
         /// Throws proper exception if the class reference is null.

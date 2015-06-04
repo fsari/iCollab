@@ -2,22 +2,20 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Web.Mvc;
 using Core.Caching;
+using Core.Infrastructure;
 using Core.Repository;
-using iCollab.ViewModels;
 using Microsoft.AspNet.Identity;
-using Microsoft.SqlServer.Server;
 using Model;
 using PagedList;
 
-namespace iCollab.Infra
+namespace Core.Service
 {
 
     public interface IUserService
     {
-        AppUserViewModel GetCurrentUser(string username); 
+        ApplicationUser GetCurrentUser(string username); 
         ApplicationUser FindById(string userId);
         ApplicationUser FindByEmail(string email);
         bool IsUserManager(string userId);
@@ -147,34 +145,18 @@ namespace iCollab.Infra
             return user;
         }
 
-        public AppUserViewModel GetCurrentUser(string userName)
+        public ApplicationUser GetCurrentUser(string userName)
         {
-            AppUserViewModel appUser = _userCache.Get(userName, () => GetUserInstance(userName));
+            ApplicationUser appUser = _userCache.Get(userName, () => GetUserInstance(userName));
               
             return appUser;
         }
 
-        public AppUserViewModel GetUserInstance(string userName)
+        public ApplicationUser GetUserInstance(string userName)
         {
             ApplicationUser user = _uow.Context.Set<ApplicationUser>().Include(a => a.Picture).AsNoTracking().FirstOrDefault(x => x.UserName == userName);
-
-            if (user == null)
-            {
-                return null;
-            }
-
-            var appUser = new AppUserViewModel
-            {
-                FullName = user.FullName,
-                Email = user.Email,
-                IsManager = user.IsManager,
-                Phone = user.Phone,
-                Id = user.Id,
-                Picture = user.Picture,
-                UserName = user.UserName,
-            };
-
-            return appUser;
+             
+            return user;
         }
 
 

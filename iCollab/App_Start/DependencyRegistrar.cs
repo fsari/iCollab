@@ -5,6 +5,7 @@ using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
 using Core.Caching;
+using Core.Infrastructure;
 using Core.Logging;
 using Core.Mappers;
 using Core.Repository;
@@ -17,6 +18,8 @@ using Microsoft.Owin.Security;
 using Model;
 using Serilog;
 using ILogger = Core.Logging.ILogger;
+using IUserService = Core.Service.IUserService;
+using UserService = Core.Service.UserService;
 
 namespace iCollab
 {
