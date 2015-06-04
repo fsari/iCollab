@@ -34,7 +34,7 @@ namespace Core.Service
 
         private Document GetDocumentInstance(Guid id)
         {
-            Document document = _repository.Collection.Include(a => a.Attachments).Include(c => c.ContentPages).FirstOrDefault(x => x.Id == id);
+            Document document = _repository.Collection.Include(p=>p.Project).Include(a => a.Attachments).Include(c => c.ContentPages).FirstOrDefault(x => x.Id == id);
 
             return document;
         }

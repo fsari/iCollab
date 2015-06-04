@@ -192,39 +192,7 @@ namespace iCollab.Controllers
 
             return RedirectToAction("View", new {id = id.Value});
         }
-
-        public ActionResult ReturnTask(Guid? id)
-        {
-            if (id.HasValue == false)
-            {
-                return HttpNotFound();
-            }
-
-            Task task = _service.GetTask(id.Value, true);
-
-            if (task == null)
-            {
-                return HttpNotFound();
-            }
-
-            if (task.IsDeleted)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            } 
-            // TODO : Alert user.
-
-            task.TaskStatus = TaskStatus.İade;
-            task.IsProcessed = true;
-            task.DateCompleted = DateTime.Now;
-
-            //TODO : alert task owner 
-
-            _service.Update(task);
-
-            TempData["success"] = "Görev iade edildi.";
-            return RedirectToAction("View", new {id = id.Value});
-        }
-
+         
         public ActionResult View(Guid? id)
         {
             if (id.HasValue == false)

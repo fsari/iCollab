@@ -33,6 +33,15 @@
                                 <strong>@Model.DateCreated.FormatDate()</strong>
                             </div> 
                             <div class="clearfix"></div>
+                            
+                            <br/>
+
+                            @if (Model.Project != null)
+                            {
+                                <strong>ilgili proje: </strong> <a href="/Projects/View/@Model.ProjectId">@Model.Project.Title</a>
+                            }
+
+                            <br /> 
                             <br /> 
                             
                             @Html.Raw(HttpUtility.HtmlDecode(Model.Description))

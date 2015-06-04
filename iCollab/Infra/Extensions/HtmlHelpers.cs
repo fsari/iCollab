@@ -20,10 +20,15 @@ namespace iCollab.Infra.Extensions
                 return "label label-primary";
             }
 
-            if (status == TaskStatus.İade)
+            if (status == TaskStatus.İptal)
             {
                 return "label label-danger";
             }
+
+            if (status == TaskStatus.Durduruldu)
+            {
+                return "label label-warning";
+            } 
              
             return "label label-info";
         }
