@@ -6,45 +6,47 @@
 
     <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
 
-@*    <link href="/Assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />*@
+    @*    <link href="/Assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />*@
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
     <link href="http://code.ionicframework.com/ionicons/2.0.0/css/ionicons.min.css" rel="stylesheet" type="text/css" />
-@*    <link href="/Assets/fineuploader/fineuploader-4.4.0.min.css" rel="stylesheet" />*@
+    @*    <link href="/Assets/fineuploader/fineuploader-4.4.0.min.css" rel="stylesheet" />*@
     <link href="/Assets/kendo/styles/kendo.common-bootstrap.min.css" rel="stylesheet" type="text/css" />
     <link href="/Assets/kendo/styles/kendo.bootstrap.min.css" rel="stylesheet" type="text/css" />
-@*    <link href="/Assets/dist/css/AdminLTE.css" rel="stylesheet" type="text/css" />
-    <link href="/Assets/dist/css/skins/skin-black.css" rel="stylesheet" type="text/css" />*@
+    @*    <link href="/Assets/dist/css/AdminLTE.css" rel="stylesheet" type="text/css" />
+        <link href="/Assets/dist/css/skins/skin-black.css" rel="stylesheet" type="text/css" />*@
+    <link href="/Assets/dist/css/bootstrap-switch.min.css" rel="stylesheet">
     <link href="/Assets/toastr/toastr.css" rel="stylesheet" />
 
     <link href="/Assets/dist/css/MyBundle.min.css" rel="stylesheet" type="text/css" />
-     
+
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
       <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
     <![endif]-->
 
-    <script src="/Assets/plugins/jQuery/jQuery-2.1.3.min.js"></script> 
-    <script src="/Assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script> 
-    <script src='/Assets/plugins/fastclick/fastclick.min.js'></script>
-    <script src="/Assets/dist/js/app.min.js" type="text/javascript"></script>  
-    <script src="/Assets/fineuploader/all.fineuploader-4.4.0.min.js"></script> 
+    <script src="/Assets/plugins/jQuery/jQuery-2.1.3.min.js"></script>
+    <script src="/Assets/bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="/Assets/dist/js/bootstrap-switch.min.js"></script>
+    <script src='/Assets/plugins/fastclick/fastclick.min.js'></script> 
+    <script src="/Assets/fineuploader/all.fineuploader-4.4.0.min.js"></script>
     <link href="/Assets/kendo/styles/kendo.dataviz.bootstrap.min.css" rel="stylesheet" type="text/css" />
     <script src="/Assets/kendo/js/jszip.min.js"></script>
     <script src="/Assets/kendo/js/kendo.all.min.js"></script>
     <script src="/Assets/kendo/js/kendo.aspnetmvc.min.js"></script>
-    <script src="/Assets/kendo/js/cultures/kendo.culture.tr-TR.min.js"></script> 
-    
-    @RenderSection("choosen", required: false)
-    @RenderSection("form", required: false)  
+    <script src="/Assets/kendo/js/cultures/kendo.culture.tr-TR.min.js"></script>
+    <script src="/Assets/dist/js/app.min.js" type="text/javascript"></script>
 
-    <script src="/Assets/toastr/toastr.js"></script> 
-  
+    @RenderSection("choosen", required: false)
+    @RenderSection("form", required: false)
+
+    <script src="/Assets/toastr/toastr.js"></script>
+
     <script>
         $(document).ready(function () {
-            kendo.culture("tr-TR"); 
+            kendo.culture("tr-TR");
         });
     </script>
-     
+
 </head>
 <body class="skin-black fixed sidebar-collapse">
 
@@ -71,60 +73,6 @@
         </footer>
     </div>
 
-
-    <script type="text/javascript">
-
-        $(document).ready(function () {
-            if ($('#success').val()) {
-                displayMessage($('#success').val(), 'success');
-            }
-            if ($('#info').val()) {
-                displayMessage($('#info').val(), 'info');
-            }
-            if ($('#warning').val()) {
-                displayMessage($('#warning').val(), 'warning');
-            }
-            if ($('#error').val()) {
-                displayMessage($('#error').val(), 'error');
-            }
-        });
-
-        var displayMessage = function (message, msgType) {
-            toastr.options = {
-                "closeButton": false,
-                "debug": false,
-                "positionClass": "toast-top-center",
-                "onClick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "8000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            };
-
-            toastr[msgType](message);
-        };
-        /*$(function () {
-            // Reference the auto-generated proxy for the hub.
-            var userActivity = $.connection.userActivityHub;
-            // Create a function that the hub can call back to display messages.
-            userActivity.client.updateUsersOnlineCount = function (users) {
-                // Add the message to the page.
-                var content = "";
-                for (var user in users) {
-                   content +=("<small class='badge bg-green'>></small> " + users[user].Username + "<br/>");
-                }
-
-                $('#usersCount').html(users.length+""+content);
-
-            };
-            $.connection.hub.start();
-        });*/
-
-    </script>
 </body>
 
 </html>

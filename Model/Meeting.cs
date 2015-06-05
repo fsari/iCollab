@@ -38,6 +38,8 @@ namespace Model
         public Project Project { set; get; }
 
         public ICollection<Attachment> Attachments { get; set; }
+
+        public bool IsPublic { set; get; }
           
     }
 }

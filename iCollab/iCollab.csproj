@@ -244,6 +244,7 @@
     <Content Include="Assets\bootstrap\js\npm.js" />
     <Content Include="Assets\dist\css\AdminLTE.css" />
     <Content Include="Assets\dist\css\AdminLTE.min.css" />
+    <Content Include="Assets\dist\css\bootstrap-switch.min.css" />
     <Content Include="Assets\dist\css\MyBundle.css">
       <DependentUpon>MyBundle.css.bundle</DependentUpon>
     </Content>
@@ -295,6 +296,7 @@
     <Content Include="Assets\dist\img\user8-128x128.jpg" />
     <Content Include="Assets\dist\js\app.js" />
     <Content Include="Assets\dist\js\app.min.js" />
+    <Content Include="Assets\dist\js\bootstrap-switch.min.js" />
     <Content Include="Assets\dist\js\ckeditor\adapters\jquery.js" />
     <Content Include="Assets\dist\js\ckeditor\build-config.js" />
     <Content Include="Assets\dist\js\ckeditor\ckeditor.js" />

@@ -22,11 +22,11 @@ namespace iCollab.Infra
             _logger = logger;
         }
 
-        public DataContext()
+      /*  public DataContext()
             : base("DefaultConnection")
         {
             
-        }
+        }*/
 
         public IDbSet<Todo> Todos { set; get; }
         public IDbSet<Project> Projects { set; get; }
@@ -51,7 +51,7 @@ namespace iCollab.Infra
                     if (entity != null)
                     {
                         string identityName = Thread.CurrentPrincipal.Identity.Name;
-                        DateTime now = DateTime.UtcNow;
+                        DateTime now = DateTime.Now;
 
                         if (entry.State == EntityState.Added)
                         {

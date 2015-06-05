@@ -23,8 +23,10 @@ namespace Model
         public ApplicationUser Owner { set; get; }
         public string OwnerId { set; get; }
 
-        public Guid ProjectId { set; get; }
+        public Guid? ProjectId { set; get; }
         public Project Project { set; get; }
+
+        public bool IsPublic { set; get; }
 
     }
 }

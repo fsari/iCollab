@@ -70,14 +70,41 @@ namespace Core.Repository
 
         public TEntity Update(TEntity entity)
         {
-            if (entity == null)
+/*            if (entity == null)
             {
                 throw new ArgumentNullException();
             }
 
-            _uow.Context.Set<TEntity>().Attach(entity);
+            if (_uow.Context.Set<TEntity>().Local.Any(o => o.Id == entity.Id) == false)
+            {
+                _uow.Context.Set<TEntity>().Attach(entity);
+            } 
 
-            _uow.Context.Entry(entity).State = EntityState.Modified;
+            _uow.Context.Entry(entity).State = EntityState.Modified;*/
+
+            var entry = _uow.Context.Entry<TEntity>(entity);
+
+            try
+            {
+                if (entry.State == EntityState.Detached)
+                {
+                    var attachedEntity = _uow.Context.Set<TEntity>().Find(entity.Id);
+
+                    if (attachedEntity != null)
+                    {
+                        _uow.Context.Entry(attachedEntity).CurrentValues.SetValues(entity);
+
+                        return entity;
+                    } 
+                }
+            }
+            catch (Exception e)
+            {
+                // ignore and try the default behavior
+            }
+
+            // default
+            entry.State = EntityState.Modified;
 
             return entity;
         }

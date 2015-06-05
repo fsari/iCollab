@@ -185,8 +185,7 @@ namespace Core.Service
 
             return true;
         }
-         
-
+        
         public ApplicationUser Delete(ApplicationUser item)
         {
             var user = _uow.Context.Set<ApplicationUser>().Remove(item);

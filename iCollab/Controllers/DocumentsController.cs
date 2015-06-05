@@ -22,20 +22,22 @@ namespace iCollab.Controllers
     {
         private readonly IDocumentService _service;
         private readonly IAttachmentService _attachmentService;
-        private readonly IMapper<ContentPage, DocumentContentPageViewModel> _contentPageMapper; 
+        private readonly IMapper<ContentPage, DocumentContentPageViewModel> _contentPageMapper;
+        private readonly IUserService _userService;
 
 
         public DocumentsController(
             IApplicationSettings appSettings,
-            IDocumentService service,
-            IUserService userService, 
+            IDocumentService service, 
             IAttachmentService attachmentService,
-            IMapper<ContentPage, DocumentContentPageViewModel> contentPageMapper
-            ) : base(userService, appSettings)
+            IMapper<ContentPage, DocumentContentPageViewModel> contentPageMapper, 
+            IUserService userService) 
+            : base(userService, appSettings)
         {
             _service = service;
             _attachmentService = attachmentService;
             _contentPageMapper = contentPageMapper;
+            _userService = userService;
         }
 
         public ActionResult Index(int? page)
@@ -45,7 +47,7 @@ namespace iCollab.Controllers
 
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            IQueryable<Document> documents  = _service.GetDocuments();
+            var documents  = _service.UserDocuments(AppUser.UserName);
             return Json(documents.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         } 
 
@@ -250,6 +252,11 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
+                var user = _userService.FindByUsername(AppUser.UserName);
+
+                document.Owner = user;
+                document.OwnerId = user.Id;
+
                 Document createdItem = _service.Create(document);
                   
                 TempData["success"] = "Döküman oluşturuldu.";
@@ -319,6 +326,33 @@ namespace iCollab.Controllers
 
             TempData["success"] = "Döküman silindi.";
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult MakePublic(Guid? id, bool isPublic)
+        {
+            if (id.HasValue == false)
+            {
+                return HttpNotFound();
+            }
+
+            Document document = _service.GetDocument(id.Value,true);
+
+            if (document == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (document.CreatedBy != AppUser.UserName)
+            {
+                return new HttpUnauthorizedResult();
+            }
+
+            document.IsPublic = isPublic;
+            
+            _service.Update(document);
+
+            return Content("ok");
         }
 
         public ActionResult RemoveAttachment(Guid documentId, Guid id)

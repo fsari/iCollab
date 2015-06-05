@@ -14,7 +14,7 @@ namespace Core.Service
         Document GetDocument(Guid id, bool nocache = false);
         IQueryable<Document> GetDocuments();
         IQueryable<Document> UserDocuments(string username); 
-        IQueryable<Document> Search(string query);
+        IQueryable<Document> Search(string query); 
     }
 
 
@@ -26,15 +26,14 @@ namespace Core.Service
                 IRepository<Document> repository,
                 Func<string, ICacheManager> cache, 
                 UoW uoW
-            )
-                : base(repository, cache, uoW)
+            ): base(repository, cache, uoW)
             {
                 _repository = repository; 
             }
 
         private Document GetDocumentInstance(Guid id)
         {
-            Document document = _repository.Collection.Include(p=>p.Project).Include(a => a.Attachments).Include(c => c.ContentPages).FirstOrDefault(x => x.Id == id);
+            Document document = _repository.Collection.AsNoTracking().Include(o=>o.Owner).Include(p=>p.Project).Include(a => a.Attachments).Include(c => c.ContentPages).FirstOrDefault(x => x.Id == id);
 
             return document;
         }
@@ -63,7 +62,7 @@ namespace Core.Service
 
         public IQueryable<Document> UserDocuments(string username)
         {
-            var documents = _repository.CollectionUntracked.Where(x => x.CreatedBy == username).OrderByDescending(x=>x.DateCreated);
+            var documents = _repository.CollectionUntracked.Where(x => x.CreatedBy == username || x.IsPublic).OrderByDescending(x=>x.DateCreated);
 
             return documents;
         }
@@ -74,5 +73,6 @@ namespace Core.Service
 
             return documents;
         }
+         
     }
 }

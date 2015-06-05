@@ -41,11 +41,16 @@
                                 <strong>ilgili proje: </strong> <a href="/Projects/View/@Model.ProjectId">@Model.Project.Title</a>
                             }
 
-                            <br /> 
-                            <br /> 
+                            <br />
                             
                             @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
-                             
+                            
+                            <div class="pull-left">
+                                @*<input data-on-text="Özel" data-off-text="Herkese açık" id="switch-state" type="checkbox" data-size="small" @{ Model.IsPublic ? "checked" : "";}> *@
+                                
+                                @Html.CheckBoxFor(m => m.IsPublic, new { @data_size = "small", @data_on_text = "Herkese açık", @data_off_text = "Özel", @id = "switch-state" })                                
+                            </div>
+                               
                             <div class="pull-right">
                                 @Html.ActionLink("Pdf'e aktar", "ExportAsPdf", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-danger" })
                                 @Html.ActionLink("İçerik ekle", "AddContentPage", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-primary" })
@@ -102,3 +107,12 @@
         </div>
     </section>
 </aside> 
+ 
+
+<script>
+    $(document).ready(function () {
+        $('#switch-state').on('switchChange.bootstrapSwitch', function (event, state) {
+            $.post("/Documents/MakePublic", { id: '@Model.Id', isPublic: state });
+        });
+    });
+</script>
