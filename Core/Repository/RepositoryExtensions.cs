@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Model;
+using SharpRepository.Repository;
 
 namespace Core.Repository
 {
@@ -9,22 +10,22 @@ namespace Core.Repository
     { 
         public static IEnumerable<T> LoadAll<T>(this IRepository<T> rs) where T : BaseEntity
         {
-            return rs.Collection.AsEnumerable();
+            return rs.AsQueryable().AsEnumerable();
         }
 
         public static IEnumerable<T> Where<T>(this IRepository<T> rs, Func<T, bool> predicate) where T : BaseEntity
         {
-            return rs.Collection.Where(predicate);
+            return rs.AsQueryable().Where(predicate);
         }
 
         public static T GetSingle<T>(this IRepository<T> rs, Func<T, bool> predicate) where T : BaseEntity
         {
-            return rs.Collection.SingleOrDefault(predicate);
+            return rs.AsQueryable().SingleOrDefault(predicate);
         }
 
         public static T GetFirst<T>(this IRepository<T> rs, Func<T, bool> predicate) where T : BaseEntity
         {
-            return rs.Collection.FirstOrDefault(predicate);
+            return rs.AsQueryable().FirstOrDefault(predicate);
         }
 
         public static IEnumerable<IEnumerable<T>> Chunk<T>(this IEnumerable<T> items, int chunkSize = 100)
@@ -56,9 +57,9 @@ namespace Core.Repository
             public bool EndOfSequence;
         }
           
-        public static void Delete<T>(this IRepository<T> rs, object id) where T : BaseEntity
+        public static void Delete<T>(this IRepository<T> rs, Guid id) where T : BaseEntity
         {
-            T entityToDelete = rs.Find(id);
+            T entityToDelete = rs.AsQueryable().FirstOrDefault(x=> x.Id == id);
             if (entityToDelete != null)
             {
                 rs.Delete(entityToDelete);

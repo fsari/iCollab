@@ -6,40 +6,32 @@ using System.Web.Mvc;
 namespace Model
 {
     public class Meeting : BaseEntity
-    { 
-
-        [Required]
+    {   
         [MinLength(3)]
         [Display(Name = "Başlık")]
-        public string Title{ get; set; }
-         
+        [Required(ErrorMessage = "Zorunlu alan.")]
+        public string Title{ get; set; } 
         [AllowHtml]
-        [DataType(DataType.Html)]
-
+        [DataType(DataType.Html)] 
         [Display(Name = "İçerik")]
-        public string Description { set; get; }
-
+        public string Description { set; get; } 
         [Required]
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
         [Display(Name = "Tarih ve zaman")]
-        public DateTime DateTime{ set; get; } 
-
-        [Required]
+        public DateTime DateTime{ set; get; }  
         [Display(Name = "Katılımcılar")]
-        public string Attendees { set; get; }
-         
-        [Required]
+        [Required(ErrorMessage = "Zorunlu alan.")]
+        public string Attendees { set; get; } 
         [Display(Name = "Lokasyon")]
-        public string Location{ get; set; }
-
-        public Guid ProjectId { set; get; }
-
-        public Project Project { set; get; }
-
-        public ICollection<Attachment> Attachments { get; set; }
-
-        public bool IsPublic { set; get; }
+        [Required(ErrorMessage = "Zorunlu alan.")]
+        public string Location{ get; set; } 
+        public Guid? ProjectId { set; get; } 
+        public Project Project { set; get; } 
+        public ICollection<Attachment> Attachments { get; set; } 
+        public bool IsPublic { set; get; } 
+        public string OwnerId { set; get; }
+        public ApplicationUser Owner { set; get; }
           
     }
 }

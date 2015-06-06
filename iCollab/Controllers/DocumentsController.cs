@@ -22,8 +22,7 @@ namespace iCollab.Controllers
     {
         private readonly IDocumentService _service;
         private readonly IAttachmentService _attachmentService;
-        private readonly IMapper<ContentPage, DocumentContentPageViewModel> _contentPageMapper;
-        private readonly IUserService _userService;
+        private readonly IMapper<ContentPage, DocumentContentPageViewModel> _contentPageMapper; 
 
 
         public DocumentsController(
@@ -36,8 +35,7 @@ namespace iCollab.Controllers
         {
             _service = service;
             _attachmentService = attachmentService;
-            _contentPageMapper = contentPageMapper;
-            _userService = userService;
+            _contentPageMapper = contentPageMapper; 
         }
 
         public ActionResult Index(int? page)
@@ -96,13 +94,25 @@ namespace iCollab.Controllers
             if (document == null)
             {
                 return HttpNotFound();
-            } 
+            }
+
+            if (document.IsPublic == false && document.OwnerId != AppUser.Id)
+            {
+                return new HttpUnauthorizedResult();
+            }
 
             return View(document);
         }
 
         public ActionResult AddContentPage(Guid documentId)
         {
+            var document = _service.GetDocument(documentId);
+
+            if (document.OwnerId != AppUser.Id)
+            {
+                return new HttpUnauthorizedResult();
+            }
+ 
             var contentPage = new DocumentContentPageViewModel {DocumentGuid = documentId};
 
             return View(contentPage);
@@ -118,10 +128,15 @@ namespace iCollab.Controllers
             }
 
             Document document = _service.GetDocument(documentContentPageViewModel.DocumentGuid, true);
-
+             
             if (document == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (document.OwnerId != AppUser.Id)
+            {
+                return new HttpUnauthorizedResult();
             }
 
             if (document.ContentPages == null)
@@ -129,10 +144,16 @@ namespace iCollab.Controllers
                 document.ContentPages = new Collection<ContentPage>();
             }
 
+            var user = UserService.FindById(AppUser.Id);
+
             var contentPage = new ContentPage
             {
                 Title = documentContentPageViewModel.Title,
-                Description = documentContentPageViewModel.Description
+                Description = documentContentPageViewModel.Description,
+                CreatedBy = AppUser.UserName,
+                DateCreated = DateTime.Now,
+                OwnerId = AppUser.Id,
+                Owner = user
             };
 
             document.ContentPages.Add(contentPage);
@@ -170,6 +191,11 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            if (contentPage.OwnerId != AppUser.Id)
+            {
+                return new HttpUnauthorizedResult();
+            }
+
             contentPage.DeletedBy = AppUser.UserName;
             contentPage.DateDeleted = DateTime.UtcNow;
 
@@ -203,6 +229,16 @@ namespace iCollab.Controllers
 
             var contentPage = document.ContentPages.FirstOrDefault(x => x.Id == contentPageId.Value);
 
+            if (contentPage == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (contentPage.OwnerId != AppUser.Id)
+            {
+                return new HttpUnauthorizedResult();
+            }
+
             var viewModel = _contentPageMapper.ToModel(contentPage);
             viewModel.DocumentGuid = documentId.Value;
 
@@ -232,6 +268,11 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            if (contentPage.OwnerId != AppUser.Id)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             contentPage.Title = viewModel.Title; 
             contentPage.Description = viewModel.Description;
 
@@ -252,10 +293,11 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _userService.FindByUsername(AppUser.UserName);
+
+                var user = UserService.FindById(AppUser.Id);
 
                 document.Owner = user;
-                document.OwnerId = user.Id;
+                document.OwnerId = AppUser.Id;
 
                 Document createdItem = _service.Create(document);
                   
@@ -282,6 +324,11 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
+            if (document.OwnerId != AppUser.Id)
+            {
+                return new HttpUnauthorizedResult();
+            }
+
             return View(document);
         }
 
@@ -289,7 +336,13 @@ namespace iCollab.Controllers
         public ActionResult Edit(Document document)
         {
             if (ModelState.IsValid)
-            { 
+            {
+
+                if (document.OwnerId != AppUser.Id)
+                {
+                    return new HttpUnauthorizedResult();
+                }
+
                 _service.Update(document);
 
                 TempData["success"] = "Döküman güncellendi.";
@@ -314,7 +367,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (document.CreatedBy != AppUser.UserName)
+            if (document.OwnerId != AppUser.Id)
             {
                 return new HttpUnauthorizedResult();
             }
@@ -343,7 +396,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (document.CreatedBy != AppUser.UserName)
+            if (document.OwnerId != AppUser.Id)
             {
                 return new HttpUnauthorizedResult();
             }

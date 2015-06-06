@@ -41,8 +41,35 @@ namespace iCollab.Controllers
 
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            IQueryable<Meeting> meetings = _service.GetMeetings();
+            IQueryable<Meeting> meetings = _service.GetUserMeetings(AppUser.UserName);
             return Json(meetings.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult MakePublic(Guid? id, bool isPublic)
+        {
+            if (id.HasValue == false)
+            {
+                return HttpNotFound();
+            }
+
+            var meeting = _service.GetMeeting(id.Value, true);
+
+            if (meeting == null)
+            {
+                return HttpNotFound();
+            }
+
+            if (meeting.OwnerId != AppUser.Id)
+            {
+                return new HttpUnauthorizedResult();
+            }
+
+            meeting.IsPublic = isPublic;
+
+            _service.Update(meeting);
+
+            return Content("ok");
         }
 
         public ActionResult Search(string query, int? page)
@@ -94,7 +121,12 @@ namespace iCollab.Controllers
             if (meeting.IsDeleted)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            } 
+            }
+
+            if (meeting.IsPublic == false && meeting.OwnerId != AppUser.Id)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
 
             return View(meeting);
         }
@@ -110,7 +142,12 @@ namespace iCollab.Controllers
         public ActionResult Create(Meeting meeting)
         {
             if (ModelState.IsValid)
-            {  
+            {
+                var user = UserService.FindById(AppUser.Id);
+
+                meeting.OwnerId = user.Id;
+                meeting.Owner = user;
+
                 _service.Create(meeting);
 
                 TempData["success"] = "Toplantı oluşturuldu.";
@@ -135,7 +172,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (meeting.CreatedBy != AppUser.UserName)
+            if (meeting.OwnerId != AppUser.Id)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -151,7 +188,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (meeting.CreatedBy != AppUser.UserName)
+            if (meeting.OwnerId != AppUser.Id)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -183,7 +220,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            if (meeting.CreatedBy != AppUser.UserName)
+            if (meeting.OwnerId != AppUser.Id)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }

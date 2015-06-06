@@ -1,4 +1,6 @@
-﻿@using Core.Extensions
+﻿@using System.Linq
+@using System.Web
+@using Core.Extensions
 @using iCollab.ViewModels
 @using Microsoft.AspNet.Identity
 @using Model
@@ -134,7 +136,7 @@
                                     }
                                     else
                                     {
-                                        { Html.RenderPartial("_TaskTable", Model.Tasks); }
+                                        { Html.RenderPartial("_TaskTable", Model.Tasks.OrderByDescending(x=>x.DateCreated)); }
                                     }
                                 }
                             </div>
@@ -164,7 +166,7 @@
                                     }
                                     else
                                     {
-                                        { Html.RenderPartial("_DocumentTable", Model.Documents); }
+                                        { Html.RenderPartial("_DocumentTable", Model.Documents.OrderByDescending(x=>x.DateCreated)); }
                                     }
                                 }
                             </div>
@@ -210,7 +212,7 @@
                                     }
                                     else
                                     {
-                                        { Html.RenderPartial("_MeetingTable", Model.Meetings); }
+                                        { Html.RenderPartial("_MeetingTable", Model.Meetings.OrderByDescending(x=>x.DateCreated)); }
                                     }
                                 }
                             </div>

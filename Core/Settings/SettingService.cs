@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection; 
@@ -9,6 +10,7 @@ using Core.Repository;
 using Fasterflect;
 using Model.Settings;
 using Newtonsoft.Json;
+using SharpRepository.Repository;
 
 namespace Core.Settings
 {
@@ -21,20 +23,17 @@ namespace Core.Settings
         #region Fields
 
         private readonly IRepository<Setting> _settingRepository; 
-        private readonly ICacheManager _cacheManager;
-        private readonly UoW _uow;
+        private readonly ICacheManager _cacheManager; 
 
         #endregion
 
         #region Ctor
          
         public SettingService(Func<string, ICacheManager> cache , 
-            IRepository<Setting> settingRepository,
-            UoW uow)
+            IRepository<Setting> settingRepository)
         {
             _cacheManager = cache("static"); 
             _settingRepository = settingRepository;
-            _uow = uow;
         }
 
         #endregion
@@ -65,7 +64,7 @@ namespace Core.Settings
             return _cacheManager.Get(key, () =>
             {
 
-                var settings = _settingRepository.CollectionUntracked.OrderBy(x=>x.Name).ToList();
+                var settings = _settingRepository.AsQueryable().AsNoTracking().OrderBy(x=>x.Name).ToList();
                 
                 var dictionary = new Dictionary<string, IList<SettingForCaching>>();
                 
@@ -101,9 +100,7 @@ namespace Core.Settings
             if (setting == null)
                 throw new ArgumentNullException("setting");
 
-            _settingRepository.Add(setting);
-
-            _uow.Commit();
+            _settingRepository.Add(setting); 
              
             if (clearCache)
                 _cacheManager.RemoveByPattern(SETTINGS_ALL_KEY);
@@ -120,9 +117,7 @@ namespace Core.Settings
             if (setting == null)
                 throw new ArgumentNullException("setting");
 
-            _settingRepository.Update(setting);
-
-            _uow.Commit();
+            _settingRepository.Update(setting); 
              
             if (clearCache)
                 _cacheManager.RemoveByPattern(SETTINGS_ALL_KEY);
@@ -181,7 +176,8 @@ namespace Core.Settings
         /// <returns>Setting</returns>
         public virtual Setting GetSettingById(Guid settingId)
         {
-            var setting = _settingRepository.Find(settingId);
+            var setting = _settingRepository.AsQueryable().AsNoTracking().FirstOrDefault(x=>x.Id == settingId);
+
             return setting;
         }
          
@@ -223,7 +219,7 @@ namespace Core.Settings
         /// <returns>Setting collection</returns>
         public virtual IList<Setting> GetAllSettings()
         { 
-            var settings = _settingRepository.Collection.OrderBy(x => x.Name).ToList();
+            var settings = _settingRepository.AsQueryable().AsNoTracking().OrderBy(x => x.Name).ToList();
             return settings;
         }
    
@@ -485,7 +481,7 @@ namespace Core.Settings
                 key = key.Trim().ToLowerInvariant();
 
                 var setting = (
-                    from s in _settingRepository.Collection
+                    from s in _settingRepository.AsQueryable()
                     where  s.Name == key
                     select s).FirstOrDefault();
 

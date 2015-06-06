@@ -11,6 +11,7 @@ namespace Model
 
         [StringLength(512)]
         [Display(Name = "Başlık")]
+        [Required(ErrorMessage = "Zorunlu alan.")]
         public string Title { get; set; }
 
         [AllowHtml]

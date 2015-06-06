@@ -18,9 +18,7 @@ namespace Model
         [Display(Name = "Düzenleme Zamanı")]
         public DateTime? DateEdited { set; get; }
         [Display(Name = "Silinme Zamanı")]
-        public DateTime? DateDeleted { set; get; }
-        [Display(Name = "Oluşturan")]
-
+        public DateTime? DateDeleted { set; get; } 
         [Column(TypeName = "VARCHAR")]
         [StringLength(200)]
         [Index]

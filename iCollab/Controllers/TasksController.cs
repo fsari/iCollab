@@ -24,8 +24,7 @@ namespace iCollab.Controllers
     public class TasksController : BaseController
     {
         private readonly IMapper<TaskViewModel, Task> _mapper; 
-        private readonly ITaskService _service;
-        private readonly IUserService _userService;
+        private readonly ITaskService _service; 
         private readonly IAttachmentService _attachmentService;
         private readonly IMapper<AppUserViewModel, ApplicationUser> _userMapper;
         private readonly IProjectService _projectService;
@@ -41,8 +40,7 @@ namespace iCollab.Controllers
             : base(userService, appSettings)
         {
             _service = service;
-            _mapper = mapper;
-            _userService = userService; 
+            _mapper = mapper; 
             _attachmentService = attachmentService;
             _userMapper = userMapper;
             _projectService = projectService;
@@ -224,7 +222,7 @@ namespace iCollab.Controllers
 
             var taskUsers = task.TaskUsers.Select(x => x.UserId);
 
-            var users = _userService.GetUsers(taskUsers.AsEnumerable());
+            var users = UserService.GetUsers(taskUsers.AsEnumerable());
 
             taskViewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
 
@@ -239,16 +237,40 @@ namespace iCollab.Controllers
             return View(taskViewModel);
         }
 
+        public ActionResult Begin(Guid? id)
+        {
+            if (id.HasValue == false)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            Task task = _service.GetTask(id.Value);
+
+            if (task == null)
+            {
+                return new HttpNotFoundResult();
+            }
+
+            if (task.IsDeleted)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (task.TaskUsers.Any(x => x.UserId == AppUser.Id) == false && task.TaskOwnerId != AppUser.Id)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            task.TaskStatus = TaskStatus.Aktif;
+            _service.Update(task);
+
+            return Content("ok");
+        }
+
         public ActionResult Index()
         { 
             return View();
-        }
-
-        public ActionResult ViewCalendar()
-        {
-
-            return View();
-        }
+        } 
 
         public ActionResult Search(string query, int? page)
         {
@@ -338,7 +360,7 @@ namespace iCollab.Controllers
             task.ParentTaskId = task.ParentTaskId.Value;
             task.ParentTask = parentTask;
 
-            var taskUser = _userService.FindById(AppUser.Id);
+            var taskUser = UserService.FindById(AppUser.Id);
 
             task.TaskOwner = taskUser;
             task.TaskOwnerId = taskUser.Id;
@@ -388,7 +410,7 @@ namespace iCollab.Controllers
             Task task = _mapper.ToModel(taskViewModel);
             task.TaskOwnerId = AppUser.Id;
 
-            var taskOwner = _userService.FindById(task.TaskOwnerId);
+            var taskOwner = UserService.FindById(task.TaskOwnerId);
             task.TaskOwner = taskOwner;
 
             task.TaskOwnerId = taskOwner.Id; 
@@ -437,7 +459,7 @@ namespace iCollab.Controllers
              
             var userIds = task.TaskUsers.Select(x => x.UserId);
 
-            var users = _userService.GetUsers(userIds);
+            var users = UserService.GetUsers(userIds);
 
             taskviewmodel.SelectedProjectUsers = users.Select(x => new UserSelectViewModel { FullName = x.FullName, Id = x.Id });
 

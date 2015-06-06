@@ -47,14 +47,14 @@ namespace iCollab.Controllers
             return PartialView("_RenderUserImage",user);
         }
 
-        public ActionResult GetProjectUsers(Guid projectId)
+/*        public ActionResult GetProjectUsers(Guid projectId)
         {
             var userIds = _userService.GetProjectUsers(projectId);
 
             var users = _userService.GetUsers(userIds.Select(x => x.UserId)); 
 
             return Json(users, JsonRequestBehavior.AllowGet);
-        }
+        }*/
 
         [Authorize(Roles = "manager")]
         public ActionResult AssignAsManager(string userId)

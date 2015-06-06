@@ -22,11 +22,11 @@ namespace iCollab.Infra
             _logger = logger;
         }
 
-      /*  public DataContext()
+        public DataContext()
             : base("DefaultConnection")
         {
             
-        }*/
+        } 
 
         public IDbSet<Todo> Todos { set; get; }
         public IDbSet<Project> Projects { set; get; }

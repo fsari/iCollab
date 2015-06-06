@@ -2,6 +2,7 @@
 using System.Linq;
 using Core.Repository;
 using Model;
+using SharpRepository.Repository;
 
 namespace Core.Service
 {
@@ -22,7 +23,7 @@ namespace Core.Service
 
         public Attachment GetAttachment(Guid id)
         {
-            var attachment = _repository.Collection.FirstOrDefault(i => i.Id == id);
+            var attachment = _repository.AsQueryable().FirstOrDefault(i => i.Id == id);
 
             return attachment;
         }

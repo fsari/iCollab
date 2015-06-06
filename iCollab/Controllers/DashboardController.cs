@@ -124,14 +124,7 @@ namespace iCollab.Controllers
 
             return Json(null, JsonRequestBehavior.AllowGet);
         }
-         
-        [ChildActionOnly]
-        public ActionResult GetOnlineUsers()
-        {
-            var onlineusers = _userService.GetOnlineUsers();
-
-            return PartialView(onlineusers);
-        }
+          
 
         [OutputCache(Duration = 300)]
         [ChildActionOnly]

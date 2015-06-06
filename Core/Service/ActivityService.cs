@@ -5,6 +5,7 @@ using Core.Repository;
 using Core.Service.CrudService;
 using Model;
 using Model.Activity;
+using SharpRepository.Repository;
 
 namespace Core.Service
 {
@@ -18,8 +19,8 @@ namespace Core.Service
     {
         private readonly IRepository<T> _repository;
 
-        public ActivityService(IRepository<T> repository, Func<string, ICacheManager> cache, UoW uow)
-            : base(repository, cache, uow)
+        public ActivityService(IRepository<T> repository, Func<string, ICacheManager> cache)
+            : base(repository, cache)
         {
             _repository = repository;
         }

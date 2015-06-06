@@ -27,9 +27,7 @@ namespace iCollab.Controllers
         private readonly IMapper<ProjectViewModel, Project> _mapper;
         private readonly IMapper<MeetingViewModel, Meeting> _meetingMapper;
         private readonly IProjectService _projectService;
-        private readonly IMapper<TaskViewModel, Task> _taskMapper;
-        private readonly IMapper<AppUserViewModel, ApplicationUser> _userMapper; 
-        private readonly IUserService _userService; 
+        private readonly IMapper<TaskViewModel, Task> _taskMapper;  
 
         public ProjectsController(
             IProjectService projectService,
@@ -46,12 +44,10 @@ namespace iCollab.Controllers
         {
             _documentMapper = documentMapper;
             _meetingMapper = meetingMapper;
-            _attachmentService = attachmentService;
-            _userMapper = userMapper;
+            _attachmentService = attachmentService; 
             _projectService = projectService;
             _mapper = mapper;
-            _taskMapper = taskMapper;
-            _userService = userService;
+            _taskMapper = taskMapper; 
         }
 
         public ActionResult Index()
@@ -318,7 +314,7 @@ namespace iCollab.Controllers
             task.ProjectId = project.Id;
             task.Project = project;
 
-            var taskUser = _userService.FindById(AppUser.Id);
+            var taskUser = UserService.FindById(AppUser.Id);
 
             task.TaskOwner = taskUser;
             task.TaskOwnerId = taskUser.Id;
@@ -360,7 +356,7 @@ namespace iCollab.Controllers
 
             var projectUsers = project.ProjectUsers.Select(x=>x.UserId);
 
-            var users = _userService.GetUsers(projectUsers.AsEnumerable());
+            var users = UserService.GetUsers(projectUsers.AsEnumerable());
 
             var nextProject = _projectService.GetUserProjects(AppUser.Id).GetNext(project);
             var previousProject = _projectService.GetUserProjects(AppUser.Id).GetPrevious(project);
@@ -369,7 +365,7 @@ namespace iCollab.Controllers
             viewModel.NextProject = nextProject;
             viewModel.PreviousProject = previousProject;
 
-            var createdBy = _userService.FindByUsername(project.CreatedBy);
+            var createdBy = UserService.FindByUsername(project.CreatedBy);
 
             viewModel.CreatedBy = createdBy.UserName;
 
@@ -398,8 +394,8 @@ namespace iCollab.Controllers
             if (ModelState.IsValid)
             {
                 Project project = _mapper.ToModel(viewModel);
-                 
-                project.ProjectOwner = _userService.FindById(AppUser.Id);
+
+                project.ProjectOwner = UserService.FindById(AppUser.Id);
                 project.ProjectOwnerId = AppUser.Id;
 
                 if (project.ProjectUsers == null)
@@ -511,7 +507,7 @@ namespace iCollab.Controllers
 
             var userIds = project.ProjectUsers.Select(x => x.UserId);
 
-            var users = _userService.GetUsers(userIds);
+            var users = UserService.GetUsers(userIds);
 
             viewModel.SelectedProjectUsers = users.Select(x => new UserSelectViewModel {FullName = x.FullName, Id = x.Id});
 

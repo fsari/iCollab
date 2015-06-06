@@ -92,6 +92,14 @@
       <HintPath>..\packages\Serilog.1.5.1\lib\net45\Serilog.FullNetFx.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="SharpRepository.EfRepository, Version=1.4.6.15, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpRepository.EfRepository.1.4.6.15\lib\net40\SharpRepository.EfRepository.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="SharpRepository.Repository, Version=1.4.6.15, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\SharpRepository.Repository.1.4.6.15\lib\net40\SharpRepository.Repository.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
@@ -162,9 +170,7 @@
     <Compile Include="Mappers\IMapper.cs" />
     <Compile Include="Mappers\Mapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repository\Repository.cs" />
     <Compile Include="Repository\RepositoryExtensions.cs" />
-    <Compile Include="Repository\UoW.cs" />
     <Compile Include="Service\ActivityService.cs" />
     <Compile Include="Service\AttachmentServıce.cs" />
     <Compile Include="Service\CrudService\BaseCrudService.cs" />

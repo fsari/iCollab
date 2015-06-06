@@ -5,6 +5,7 @@ using Core.Caching;
 using Core.Repository;
 using Core.Service.CrudService;
 using Model;
+using SharpRepository.Repository;
 
 namespace Core.Service
 {
@@ -21,15 +22,15 @@ namespace Core.Service
     {
         private readonly IRepository<Meeting> _repository; 
 
-        public MeetingService(IRepository<Meeting> repository, Func<string, ICacheManager> cache, UoW uow)
-            : base(repository, cache, uow)
+        public MeetingService(IRepository<Meeting> repository, Func<string, ICacheManager> cache)
+            : base(repository, cache)
         {
             _repository = repository; 
         }
 
         private Meeting GetMeetingInstance(Guid id)
         {
-            Meeting meeting = _repository.Collection.Include(p => p.Project).Include(a => a.Attachments).FirstOrDefault(i => i.Id == id);
+            Meeting meeting = _repository.AsQueryable().Include(p => p.Project).Include(a => a.Attachments).FirstOrDefault(i => i.Id == id);
 
             return meeting;
         }
@@ -52,28 +53,28 @@ namespace Core.Service
 
         public IQueryable<Meeting> GetMeetings()
         {
-            var meetings = _repository.CollectionUntracked.Where(m => m.IsDeleted == false).OrderByDescending(m => m.Id);
+            var meetings = _repository.AsQueryable().AsNoTracking().Where(m => m.IsDeleted == false).OrderByDescending(m => m.Id);
 
             return meetings;
         }
 
         public int MeetingsCount()
         {
-            int count = _repository.CollectionUntracked.Count();
+            int count = _repository.AsQueryable().AsNoTracking().Count();
 
             return count;
         }
 
         public IQueryable<Meeting> GetUserMeetings(string username)
         {
-            var meetings = _repository.CollectionUntracked.Where(x => x.CreatedBy == username).OrderByDescending(x=>x.DateCreated);
+            var meetings = _repository.AsQueryable().AsNoTracking().Where(x => x.CreatedBy == username || x.IsPublic).OrderByDescending(x=>x.DateCreated);
 
             return meetings;
         }
 
         public IQueryable<Meeting> Search(string query)
         {
-            var meetings = _repository.CollectionUntracked.Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(x => x.DateCreated);
+            var meetings = _repository.AsQueryable().AsNoTracking().Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(x => x.DateCreated);
 
             return meetings;
         }

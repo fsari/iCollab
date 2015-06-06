@@ -17,6 +17,8 @@ using MemoryCacheT;
 using Microsoft.Owin.Security;
 using Model;
 using Serilog;
+using SharpRepository.EfRepository;
+using SharpRepository.Repository;
 using ILogger = Core.Logging.ILogger;
 using IUserService = Core.Service.IUserService;
 using UserService = Core.Service.UserService;
@@ -37,12 +39,11 @@ namespace iCollab
 
             builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>();
 
-            builder.RegisterType<DataContext>().As<DbContext>().InstancePerRequest();
-            builder.RegisterType<UoW>().AsSelf().InstancePerRequest();
+            builder.RegisterType<DataContext>().As<DbContext>().InstancePerRequest(); 
 
             builder.RegisterType<UserService>().As<IUserService>().InstancePerRequest();
 
-            builder.RegisterGeneric(typeof(Repository<>)).As(typeof(IRepository<>)).InstancePerRequest();
+            builder.RegisterGeneric(typeof(EfRepository<>)).As(typeof(IRepository<>)).InstancePerRequest();
 
 
             //builder.RegisterType<AppMailer>().As<IAppMailer>().InstancePerRequest();

@@ -1,4 +1,5 @@
-﻿@using Core.Extensions
+﻿@using System.Web
+@using Core.Extensions
 @using iCollab.ViewModels 
 @using Microsoft.AspNet.Identity
 @model Model.Document
@@ -45,15 +46,19 @@
                             
                             @Html.Raw(HttpUtility.HtmlDecode(Model.Description))
                             
-                            <div class="pull-left">
-                                @*<input data-on-text="Özel" data-off-text="Herkese açık" id="switch-state" type="checkbox" data-size="small" @{ Model.IsPublic ? "checked" : "";}> *@
-                                
-                                @Html.CheckBoxFor(m => m.IsPublic, new { @data_size = "small", @data_on_text = "Herkese açık", @data_off_text = "Özel", @id = "switch-state" })                                
-                            </div>
+                            @if (Model.CreatedBy == User.Identity.GetUserName())
+                            {
+                                <div class="pull-left">  
+                                    @Html.CheckBoxFor(m => m.IsPublic, new { @data_size = "small", @data_on_text = "Herkese açık", @data_off_text = "Özel", @id = "switch-state" })
+                                </div>
+                            }
                                
                             <div class="pull-right">
-                                @Html.ActionLink("Pdf'e aktar", "ExportAsPdf", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-danger" })
-                                @Html.ActionLink("İçerik ekle", "AddContentPage", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-primary" })
+                                @*@Html.ActionLink("Pdf'e aktar", "ExportAsPdf", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-danger" })*@
+                                @if (Model.CreatedBy == User.Identity.GetUserName())
+                                {
+                                    @Html.ActionLink("İçerik ekle", "AddContentPage", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-primary" })
+                                }
                             </div>
                             <div class="clearfix"></div>
                         </div>
@@ -97,8 +102,12 @@
                                 <div class="clearfix"></div>
 
                                 @Html.Raw(HttpUtility.HtmlDecode(item.Description))
-                                @Html.ActionLink("Düzenle", "EditContentPage", "Documents", new { documentId = Model.Id, contentPageId = item.Id }, new { @class = "btn btn-sm btn-warning" })
-                                @Html.ActionLink("Sil", "DeleteContentPage", "Documents", new { documentId = Model.Id, contentPageId = item.Id }, new { @class = "btn btn-sm btn-danger", onclick = "return confirm('Silmek istediğinizden emin misiniz ?');" })
+                                
+                                @if (item.CreatedBy == User.Identity.GetUserName())
+                                {
+                                    @Html.ActionLink("Düzenle", "EditContentPage", "Documents", new { documentId = Model.Id, contentPageId = item.Id }, new { @class = "btn btn-sm btn-warning" })
+                                    @Html.ActionLink("Sil", "DeleteContentPage", "Documents", new { documentId = Model.Id, contentPageId = item.Id }, new { @class = "btn btn-sm btn-danger", onclick = "return confirm('Silmek istediğinizden emin misiniz ?');" })
+                                }
                             </div> 
                         </div> 
                     </div>

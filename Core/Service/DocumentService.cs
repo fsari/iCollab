@@ -5,6 +5,7 @@ using Core.Caching;
 using Core.Repository;
 using Core.Service.CrudService;
 using Model;
+using SharpRepository.Repository;
 
 namespace Core.Service
 {
@@ -24,16 +25,15 @@ namespace Core.Service
         public DocumentService
             (
                 IRepository<Document> repository,
-                Func<string, ICacheManager> cache, 
-                UoW uoW
-            ): base(repository, cache, uoW)
+                Func<string, ICacheManager> cache 
+            ): base(repository, cache)
             {
                 _repository = repository; 
             }
 
         private Document GetDocumentInstance(Guid id)
         {
-            Document document = _repository.Collection.AsNoTracking().Include(o=>o.Owner).Include(p=>p.Project).Include(a => a.Attachments).Include(c => c.ContentPages).FirstOrDefault(x => x.Id == id);
+            Document document = _repository.AsQueryable().Include(p=>p.Project).Include(a => a.Attachments).Include(c => c.ContentPages).FirstOrDefault(x => x.Id == id);
 
             return document;
         }
@@ -55,21 +55,21 @@ namespace Core.Service
 
         public IQueryable<Document> GetDocuments()
         {
-            var documents = _repository.CollectionUntracked.OrderByDescending(t => t.DateCreated);
+            var documents = _repository.AsQueryable().OrderByDescending(t => t.DateCreated);
 
             return documents;
         }
 
         public IQueryable<Document> UserDocuments(string username)
         {
-            var documents = _repository.CollectionUntracked.Where(x => x.CreatedBy == username || x.IsPublic).OrderByDescending(x=>x.DateCreated);
+            var documents = _repository.AsQueryable().Where(x => x.CreatedBy == username || x.IsPublic).OrderByDescending(x=>x.DateCreated);
 
             return documents;
         }
 
         public IQueryable<Document> Search(string query)
         {
-            var documents = _repository.CollectionUntracked.Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(x => x.DateCreated);
+            var documents = _repository.AsQueryable().Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(x => x.DateCreated);
 
             return documents;
         }

@@ -7,6 +7,7 @@ using Core.Caching;
 using Core.Repository;
 using Core.Service.CrudService;
 using Model;
+using SharpRepository.Repository;
 using Task = Model.Task;
 using TaskStatus = Model.TaskStatus;
 
@@ -27,9 +28,8 @@ namespace Core.Service
 
         public DependencyService(
             IRepository<Dependency> repository,
-            Func<string, ICacheManager> cache,
-            UoW uow)
-            : base(repository, cache, uow)
+            Func<string, ICacheManager> cache)
+            : base(repository, cache)
         {
             this._repository = repository;
         }

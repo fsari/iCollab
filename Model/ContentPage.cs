@@ -5,7 +5,7 @@ using System.Web.Mvc;
 namespace Model
 {
     public class ContentPage : BaseEntity
-    { 
+    {
 
         [Display(Name = "Başlık")]
         [Required]
@@ -13,6 +13,9 @@ namespace Model
 
         [Display(Name = "İçerik")]
         [AllowHtml]
-        public string Description { get; set; } 
+        public string Description { get; set; }
+
+        public string OwnerId { set; get; }
+        public ApplicationUser Owner { set; get; }
     }
 }

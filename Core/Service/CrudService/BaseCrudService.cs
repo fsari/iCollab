@@ -1,27 +1,26 @@
 ﻿using System;
+using System.Data.Entity;
 using System.Linq;
 using Core.Caching;
 using Core.Repository;
 using Model;
 using PagedList;
+using SharpRepository.Repository;
 
 namespace Core.Service.CrudService
 {
     public class BaseCrudService<T> : ICrudService<T> where T : BaseEntity, new()
     {
         private readonly IRepository<T> _repository;
-        protected readonly ICacheManager Cache;
-        private readonly UoW _uow;
+        protected readonly ICacheManager Cache; 
 
         public BaseCrudService
         (
             IRepository<T> repository,
-            Func<string, ICacheManager> cache, 
-            UoW uow)
+            Func<string, ICacheManager> cache)
         {
             _repository = repository;
-            Cache = cache("static");
-            _uow = uow;
+            Cache = cache("static"); 
         }
 
         public virtual T Create(T item)
@@ -31,25 +30,21 @@ namespace Core.Service.CrudService
                 throw new ArgumentNullException();
             }
              
-            var instance = _repository.Add(item);
+            _repository.Add(item); 
 
-            Cache.Set(item.Id.ToString(), item);
+            Cache.Set(item.Id.ToString(), item); 
 
-            _uow.Commit();
-
-            return instance;
+            return item;
         }
 
         public T Find(Guid id)
         {
-            var item = _repository.Find(id);
+            var item = _repository.AsQueryable().FirstOrDefault(x=>x.Id == id);
 
             if (item == null)
             {
                 return  default(T);
-            }
-
-            _uow.Commit();
+            } 
 
             return item;
         }
@@ -62,13 +57,10 @@ namespace Core.Service.CrudService
             }
 
             Cache.Remove(item.Id.ToString());
+             
+            _repository.Update(item); 
 
-            item.DateEdited = DateTime.Now;
-            var instance = _repository.Update(item);
-
-            var result = _uow.Commit();
-
-            return instance;
+            return item;
         }
 
         public T SoftDelete(T item)
@@ -82,11 +74,9 @@ namespace Core.Service.CrudService
 
             item.DateDeleted = DateTime.Now;
             item.IsDeleted = true;
-            var instance = _repository.Update(item);
+            _repository.Update(item);
 
-            _uow.Commit();
-
-            return instance;
+            return item;
         }
 
         public T Delete(T item)
@@ -100,23 +90,21 @@ namespace Core.Service.CrudService
 
             item.DateDeleted = DateTime.Now;
             item.IsDeleted = true;
-            var instance = _repository.Delete(item);
+            _repository.Delete(item); 
 
-            _uow.Commit();
-
-            return instance;
+            return item;
         }
 
         public IQueryable<T> GetQueryable()
         {
-            var items = _repository.CollectionUntracked.Where(x=>x.IsDeleted == false).OrderByDescending(x => x.DateCreated);
+            var items = _repository.AsQueryable().AsNoTracking().Where(x=>x.IsDeleted == false).OrderByDescending(x => x.DateCreated);
 
             return items;
         } 
 
         public IPagedList<T> GetPageOf(int pagenumber, int pagesize)
         {
-            var items = _repository.CollectionUntracked.Where(x=>x.IsDeleted == false).OrderByDescending(x => x.DateCreated);
+            var items = _repository.AsQueryable().AsNoTracking().Where(x=>x.IsDeleted == false).OrderByDescending(x => x.DateCreated);
 
             var result = items.ToPagedList(pagenumber, pagesize);
 
@@ -125,7 +113,7 @@ namespace Core.Service.CrudService
 
         public IQueryable<T> GetTable()
         {
-            var table = _repository.CollectionUntracked.Where(i=>i.IsDeleted == false);
+            var table = _repository.AsQueryable().AsNoTracking().Where(i=>i.IsDeleted == false);
 
             return table;
         }

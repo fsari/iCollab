@@ -1,7 +1,8 @@
-﻿@using iCollab.Infra.Extensions
-@using iCollab.ViewModels 
+﻿@using System.Web
+@using iCollab.Infra.Extensions
+@using iCollab.ViewModels
 @using Microsoft.AspNet.Identity
-@using Model 
+@using Model
 @using Core.Extensions
 
 @model TaskViewModel
@@ -12,21 +13,21 @@
 <aside class="right-side">
     <section class="content-header">
         <h1 class="pull-left">
-            <a href="/Tasks">Görevler </a> <i class="fa fa-angle-double-right"></i> @Model.Title 
-            
+            <a href="/Tasks">Görevler </a> <i class="fa fa-angle-double-right"></i> @Model.Title
+
             @if (Model.IsLate)
             {
                 <i class="fa fa fa-flag pull-right" style="color:red"> @Model.LateDays Gün geç kalmış.</i><br />
             }
         </h1>
         <div class="pull-right">
-            
+
             @if (Model.TaskOwner.UserName == User.Identity.GetUserName())
             {
                 <a href="/Tasks/Edit/@Model.Id"><i class="glyphicon glyphicon-edit"></i></a>
                 <a href="/Tasks/Delete/@Model.Id" onclick="return confirm('Silmek istediğinize emin misiniz?');"><i class="glyphicon glyphicon-trash btn-lg"></i></a>
             }
-            <a href="/Tasks/Index"><i class="glyphicon glyphicon-list btn-lg"></i></a> 
+            <a href="/Tasks/Index"><i class="glyphicon glyphicon-list btn-lg"></i></a>
 
         </div>
         <div class="clearfix"></div>
@@ -39,8 +40,7 @@
                     <div class="box-body table-responsive no-padding" style="margin-left: 10px;">
                         <div>
                             @Html.Raw(HttpUtility.HtmlDecode(Model.Description))<br />
-                            
-
+                             
                             @if (Model.Previous != null)
                             {
                                 <a href="/Tasks/View/@Model.Previous.Id" class="btn btn-primary btn-sm">@Model.Previous.Title</a>
@@ -65,7 +65,7 @@
                             @foreach (var u in Model.SelectedUsers)
                             {
                                 <label class="label label-default">@u</label>
-                            } 
+                            }
                         </div>
                         <div class="pull-right">
                             <strong><i class="fa fa-clock-o"></i> Oluşturulma Zamanı : </strong> @Model.DateCreated.FormatDate() <br />
@@ -73,15 +73,21 @@
                             <strong><i class="fa fa-clock-o"></i> Bitiş Zamanı : </strong> @Html.DisplayFor(m => m.End) <br />
                         </div>
                         <div class="clearfix"></div>
+                        @if (Model.ParentTask != null)
+                        {
+                            <span><strong>Üst görev: @Html.ActionLink(@Model.ParentTask.Title, "View", "Tasks", new { id = Model.ParentTask.Id }, null) </strong></span>
+                        }
+                        <hr />
 
-                        <hr /> 
-                        <div class="pull-left">
-                            @if (Model.ParentTask != null)
-                            {
-                                <span><strong>Üst görev: @Html.ActionLink(@Model.ParentTask.Title, "View", "Tasks", new { id = Model.ParentTask.Id }, null) </strong></span>
-                            }
+                        <div class="col-md-4">
+                            <a href="/Tasks/Begin/@Model.Id" class="btn btn-success btn-sm"> Başla </a>
                         </div>
-                        <div class="pull-right"> 
+
+                        <div class="col-md-4">
+                            <input id="ex1" style="width: 100%;" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="0" />
+                        </div>
+
+                        <div class="col-md-4 pull-right">
                             @if (Model.IsProcessed == false && Model.TaskStatus != TaskStatus.Tamamlandı)
                             {
                                 <div class="btn-group">
@@ -96,12 +102,12 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="row">
             <div class="col-xs-6">
                 <div class="box">
-                    <div class="box-header" style="margin: 10px;"> 
-                        <h3 class='box-title pull-left'>Alt Görevler</h3> 
+                    <div class="box-header" style="margin: 10px;">
+                        <h3 class='box-title pull-left'>Alt Görevler</h3>
                         <div class="pull-right">
                             @Html.ActionLink("Alt görev ekle", "AddSubTask", "Tasks", new { parentId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
                         </div>
@@ -110,7 +116,7 @@
                     <div class="box-body table-responsive no-padding">
                         @if (Model.SubTasks != null && Model.SubTasks.Count > 0)
                         {
-                            {Html.RenderPartial("_TaskTable", Model.SubTasks);}
+                            { Html.RenderPartial("_TaskTable", Model.SubTasks); }
                         }
                         else
                         {
@@ -135,6 +141,14 @@
                     </div>
                 </div>
             </div>
-        </div>  
+        </div>
     </section>
-</aside> 
+</aside>
+
+<script>
+    $('#ex1').slider({
+        formatter: function (value) {
+            return '%' + value;
+        }
+    });
+</script>

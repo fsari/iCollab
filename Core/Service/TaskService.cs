@@ -9,6 +9,7 @@ using Core.Service.CrudService;
 using Kendo.Mvc.Extensions;
 using Microsoft.AspNet.Identity;
 using Model;
+using SharpRepository.Repository;
 
 namespace Core.Service
 {
@@ -35,8 +36,8 @@ namespace Core.Service
         private readonly IRepository<Task> _repository; 
         private readonly ICacheManager _cache; 
 
-        public TaskService(IRepository<Task> repository, Func<string, ICacheManager> cache, UoW uow)
-            : base(repository, cache, uow)
+        public TaskService(IRepository<Task> repository, Func<string, ICacheManager> cache)
+            : base(repository, cache)
         {
             _repository = repository;
             _cache = cache("static"); 
@@ -44,14 +45,14 @@ namespace Core.Service
 
         public IQueryable<Task> GetTasksByStatus(TaskStatus status)
         {
-            var tasks = _repository.CollectionUntracked.Where(x => x.TaskStatus == status).OrderByDescending(t => t.DateCreated);
+            var tasks = _repository.AsQueryable().Where(x => x.TaskStatus == status).OrderByDescending(t => t.DateCreated);
 
             return tasks;
         }
 
         private Task GetTaskInstance(Guid id)
         {
-            Task task = _repository.Collection
+            Task task = _repository.AsQueryable()
                             .Include(p => p.Project)
                             .Include(a => a.Attachments)
                             .Include(t=>t.SubTasks)
@@ -96,70 +97,70 @@ namespace Core.Service
 
         public IQueryable<Task> GetUserTasks(string userId)
         {
-            var userTasks = _repository.CollectionUntracked.Include(t => t.TaskUsers).Where(x => x.TaskUsers.Any(r => r.UserId == userId)).OrderByDescending(x=>x.DateCreated);
+            var userTasks = _repository.AsQueryable().Include(t => t.TaskUsers).Where(x => x.TaskUsers.Any(r => r.UserId == userId)).OrderByDescending(x=>x.DateCreated);
 
             return userTasks;
         }
 
         public IQueryable<Task> GetTasks()
         {
-            var tasks = _repository.CollectionUntracked.OrderByDescending(t => t.DateCreated);
+            var tasks = _repository.AsQueryable().OrderByDescending(t => t.DateCreated);
 
             return tasks;
         }
 
         public IQueryable<Task> GetLateTasks()
         {
-            var tasks = _repository.CollectionUntracked.Where(x => x.End < DateTime.Now && x.TaskStatus != TaskStatus.Tamamlandı).OrderByDescending(t => t.DateCreated);
+            var tasks = _repository.AsQueryable().Where(x => x.End < DateTime.Now && x.TaskStatus != TaskStatus.Tamamlandı).OrderByDescending(t => t.DateCreated);
 
             return tasks;
         }
 
         public IQueryable<Task> GetTasksUserCreated(string userId)
         {
-            var tasks = _repository.CollectionUntracked.Where(x => x.TaskOwnerId == userId).OrderByDescending(x=>x.DateCreated);
+            var tasks = _repository.AsQueryable().Where(x => x.TaskOwnerId == userId).OrderByDescending(x => x.DateCreated);
 
             return tasks;
         }
 
         public int TasksCount()
         {
-            var count = _repository.CollectionUntracked.Count();
+            var count = _repository.AsQueryable().Count();
 
             return count;
         }
 
         public bool UserHasAnyTasks(string userId)
         {
-            var result = _repository.CollectionUntracked.Any(x => x.TaskUsers.Any(u => u.UserId == userId));
+            var result = _repository.AsQueryable().Any(x => x.TaskUsers.Any(u => u.UserId == userId));
             //CHECK THIS if user has any tasks
             return result;
         }
 
         public IQueryable<Task> Search(string query)
         {
-            var tasks = _repository.CollectionUntracked.Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(t => t.DateCreated);
+            var tasks = _repository.AsQueryable().Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(t => t.DateCreated);
 
             return tasks;
         }
 
         public Task GetNext(Task task)
         {
-            var next = _repository.CollectionUntracked.GetNext(task);
+            var next = _repository.AsQueryable().GetNext(task);
 
             return next;
         }
 
         public Task GetPrevious(Task task)
         {
-            var previous = _repository.CollectionUntracked.GetPrevious(task);
+            var previous = _repository.AsQueryable().GetPrevious(task);
 
             return previous;
         }
 
         public IQueryable<Task> SearchUserTaks(string query, string userId)
         {
-            var tasks = _repository.CollectionUntracked.Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(t => t.DateCreated);
+            var tasks = _repository.AsQueryable().Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(t => t.DateCreated);
             return tasks;
         }
 

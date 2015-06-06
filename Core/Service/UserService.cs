@@ -9,6 +9,7 @@ using Core.Repository;
 using Microsoft.AspNet.Identity;
 using Model;
 using PagedList;
+using SharpRepository.Repository;
 
 namespace Core.Service
 {
@@ -24,30 +25,27 @@ namespace Core.Service
         IQueryable<ApplicationUser> GetAllUsers();
         IPagedList<ApplicationUser> GetPageOf(int pagenumber, int pagesize); 
         IEnumerable<SelectListItem> GetUsersDropDown();
-        int GetUserCount();
-        IEnumerable<string> GetOnlineUsers();
+        int GetUserCount(); 
         IQueryable<ApplicationUser> GetUsers(IEnumerable<string> userId); 
-        bool ChangePassword(string userId, string currentPassword, string newPassword); 
-        IEnumerable<ProjectUsers> GetProjectUsers(Guid projectId);
+        bool ChangePassword(string userId, string currentPassword, string newPassword);  
         bool Update(ApplicationUser user);
 
         ApplicationUser FindByUsername(string userName);
     }
 
     public class UserService : IUserService
-    {
-        private readonly UoW _uow;
+    { 
         private readonly ApplicationUserManager _userManager; 
-        private readonly ICacheManager _userCache; 
+        private readonly ICacheManager _userCache;
+        private readonly IRepository<ApplicationUser> _userRepository; 
 
-        public UserService(
-                           UoW uow,
-                           ApplicationUserManager usermanager,
-                           Func<string, ICacheManager> cache)
+        public UserService(ApplicationUserManager usermanager,
+                           Func<string, ICacheManager> cache, 
+                           IRepository<ApplicationUser> userRepository)
         {
-            _userCache = cache("static");
-            _uow = uow;
-            _userManager = usermanager;  
+            _userCache = cache("static"); 
+            _userManager = usermanager;
+            _userRepository = userRepository;
         }
 
         public bool ChangePassword(string userId, string currentPassword, string newPassword)
@@ -60,21 +58,7 @@ namespace Core.Service
             }
 
             return false;
-        } 
-
-        public IEnumerable<ProjectUsers> GetProjectUsers(Guid projectId)
-        { 
-            var project = _uow.Context.Set<Project>().Include(u=>u.ProjectUsers).FirstOrDefault(x => x.Id == projectId);
-
-            if (project == null)
-            {
-                return null;
-
-            }
-
-            return project.ProjectUsers.AsEnumerable();
-
-        }
+        }  
 
         public void AssignManager(string userId)
         { 
@@ -90,7 +74,7 @@ namespace Core.Service
 
         public int GetUserCount()
         {
-            var userCount = _uow.Context.Set<ApplicationUser>().Count();
+            var userCount = _userRepository.Count();
 
             return userCount;
         } 
@@ -102,31 +86,23 @@ namespace Core.Service
          
         public IQueryable<ApplicationUser> GetAllUsers()
         {
-            return _uow.Context.Set<ApplicationUser>();
+            return _userRepository.AsQueryable();
         }
-
-        public IEnumerable<string> GetOnlineUsers()
-        {
-            var tenminutesbefore = DateTime.Now.Subtract(TimeSpan.FromMinutes(10));
-            
-            var users =
-                _uow.Context.Set<ApplicationUser>()
-                    .Where(x => x.LastLogin > tenminutesbefore)
-                    .Select(e => e.UserName);
-
-            return users;
-        }
+         
 
         public IQueryable<ApplicationUser> GetUsers(IEnumerable<string> userId)
         {
-            var users = _uow.Context.Set<ApplicationUser>().AsNoTracking().Where(x => userId.Contains(x.Id));
+            var users = _userRepository.AsQueryable().AsNoTracking().Include(p=>p.Picture).Where(x => userId.Contains(x.Id));
 
             return users;
         }
 
         public ApplicationUser FindByUsername(string userName)
-        {
-            var user = _uow.Context.Set<ApplicationUser>().Include(p=>p.Picture).FirstOrDefault(x => x.UserName == userName);
+        { 
+            var user =
+                _userRepository.AsQueryable() 
+                    .Include(p => p.Picture)
+                    .FirstOrDefault(x => x.UserName == userName);
 
             return user;
         }
@@ -140,26 +116,18 @@ namespace Core.Service
 
         public ApplicationUser FindById(string userId)
         {
-            var user = _uow.Context.Set<ApplicationUser>().FirstOrDefault(x => x.Id == userId);
+            var user = _userRepository.AsQueryable().Include(p => p.Picture).FirstOrDefault(x => x.Id == userId); 
 
             return user;
         }
 
         public ApplicationUser GetCurrentUser(string userName)
         {
-            ApplicationUser appUser = _userCache.Get(userName, () => GetUserInstance(userName));
+            ApplicationUser appUser = _userCache.Get(userName, () => FindByUsername(userName));
               
             return appUser;
         }
-
-        public ApplicationUser GetUserInstance(string userName)
-        {
-            ApplicationUser user = _uow.Context.Set<ApplicationUser>().Include(a => a.Picture).AsNoTracking().FirstOrDefault(x => x.UserName == userName);
-             
-            return user;
-        }
-
-
+          
         public ApplicationUser Create(ApplicationUser user)
         {
             var result = _userManager.Create(user);
@@ -185,23 +153,17 @@ namespace Core.Service
 
             return true;
         }
-        
-        public ApplicationUser Delete(ApplicationUser item)
+
+        public ApplicationUser Delete(ApplicationUser user)
         {
-            var user = _uow.Context.Set<ApplicationUser>().Remove(item);
+            _userRepository.Delete(user);
 
             return user;
-        }
-
-        public IQueryable<ApplicationUser> GetQueryable()
-        {
-            var users = _uow.Context.Set<ApplicationUser>().AsNoTracking();
-            return users;
-        }
+        } 
 
         public IPagedList<ApplicationUser> GetPageOf(int pagenumber, int pagesize)
         {
-            var users = _uow.Context.Set<ApplicationUser>().Include(p=>p.Picture).AsNoTracking().OrderByDescending(x => x.Id).ToPagedList(pagenumber, pagesize);
+            var users = _userRepository.AsQueryable().AsNoTracking().Include(p=>p.Picture).AsNoTracking().OrderByDescending(x => x.Id).ToPagedList(pagenumber, pagesize);
 
             return users;
         }  
