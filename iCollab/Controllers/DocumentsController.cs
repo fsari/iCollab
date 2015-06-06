@@ -337,6 +337,10 @@ namespace iCollab.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (document.IsDeleted)
+                {
+                    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                }
 
                 if (document.OwnerId != AppUser.Id)
                 {
@@ -360,7 +364,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            Document document = _service.GetDocument(id.Value);
+            Document document = _service.GetDocument(id.Value,true);
 
             if (document == null)
             {
@@ -370,10 +374,7 @@ namespace iCollab.Controllers
             if (document.OwnerId != AppUser.Id)
             {
                 return new HttpUnauthorizedResult();
-            }
-
-            document.DeletedBy = AppUser.UserName;
-            document.DateDeleted = DateTime.UtcNow;
+            } 
 
             _service.SoftDelete(document);
 

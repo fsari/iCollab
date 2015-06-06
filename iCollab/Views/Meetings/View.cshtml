@@ -14,11 +14,11 @@
 
             @if (Model.CreatedBy == User.Identity.GetUserName())
             {
-                @Html.ActionLink("Duzenle", "Edit", "Meetings", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm" })
-                @Html.ActionLink("Sil", "Delete", "Meetings", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Silmek istediğinizden emin misiniz ?');" })
+                <a href="/Meetings/Edit/@Model.Id"><i class="glyphicon glyphicon-edit"></i></a>
+                <a href="/Meetings/Delete/@Model.Id" onclick="return confirm('Silmek istediğinize emin misiniz?');"><i class="glyphicon glyphicon-trash btn-lg"></i></a>
             }
 
-            @Html.ActionLink("Toplantılar", "Index", "Meetings", null, new { @class = "btn btn-info btn-sm" })
+            <a href="/Meetings/Index"><i class="glyphicon glyphicon-list btn-lg"></i></a>
 
         </div>
         <div class="clearfix"></div>

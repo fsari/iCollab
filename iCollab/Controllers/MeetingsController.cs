@@ -165,7 +165,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            Meeting meeting = _service.GetMeeting(id.Value);
+            Meeting meeting = _service.GetMeeting(id.Value,true);
 
             if (meeting.IsDeleted)
             {
@@ -213,7 +213,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            Meeting meeting = _service.GetMeeting(id.Value);
+            Meeting meeting = _service.GetMeeting(id.Value, true);
 
             if (meeting == null)
             {
@@ -223,10 +223,7 @@ namespace iCollab.Controllers
             if (meeting.OwnerId != AppUser.Id)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-
-            meeting.DeletedBy = AppUser.UserName;
-            meeting.DateDeleted = DateTime.UtcNow;
+            } 
 
             _service.SoftDelete(meeting);
 

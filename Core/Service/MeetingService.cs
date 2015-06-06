@@ -30,7 +30,7 @@ namespace Core.Service
 
         private Meeting GetMeetingInstance(Guid id)
         {
-            Meeting meeting = _repository.AsQueryable().Include(p => p.Project).Include(a => a.Attachments).FirstOrDefault(i => i.Id == id);
+            Meeting meeting = _repository.AsQueryable().Include(o=>o.Owner).Include(p => p.Project).Include(a => a.Attachments).FirstOrDefault(i => i.Id == id);
 
             return meeting;
         }
@@ -67,7 +67,7 @@ namespace Core.Service
 
         public IQueryable<Meeting> GetUserMeetings(string username)
         {
-            var meetings = _repository.AsQueryable().AsNoTracking().Where(x => x.CreatedBy == username || x.IsPublic).OrderByDescending(x=>x.DateCreated);
+            var meetings = _repository.AsQueryable().AsNoTracking().Where(m => m.IsDeleted == false).Where(x => x.CreatedBy == username || x.IsPublic).OrderByDescending(x => x.DateCreated);
 
             return meetings;
         }
