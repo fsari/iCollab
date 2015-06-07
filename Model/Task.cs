@@ -32,10 +32,7 @@ namespace Model
         [DataType(DataType.Date)]
         [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}")]
 		[Display(Name = "Tamamlanma Zamanı")]
-        public DateTime? DateCompleted { set; get; }
-
-        [Display(Name = "İşlendi mi?")] 
-        public bool IsProcessed{ get; set; }
+        public DateTime? DateCompleted { set; get; } 
 
         [Display(Name = "Önceliği")]
         public Priority Priority { set; get; }

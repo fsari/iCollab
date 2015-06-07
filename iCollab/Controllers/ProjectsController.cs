@@ -7,7 +7,6 @@ using Core.Extensions;
 using Core.Mappers;
 using Core.Service;
 using Core.Settings;
-using iCollab.Infra;
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
@@ -37,8 +36,7 @@ namespace iCollab.Controllers
             IUserService userService,
             IMapper<DocumentViewModel, Document> documentMapper,
             IMapper<MeetingViewModel, Meeting> meetingMapper,
-            IAttachmentService attachmentService, 
-            IMapper<AppUserViewModel, ApplicationUser> userMapper)
+            IAttachmentService attachmentService)
             : base(userService, appSettings)
 
         {

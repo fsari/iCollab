@@ -175,8 +175,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
               
-            task.TaskStatus = TaskStatus.Tamamlandı;
-            task.IsProcessed = true;
+            task.TaskStatus = TaskStatus.Tamamlandı; 
             task.DateCompleted = DateTime.Now;
 
             _service.Update(task);
@@ -244,7 +243,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            Task task = _service.GetTask(id.Value);
+            Task task = _service.GetTask(id.Value,true);
 
             if (task == null)
             {
@@ -264,7 +263,7 @@ namespace iCollab.Controllers
             task.TaskStatus = TaskStatus.Aktif;
             _service.Update(task);
 
-            return Content("ok");
+            return RedirectToAction("View", new {id = id.Value});
         }
 
         public ActionResult Index()

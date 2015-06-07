@@ -5,13 +5,11 @@ using System.Net;
 using System.Web.Mvc;
 using Core.Service;
 using Core.Settings;
-using iCollab.Infra;
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI; 
+using Kendo.Mvc.UI;
 using Model;
-using Model.Activity;
 using Model.FineUploader;
 using PagedList;
 
@@ -19,23 +17,24 @@ namespace iCollab.Controllers
 {
     [Authorize]
     public class MeetingsController : BaseController
-    { 
+    {
         private readonly IMeetingService _service;
         private readonly IAttachmentService _attachmentService;
-         
+
         public MeetingsController(
             IApplicationSettings settings,
-            IMeetingService service,  
-            IUserService userService, 
+            IMeetingService service,
+            IUserService userService,
             IAttachmentService attachmentService
-            ) : base(userService, settings)
+            )
+            : base(userService, settings)
         {
             _service = service;
             _attachmentService = attachmentService;
         }
-         
+
         public ActionResult Index()
-        {  
+        {
             return View();
         }
 
@@ -133,7 +132,7 @@ namespace iCollab.Controllers
 
         public ActionResult Create()
         {
-            var meeting = new Meeting {DateCreated = DateTime.Now};
+            var meeting = new Meeting { DateCreated = DateTime.Now };
 
             return View(meeting);
         }
@@ -151,7 +150,7 @@ namespace iCollab.Controllers
                 _service.Create(meeting);
 
                 TempData["success"] = "Toplantı oluşturuldu.";
-                return RedirectToAction("View", new{id= meeting.Id});
+                return RedirectToAction("View", new { id = meeting.Id });
             }
 
             TempData["error"] = "Bir hata oldu.";
@@ -165,7 +164,7 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
-            Meeting meeting = _service.GetMeeting(id.Value,true);
+            Meeting meeting = _service.GetMeeting(id.Value, true);
 
             if (meeting.IsDeleted)
             {
@@ -194,9 +193,9 @@ namespace iCollab.Controllers
             }
 
             if (ModelState.IsValid)
-            { 
+            {
                 _service.Update(meeting);
-                 
+
                 TempData["success"] = "Toplantı güncellendi.";
 
                 return RedirectToAction("View", new { id = meeting.Id });
@@ -223,7 +222,7 @@ namespace iCollab.Controllers
             if (meeting.OwnerId != AppUser.Id)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            } 
+            }
 
             _service.SoftDelete(meeting);
 
@@ -267,7 +266,7 @@ namespace iCollab.Controllers
             {
                 upload.SaveAs(uploadPath);
 
-                var attachment = new Attachment { Name = upload.Filename, Path = accessPath};
+                var attachment = new Attachment { Name = upload.Filename, Path = accessPath };
 
                 Meeting meeting = _service.GetMeeting(id.Value, true);
 

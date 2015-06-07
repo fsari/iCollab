@@ -1,10 +1,7 @@
-﻿using System.Security.Claims;
-using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 using Core.Mappers;
 using Core.Service;
-using Core.Settings;
-using iCollab.Infra;
+using Core.Settings; 
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
 using Microsoft.AspNet.Identity;

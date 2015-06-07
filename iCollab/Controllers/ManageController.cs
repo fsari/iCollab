@@ -1,22 +1,14 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using Core.Logging;
 using Core.Service;
 using Core.Settings;
-using iCollab.Infra;
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
-using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
-using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin.Security;
-using Model;
-using Model.FineUploader;
+using Model; 
 
 namespace iCollab.Controllers
 {
@@ -108,10 +100,7 @@ namespace iCollab.Controllers
         [ChildActionOnly]
         public ActionResult UpdateProfile()
         {
-            var profileViewModel = new ProfileViewModel();
-
-            profileViewModel.FullName = AppUser.FullName;
-            profileViewModel.PhoneNumber = AppUser.Phone;
+            var profileViewModel = new ProfileViewModel {FullName = AppUser.FullName, PhoneNumber = AppUser.Phone};
 
             return PartialView("_UpdateProfile", profileViewModel);
         }
@@ -206,17 +195,7 @@ namespace iCollab.Controllers
 
  
 
-#region Helpers
-        // Used for XSRF protection when adding external logins
-        private const string XsrfKey = "XsrfId"; 
-
-        private void AddErrors(IdentityResult result)
-        {
-            foreach (var error in result.Errors)
-            {
-                ModelState.AddModelError("", error);
-            }
-        }
+#region Helpers 
          
         public enum ManageMessageId
         {

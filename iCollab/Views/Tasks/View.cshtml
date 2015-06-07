@@ -1,5 +1,4 @@
-﻿@using System.Web
-@using iCollab.Infra.Extensions
+﻿@using iCollab.Infra.Extensions
 @using iCollab.ViewModels
 @using Microsoft.AspNet.Identity
 @using Model
@@ -40,7 +39,7 @@
                     <div class="box-body table-responsive no-padding" style="margin-left: 10px;">
                         <div>
                             @Html.Raw(HttpUtility.HtmlDecode(Model.Description))<br />
-                             
+
                             @if (Model.Previous != null)
                             {
                                 <a href="/Tasks/View/@Model.Previous.Id" class="btn btn-primary btn-sm">@Model.Previous.Title</a>
@@ -79,25 +78,39 @@
                         }
                         <hr />
 
-                        <div class="col-md-4">
-                            <a href="/Tasks/Begin/@Model.Id" class="btn btn-success btn-sm"> Başla </a>
-                        </div>
+                        @if (Model.TaskStatus != TaskStatus.Tamamlandı)
+                        {
+                            <div class="well">
+                                <div class="col-md-4">
+                                    @if (Model.TaskStatus == TaskStatus.Planlandı)
+                                    {
+                                        <a href="/Tasks/Begin/@Model.Id" class="btn btn-success btn-sm"> Başla </a>
+                                    }
+                                </div>
 
-                        <div class="col-md-4">
-                            <input id="ex1" style="width: 100%;" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="0" />
-                        </div>
+                                <div class="col-md-4">
+                                    @if (Model.TaskStatus == TaskStatus.Aktif)
+                                    {
+                                        <input id="ex1" style="width: 100%;" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="10" data-slider-value="0" />
+                                    }
+                                </div>
 
-                        <div class="col-md-4">
-                            <div class="pull-right">
-                                @if (Model.IsProcessed == false && Model.TaskStatus != TaskStatus.Tamamlandı)
-                                {
-                                    <div class="btn-group">
-                                        @Html.ActionLink("Tamamla", "CompleteTask", "Tasks", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm", onclick = "return confirm('Tamamlamak istediğinizden emin misiniz?');" })
-                                        @Html.ActionLink("Reddet", "ReturnTask", "Tasks", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('İade etmek istediğinizden emin misiniz?');" })
-                                    </div>
-                                }
+                                <div class="col-md-4">
+                                    @if (Model.TaskStatus != TaskStatus.Tamamlandı && Model.TaskStatus == TaskStatus.Aktif)
+                                    {
+                                        <div class="pull-right">
+                                            <div class="btn-group">
+                                                @Html.ActionLink("Tamamla", "CompleteTask", "Tasks", new { id = Model.Id }, new { @class = "btn btn-primary btn-sm", onclick = "return confirm('Tamamlamak istediğinizden emin misiniz?');" })
+                                            </div>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    }
+                                    
+                                </div>
+
+                                <div class="clearfix"></div>
                             </div>
-                        </div>
+                        }
 
                         <div class="clearfix"></div>
                     </div>
