@@ -223,13 +223,7 @@ namespace iCollab.Controllers
 
             var users = UserService.GetUsers(taskUsers.AsEnumerable());
 
-            taskViewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
-
-            var next = _service.GetUserTasks(AppUser.Id).GetNext(task);
-            var previous = _service.GetUserTasks(AppUser.Id).GetPrevious(task);
-
-            taskViewModel.Next = next;
-            taskViewModel.Previous = previous;
+            taskViewModel.SelectedUsers = users.Select(x => x.FullName).ToList(); 
 
             taskViewModel.TaskOwner = _userMapper.ToEntity(task.TaskOwner);
 

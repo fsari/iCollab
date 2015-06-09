@@ -38,17 +38,7 @@
                 <div class="box">
                     <div class="box-body table-responsive no-padding" style="margin-left: 10px;">
                         <div>
-                            @Html.Raw(HttpUtility.HtmlDecode(Model.Description))<br />
-
-                            @if (Model.Previous != null)
-                            {
-                                <a href="/Tasks/View/@Model.Previous.Id" class="btn btn-primary btn-sm">@Model.Previous.Title</a>
-                            }
-
-                            @if (Model.Next != null)
-                            {
-                                <a href="/Tasks/View/@Model.Next.Id" class="btn btn-primary btn-sm">@Model.Next.Title</a>
-                            }
+                            @Html.Raw(HttpUtility.HtmlDecode(Model.Description))<br /> 
                         </div>
 
                         <div class="pull-left">
