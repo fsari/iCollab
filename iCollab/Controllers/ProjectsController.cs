@@ -376,7 +376,7 @@ namespace iCollab.Controllers
 
             viewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
 
-            if (users.Any(x => x.Id != AppUser.Id))
+            if (users.Any(x => x.Id == AppUser.Id) == false)
             {
                 return HttpNotFound();
             }
@@ -734,6 +734,15 @@ namespace iCollab.Controllers
             }
 
             return Content("fail");
+        }
+
+        public ActionResult GetProjectUsers(Guid projectId)
+        {
+            var userIds = _projectService.GetProject(projectId, true).ProjectUsers.Select(x => x.UserId);
+
+            var users = UserService.GetUsers(userIds).Select(x=> new UserSelectViewModel(){ FullName = x.FullName, Id = x.Id}); 
+
+            return Json(users, JsonRequestBehavior.AllowGet); 
         }
 
         

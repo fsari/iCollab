@@ -8,5 +8,7 @@ namespace iCollab.ViewModels
         public IEnumerable<Attachment> Attachments { set; get; }
         public string RemovePath { set; get; }
         public string UploadPath { set; get; }
+
+        public bool CanUserUpload { set; get; }
     }
 }
