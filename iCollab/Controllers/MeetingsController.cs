@@ -40,7 +40,7 @@ namespace iCollab.Controllers
 
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            IQueryable<Meeting> meetings = _service.GetUserMeetings(AppUser.UserName);
+            IQueryable<MeetingViewModel> meetings = _service.GetUserMeetings(AppUser.Id).Select(x=> new MeetingViewModel(){Id = x.Id, Title = x.Title, DateTime = x.DateTime,CreatedBy = x.Owner.FullName});
             return Json(meetings.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 
@@ -122,9 +122,24 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            bool canView = false;
+
+            if (meeting.Project != null)
+            {
+                if (meeting.Project.ProjectUsers.Any(x => x.UserId == AppUser.Id))
+                {
+                    canView = true;
+                }
+            }
+
+            if (canView)
+            {
+                return View(meeting);
+            }
+
             if (meeting.IsPublic == false && meeting.OwnerId != AppUser.Id)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest); 
             }
 
             return View(meeting);

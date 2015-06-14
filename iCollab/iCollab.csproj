@@ -248,6 +248,7 @@
     <Compile Include="ViewModels\SearchViewModel.cs" />
     <Compile Include="ViewModels\TaskViewModel.cs" />
     <Compile Include="ViewModels\TodoDto.cs" />
+    <Compile Include="ViewModels\XEditable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\bootstrap\css\bootstrap.css" />
@@ -1257,6 +1258,11 @@
     <Content Include="Assets\plugins\bootstrap-slider\bootstrap-slider.min.js" />
     <Content Include="Assets\plugins\bootstrap-slider\css\bootstrap-slider.css" />
     <Content Include="Assets\plugins\bootstrap-slider\css\bootstrap-slider.min.css" />
+    <Content Include="Assets\plugins\bootstrap3-editable\css\bootstrap-editable.css" />
+    <Content Include="Assets\plugins\bootstrap3-editable\img\clear.png" />
+    <Content Include="Assets\plugins\bootstrap3-editable\img\loading.gif" />
+    <Content Include="Assets\plugins\bootstrap3-editable\js\bootstrap-editable.js" />
+    <Content Include="Assets\plugins\bootstrap3-editable\js\bootstrap-editable.min.js" />
     <Content Include="Assets\plugins\chartjs\Chart.js" />
     <Content Include="Assets\plugins\chartjs\Chart.min.js" />
     <Content Include="Assets\plugins\ckeditor\adapters\jquery.js" />

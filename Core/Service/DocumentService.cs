@@ -33,8 +33,9 @@ namespace Core.Service
 
         private Document GetDocumentInstance(Guid id)
         {
-            Document document = _repository.AsQueryable().Include(o=>o.Owner).Include(p=>p.Project).Include(a => a.Attachments).Include(c => c.ContentPages).FirstOrDefault(x => x.Id == id);
-
+            Document document = _repository.AsQueryable()
+                                .Include(o=>o.Owner).Include(p=>p.Project).Include(u=>u.Project.ProjectUsers).Include(a => a.Attachments).Include(c => c.ContentPages)
+                                .FirstOrDefault(x => x.Id == id); 
             return document;
         }
 

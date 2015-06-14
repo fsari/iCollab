@@ -68,7 +68,7 @@
                         }
                         <hr />
 
-                        @if (Model.TaskStatus != TaskStatus.Tamamlandı)
+                        @if (Model.TaskStatus != TaskStatus.Tamamlandı && Model.SelectedUsers.Any(x=>x == User.Identity.GetUserName()))
                         {
                             <div class="well">
                                 <div class="col-md-4">

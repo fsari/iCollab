@@ -57,7 +57,7 @@
                             @if (Model.CreatedBy == User.Identity.GetUserName())
                             {
                                 @Html.CheckBoxFor(m => m.IsPublic, new { @data_size = "small", @data_on_text = "Herkese açık", @data_off_text = "Özel", @id = "switch-state" })
-                            } 
+                            }
                         </div>
                     </div>
                 </div>
@@ -66,12 +66,14 @@
             <div class="col-md-4">
                 <div class="box">
                     <div class="box-body">
-                        @{Html.RenderPartial("_Attachment", new AttachmentViewModel
-                          {
-                              Attachments = Model.Attachments,
-                              UploadPath = "/Meetings/Upload/?id=" + Model.Id,
-                              RemovePath = "/Meetings/RemoveAttachment/?meetingId=" + Model.Id
-                          });}
+                        @{
+                            Html.RenderPartial("_Attachment", new AttachmentViewModel
+                                {
+                                    Attachments = Model.Attachments,
+                                    UploadPath = "/Meetings/Upload/?id=" + Model.Id,
+                                    RemovePath = "/Meetings/RemoveAttachment/?meetingId=" + Model.Id
+                                });
+                        }
                     </div>
                 </div>
             </div>

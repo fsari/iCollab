@@ -223,7 +223,7 @@ namespace iCollab.Controllers
 
             var users = UserService.GetUsers(taskUsers.AsEnumerable());
 
-            taskViewModel.SelectedUsers = users.Select(x => x.FullName).ToList(); 
+            taskViewModel.SelectedUsers = users.Select(x => x.UserName).ToList(); 
 
             taskViewModel.TaskOwner = _userMapper.ToEntity(task.TaskOwner);
 

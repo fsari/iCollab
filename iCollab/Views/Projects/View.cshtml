@@ -31,7 +31,7 @@
             <div class="col-md-7">
                 <div class="row">
                     <div class="col-md-12">
-                        <div class="box"> 
+                        <div class="box">
                             <div class="box-body table-responsive no-padding" style="margin-left: 10px;">
 
                                 <div class="pull-left">
@@ -40,7 +40,7 @@
                                 <div class="pull-right">
                                     <strong>@Model.DateCreated.FormatDate()</strong>
                                 </div>
-                                <div class="clearfix"></div> 
+                                <div class="clearfix"></div>
 
                                 <div class="progress">
                                     @if (Model.Status == ProjectStatus.Bitti)
@@ -53,61 +53,54 @@
                                     }
                                 </div>
 
-                                <br/>  
+                                <br />
 
                                 <div style="margin-right: 10px;">
-                                    <div class="pull-left"> 
-                                        <strong>Durumu : </strong> <label class="label label-info">@Model.Status </label><br />
-                                        <strong>Önceliği : </strong> <label class="label label-primary">@Model.Priority </label><br />
+                                    <div class="pull-left">
+                                        <strong>Durumu : </strong>
+                                        <a href="#" id="projectstatus" data-type="select" data-source="@Url.Action("GetProjectStatus")" data-value="@Model.Status" class="editable-click">@Model.Status</a>
+                                        <br />
 
-                                        <strong>Kullanıcılar :</strong> 
+                                        <strong>Önceliği : </strong>
+                                        <a href="#" id="projectpriority" data-type="select" data-source="@Url.Action("GetProjectPriority")" data-value="@Model.Priority" class="editable-click">@Model.Priority</a>
+                                        <br />
+
+                                        <strong>Kullanıcılar :</strong>
                                         @foreach (var user in Model.SelectedUsers)
                                         {
                                             <label class="label label-default">  @user </label>
                                         }
-                                        
+
                                     </div>
                                     <div class="pull-right">
-                                         
+
                                         @if (Model.StartDatetime.HasValue)
                                         {
                                             <strong>Başlangıç : </strong> @Html.DisplayFor(m => m.StartDatetime) <br />
                                         }
-                                        
+
                                         @if (Model.EndDatetime.HasValue)
                                         {
                                             <strong>Bitiş : </strong> @Html.DisplayFor(m => m.EndDatetime) <br />
-                                        } 
+                                        }
                                     </div>
 
                                     <div class="clearfix"></div>
                                 </div>
-                                <br/>
+                                <br />
                                 @Html.Raw(HttpUtility.HtmlDecode(Model.Description)) <br />
 
                                 <div class="clearfix"></div>
 
-                                <div> 
-                                    <div class="pull-left">
-                                        @if (Model.PreviousProject != null)
-                                        {
-                                            <a href="/Projects/View/@Model.PreviousProject.Id" class="btn btn-primary btn-sm">@Model.PreviousProject.Title</a>
-                                        }
 
-                                        @if (Model.NextProject != null)
-                                        {
-                                            <a href="/Projects/View/@Model.NextProject.Id" class="btn btn-primary btn-sm">@Model.NextProject.Title</a>
-                                        }
-                                    </div>
-                                    <div class="pull-right">
-                                        @if (Model.CreatedBy == User.Identity.GetUserName() && (Model.Status != ProjectStatus.Bitti || Model.Status != ProjectStatus.Iptal))
-                                        {
-                                            @Html.ActionLink("Projeyi Bitir", "Finish", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Projeyi bitirmek istediginizden emin misiniz?');" })
-                                            @Html.ActionLink("Projeyi iptal et", "CancelProject", new { id = Model.Id }, new { @class = "btn btn-warning btn-sm", onclick = "return confirm('Projeyi iptal etmek istediginizden emin misiniz?');" })
-                                        }
-                                    </div>
-                                    <div class="clearfix"></div>
+                                <div class="pull-right">
+                                    @if (Model.CreatedBy == User.Identity.GetUserName() && (Model.Status != ProjectStatus.Bitti || Model.Status != ProjectStatus.Iptal))
+                                    {
+                                        @Html.ActionLink("Projeyi Bitir", "Finish", new { id = Model.Id }, new { @class = "btn btn-danger btn-sm", onclick = "return confirm('Projeyi bitirmek istediginizden emin misiniz?');" })
+                                        @Html.ActionLink("Projeyi iptal et", "CancelProject", new { id = Model.Id }, new { @class = "btn btn-warning btn-sm", onclick = "return confirm('Projeyi iptal etmek istediginizden emin misiniz?');" })
+                                    }
                                 </div>
+                                <div class="clearfix"></div>
 
                             </div>
                         </div>
@@ -119,60 +112,36 @@
                         <div class="box">
                             <div class="box-header">
                                 <i class="fa fa-tasks"></i>
-                                <h3 class="box-title">Proje Görevleri</h3>
+                                <h3 class="box-title">Görevler</h3>
 
                                 <div class="pull-right box-tools">
                                     @Html.ActionLink("Görev Ekle", "AddTask", "Projects", new { projectId = Model.Id }, new { @class = "btn btn-danger btn-sm" })
                                 </div>
                             </div>
                             <div class="box-body">
-                                @if (Model.Tasks != null)
-                                {
-                                    if (Model.Tasks.Any() == false)
-                                    {
-                                        <div class="callout">
-                                            Bu projeye ait bir görev yok.
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        { Html.RenderPartial("_TaskTable", Model.Tasks.OrderByDescending(x=>x.DateCreated)); }
-                                    }
-                                }
+                                @{ Html.RenderPartial("_TaskTable", Model.Tasks.OrderByDescending(x => x.DateCreated)); }
                             </div>
                         </div>
                     </div>
-                </div> 
+                </div>
 
                 <div class="row">
                     <div class="col-md-12">
                         <div class="box">
                             <div class="box-header">
                                 <i class="fa fa-book"></i>
-                                <h3 class="box-title">Proje Dökümanları</h3>
+                                <h3 class="box-title">Dökümanlar</h3>
 
                                 <div class="pull-right box-tools">
                                     @Html.ActionLink("Döküman Ekle", "AddDocument", "Projects", new { projectId = Model.Id }, new { @class = "btn btn-danger btn-sm" })
                                 </div>
                             </div>
-                            <div class="box-body"> 
-                                @if (Model.Documents != null)
-                                {
-                                    if (Model.Documents.Any() == false)
-                                    {
-                                        <div class="callout">
-                                            Bu projeye ait bir doküman yok.
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        { Html.RenderPartial("_DocumentTable", Model.Documents.OrderByDescending(x=>x.DateCreated)); }
-                                    }
-                                }
+                            <div class="box-body">
+                                @{ Html.RenderPartial("_DocumentTable", Model.Documents.OrderByDescending(x => x.DateCreated)); }
                             </div>
                         </div>
                     </div>
-                </div> 
+                </div>
             </div>
 
             <div class="col-md-5">
@@ -196,32 +165,69 @@
                         <div class="box">
                             <div class="box-header">
                                 <i class="fa fa-book"></i>
-                                <h3 class="box-title">Proje toplantıları</h3>
+                                <h3 class="box-title">Toplantılar</h3>
                                 <div class="pull-right box-tools">
                                     @Html.ActionLink("Toplantı Ekle", "AddMeeting", "Projects", new { projectId = Model.Id }, new { @class = "btn btn-danger btn-sm" })
                                 </div>
                             </div>
                             <div class="box-body">
-                                @if (Model.Meetings != null)
-                                {
-                                    if (Model.Meetings.Any() == false)
-                                    {
-                                        <div class="callout">
-                                            Bu projeye ait bir toplantı yok.
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        { Html.RenderPartial("_MeetingTable", Model.Meetings.OrderByDescending(x=>x.DateCreated)); }
-                                    }
-                                }
+                                @{ Html.RenderPartial("_MeetingTable", Model.Meetings.OrderByDescending(x => x.DateCreated)); }
                             </div>
                         </div>
                     </div>
                 </div>
-            </div> 
+            </div>
 
         </div>
     </section>
 </aside>
+<script>
+    $(document).ready(function () {
+        //toggle `popup` / `inline` mode
+        $.fn.editable.defaults.mode = 'inline';
 
+        $('#projectstatus').editable({
+            type: 'select',
+            placement: 'right',
+            value: 2,
+            source: function () {
+                var result;
+                $.ajax({
+                    url: '/Projects/GetProjectStatus',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        result = data;
+                    }
+                });
+                return result;
+            }
+            , pk: '@Model.Id'
+            , url: '/Projects/ChangeStatus'
+
+        });
+
+        $('#projectpriority').editable({
+            type: 'select',
+            placement: 'right',
+            value: 2,
+            source: function () {
+                var result;
+                $.ajax({
+                    url: '/Projects/GetProjectPriority',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        result = data;
+                    }
+                });
+                return result;
+            }
+            , pk: '@Model.Id'
+            , url: '/Projects/ChangePriority'
+
+        });
+
+    });
+
+</script>

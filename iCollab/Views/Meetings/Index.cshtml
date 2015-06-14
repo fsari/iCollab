@@ -1,6 +1,7 @@
-﻿@using Model
+﻿@using iCollab.ViewModels
+@using Model
 @{
-    ViewBag.Title = "Toplantilar";
+    ViewBag.Title = "Toplantolar";
 }
 
 <aside class="right-side">
@@ -18,7 +19,7 @@
                         <div class="pull-left" style="margin:10px;">
                             @Html.ActionLink("Yeni toplanti", "Create", "Meetings", null, new { @class = "btn btn-primary" })
                         </div>
-                        <div class="pull-right" style="margin: 4px;">
+                        @*<div class="pull-right" style="margin: 4px;">
                             <form id="searchform" name="searchform" action="/Meetings/Search" method="POST" class="sidebar-form">
                                 <div class="input-group">
                                     <input type="text" name="query" class="form-control" placeholder="Arama." />
@@ -27,12 +28,12 @@
                                     </span>
                                 </div>
                             </form>
-                        </div>
+                        </div>*@
                         <div class="clearfix"></div>
                     </div>
 
                     <div class="box-body table-responsive no-padding">
-                        @(Html.Kendo().Grid<Meeting>()
+                        @(Html.Kendo().Grid<MeetingViewModel>()
                             .Name("grid")
                             .Columns(columns =>
                             {

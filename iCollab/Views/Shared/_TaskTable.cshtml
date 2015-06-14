@@ -1,35 +1,48 @@
 ﻿@using iCollab.Infra.Extensions
 @model IEnumerable<Model.Task>
 
-<table class="table table-striped table-responsive table-hover">
-    <thead>
-        <tr>
-            <th></th>
-            <th style="width: 90px;">Durumu</th>
-            <th style="width: 90px;">Önceliği</th>
-            <th style="width: 90px;">Başlangıç</th>
-            <th style="width: 90px;">Bitiş</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null)
-        {
-            foreach (var item in Model)
-            {
+
+@if (Model != null)
+{
+    if (Model.Any() == false)
+    {
+        <div class="callout">
+            Bu projeye ait bir görev yok.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-responsive table-hover">
+            <thead>
                 <tr>
-                    <td>
-                        @if (item.IsLate)
-                        {
-                            <i class="fa fa-flag" style="color:red;"></i>
-                        }
-                        @Html.ActionLink(item.Title, "View", "Tasks", new { id = item.Id }, null)
-                    </td>
-                    <td><span class="@item.TaskStatus.CssClass()">@item.TaskStatus</span></td>
-                    <td><span class="@item.Priority.CssClass()">@item.Priority</span></td>
-                    <td>@Html.DisplayFor(modelItem => item.Start)</td>
-                    <td>@Html.DisplayFor(modelItem => item.End)</td>
+                    <th></th>
+                    <th style="width: 90px;">Durumu</th>
+                    <th style="width: 90px;">Önceliği</th>
+                    <th style="width: 90px;">Başlangıç</th>
+                    <th style="width: 90px;">Bitiş</th>
                 </tr>
-            }
-        }
-    </tbody>
-</table>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (item.IsLate)
+                                {
+                                    <i class="fa fa-flag" style="color:red;"></i>
+                                }
+                                @Html.ActionLink(item.Title, "View", "Tasks", new { id = item.Id }, null)
+                            </td>
+                            <td><span class="@item.TaskStatus.CssClass()">@item.TaskStatus</span></td>
+                            <td><span class="@item.Priority.CssClass()">@item.Priority</span></td>
+                            <td>@Html.DisplayFor(modelItem => item.Start)</td>
+                            <td>@Html.DisplayFor(modelItem => item.End)</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+}

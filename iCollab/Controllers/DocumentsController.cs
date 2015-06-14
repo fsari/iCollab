@@ -95,6 +95,21 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
+            bool canView = false;
+
+            if (document.Project != null)
+            {
+                if (document.Project.ProjectUsers.Any(x => x.UserId == AppUser.Id))
+                {
+                    canView = true;
+                }
+            }
+
+            if (canView)
+            {
+                return View(document);
+            }
+
             if (document.IsPublic == false && document.OwnerId != AppUser.Id)
             {
                 return new HttpUnauthorizedResult();

@@ -12,6 +12,8 @@ namespace iCollab.ViewModels
             DateCreated = DateTime.Now;
         }
 
+        public Guid Id { set; get; }
+
         [Display(Name = "Oluşturulma Zamanı")]
         public DateTime DateCreated { set; get; }
 
@@ -42,6 +44,8 @@ namespace iCollab.ViewModels
         public string Location { get; set; }
 
         public Guid ProjectId { set; get; }
+
+        public string CreatedBy { set; get; }
 
     }
 }

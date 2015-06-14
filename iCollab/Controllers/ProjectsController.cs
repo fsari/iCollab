@@ -1,4 +1,5 @@
-﻿using System; 
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
@@ -55,8 +56,9 @@ namespace iCollab.Controllers
          
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var projects = _projectService.GetProjects();
-
+            var user = UserService.FindById(AppUser.Id);
+            var projects = _projectService.GetUserProjects(user);
+            
             return Json(projects.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 
@@ -181,6 +183,11 @@ namespace iCollab.Controllers
                 project.Meetings = new Collection<Meeting>();
             }
 
+            var user = UserService.FindById(AppUser.Id);
+
+            meeting.Owner = user;
+            meeting.OwnerId = user.Id;
+
             project.Meetings.Add(meeting);
 
             _projectService.Update(project);
@@ -230,6 +237,11 @@ namespace iCollab.Controllers
             {
                 project.Documents = new Collection<Document>();
             }
+
+            var user = UserService.FindById(AppUser.Id);
+
+            document.Owner = user;
+            document.OwnerId = user.Id;
 
             project.Documents.Add(document);
 
@@ -353,21 +365,21 @@ namespace iCollab.Controllers
             } 
 
             var projectUsers = project.ProjectUsers.Select(x=>x.UserId);
-
-            var users = UserService.GetUsers(projectUsers.AsEnumerable());
-
-            var nextProject = _projectService.GetUserProjects(AppUser.Id).GetNext(project);
-            var previousProject = _projectService.GetUserProjects(AppUser.Id).GetPrevious(project);
              
-            ProjectViewModel viewModel = _mapper.ToEntity(project);
-            viewModel.NextProject = nextProject;
-            viewModel.PreviousProject = previousProject;
+            var users = UserService.GetUsers(projectUsers.AsEnumerable());
+             
+            ProjectViewModel viewModel = _mapper.ToEntity(project); 
 
             var createdBy = UserService.FindByUsername(project.CreatedBy);
 
             viewModel.CreatedBy = createdBy.UserName;
 
             viewModel.SelectedUsers = users.Select(x => x.FullName).ToList();
+
+            if (users.Any(x => x.Id != AppUser.Id))
+            {
+                return HttpNotFound();
+            }
 
             return View(viewModel);
         }
@@ -670,5 +682,60 @@ namespace iCollab.Controllers
                 return new FineUploaderResult(false, error: ex.Message);
             }
         }
+
+        public ActionResult GetProjectStatus()
+        {
+            var items = Enum.GetValues(typeof(ProjectStatus)).Cast<ProjectStatus>().Select(x=>x.DisplayName());
+
+            return Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult ChangeStatus(Guid pk, string name, string value)
+        {
+            var project = _projectService.GetProject(pk, true);
+
+            var user = UserService.FindById(AppUser.Id);
+
+            if (project.CanEditProject(user))
+            {
+                var newstatus = EnumExtensions.ParseEnum<ProjectStatus>(value);
+
+                project.Status = newstatus;
+
+                _projectService.Update(project);
+                return Content("ok");
+            }
+
+            return Content("fail");
+        }
+
+        public ActionResult GetProjectPriority()
+        {
+            var items = Enum.GetValues(typeof(Priority)).Cast<Priority>().Select(x => x.DisplayName());
+
+            return Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult ChangePriority(Guid pk, string name, string value)
+        {
+            var project = _projectService.GetProject(pk, true);
+             
+            var user = UserService.FindById(AppUser.Id);
+
+            if (project.CanEditProject(user))
+            {
+                var newstatus = EnumExtensions.ParseEnum<Priority>(value);
+
+                project.Priority = newstatus;
+
+                _projectService.Update(project); 
+
+                return Content("ok");
+            }
+
+            return Content("fail");
+        }
+
+        
     }
 }

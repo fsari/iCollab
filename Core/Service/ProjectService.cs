@@ -22,7 +22,7 @@ namespace Core.Service
         int ProjectsCount();
         Project GetNextProject(Project project);
         Project GetPreviousProject(Project project);
-        IQueryable<Project> GetUserProjects(string username); 
+        IQueryable<Project> GetUserProjects(ApplicationUser user); 
         ICollection<Task> GetProjectTasks(Guid id);  
         IQueryable<Project> Search(string query);
         IQueryable<Project> SearchUserProjects(string query, string userId);
@@ -137,9 +137,10 @@ namespace Core.Service
             return previousProject;
         }
 
-        public IQueryable<Project> GetUserProjects(string userId)
+        public IQueryable<Project> GetUserProjects(ApplicationUser user)
         {  
-            var projects = _repository.AsQueryable().Include(u=>u.ProjectOwner).Include(p=>p.ProjectUsers).Where(x => x.ProjectUsers.Any(e=>e.UserId == userId) || x.ProjectOwnerId == userId).OrderByDescending(x => x.DateCreated);
+            var projects = _repository.AsQueryable().Include(u=>u.ProjectOwner).Include(p=>p.ProjectUsers).Include(o=>o.ProjectOwner)
+                .Where(x => x.ProjectUsers.Any(e=>e.UserId == user.Id) || x.ProjectOwnerId == user.Id).OrderByDescending(x => x.DateCreated);
 
             return projects;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations; 
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace Model
@@ -36,6 +37,26 @@ namespace Model
         public ICollection<Meeting> Meetings { set; get; }
         public ICollection<ProjectUsers> ProjectUsers { set; get; }
         public ICollection<Model.Activity.Activity> Activities { set; get; }
+
+        public bool CanEditProject(ApplicationUser user)
+        {
+            if (CreatedBy == user.UserName)
+            {
+                return true;
+            }
+
+            if (ProjectOwner.UserName == user.UserName)
+            {
+                return true;
+            }
+
+            if (ProjectUsers.Any(x => x.UserId == user.Id))
+            {
+                return true;
+            }
+
+            return false;
+        }
          
     }
 }

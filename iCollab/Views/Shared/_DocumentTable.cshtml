@@ -1,24 +1,38 @@
 ﻿@model IEnumerable<Model.Document>
 
-<table class="table table-striped table-responsive table-hover">
-    <thead>
-        <tr>
-            <th></th>
-            <th style="width: 90px;">Tarih</th>
-            <th style="width: 90px;">Oluşturan</th>
-        </tr>
-    </thead>
-    <tbody>
-        @if (Model != null)
-        {
-            foreach (var item in Model)
-            {
+
+@if (Model != null)
+{
+    if (Model.Any() == false)
+    {
+        <div class="callout">
+            Yeni bir doküman yok.
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped table-responsive table-hover">
+            <thead>
                 <tr>
-                    <td>@Html.ActionLink(item.Title, "View", "Documents", new { id = item.Id }, null)</td>
-                    <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
-                    <td><span class="label label-info">@item.CreatedBy</span></td>
+                    <th></th>
+                    <th style="width: 90px;">Tarih</th>
+                    <th style="width: 90px;">Oluşturan</th>
                 </tr>
-            }
-        }
-    </tbody>
-</table> 
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.ActionLink(item.Title, "View", "Documents", new { id = item.Id }, null)</td>
+                            <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
+                            <td><span class="label label-info">@item.CreatedBy</span></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+}
+

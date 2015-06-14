@@ -14,7 +14,7 @@ namespace Core.Service
         Meeting GetMeeting(Guid id, bool nocache = false);
         IQueryable<Meeting> GetMeetings();
         int MeetingsCount();
-        IQueryable<Meeting> GetUserMeetings(string username);
+        IQueryable<Meeting> GetUserMeetings(string userId);
         IQueryable<Meeting> Search(string query);
     }
 
@@ -30,7 +30,7 @@ namespace Core.Service
 
         private Meeting GetMeetingInstance(Guid id)
         {
-            Meeting meeting = _repository.AsQueryable().Include(o=>o.Owner).Include(p => p.Project).Include(a => a.Attachments).FirstOrDefault(i => i.Id == id);
+            Meeting meeting = _repository.AsQueryable().Include(o=>o.Owner).Include(p => p.Project).Include(p=>p.Project.ProjectUsers).Include(a => a.Attachments).FirstOrDefault(i => i.Id == id);
 
             return meeting;
         }
@@ -65,9 +65,10 @@ namespace Core.Service
             return count;
         }
 
-        public IQueryable<Meeting> GetUserMeetings(string username)
+        public IQueryable<Meeting> GetUserMeetings(string userId)
         {
-            var meetings = _repository.AsQueryable().AsNoTracking().Where(m => m.IsDeleted == false).Where(x => x.CreatedBy == username || x.IsPublic).OrderByDescending(x => x.DateCreated);
+            var meetings = _repository.AsQueryable().Include(x=>x.Project.ProjectUsers).Include(o=>o.Owner).AsNoTracking()
+                            .Where(m => m.IsDeleted == false).Where(x => x.OwnerId == userId || x.IsPublic || x.Project.ProjectUsers.Any(c => c.UserId == userId)).OrderByDescending(x => x.DateCreated);
 
             return meetings;
         }

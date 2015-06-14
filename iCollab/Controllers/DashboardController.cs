@@ -155,9 +155,10 @@ namespace iCollab.Controllers
 
         [ChildActionOnly]
         public ActionResult ViewProjects()
-        { 
+        {
+            var user = UserService.FindById(AppUser.Id);
 
-            var projects = _projectService.GetUserProjects(AppUser.Id).ToPagedList(1, AppSettings.IndexPageSize);
+            var projects = _projectService.GetUserProjects(user).ToPagedList(1, AppSettings.IndexPageSize);
 
             var pageOfprojectViewModels = _mapper.ToEntities(projects);
 
@@ -186,7 +187,7 @@ namespace iCollab.Controllers
         public ActionResult ViewMeetings()
         {
 
-            var meetings = _meetingService.GetUserMeetings(AppUser.UserName).ToPagedList(1, AppSettings.IndexPageSize);
+            var meetings = _meetingService.GetUserMeetings(AppUser.Id).ToPagedList(1, AppSettings.IndexPageSize);
 
             return PartialView(meetings);
         }
