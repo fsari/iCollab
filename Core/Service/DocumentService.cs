@@ -74,6 +74,7 @@ namespace Core.Service
                                         .Include(p=>p.Project)
                                         .Where(m => m.IsDeleted == false)
                                         .Where(x => x.Owner.Id == userId || x.IsPublic || x.Project.ProjectUsers.Any(c => c.UserId == userId))
+                                        .Where(x=>x.Project.IsDeleted == false)
                                         .OrderByDescending(x => x.DateCreated);
 
             return documents;
