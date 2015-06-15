@@ -195,7 +195,7 @@
             , pk: '@Model.Id'
             , url: '/Projects/ChangeStatus'
             , success: function (response, newValue) {
-
+                if (response != 'ok') return response;
             }
         });
 

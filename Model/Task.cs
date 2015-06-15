@@ -54,6 +54,8 @@ namespace Model
         public string TaskOwnerId { set; get; }
         public ApplicationUser TaskOwner { set; get; }
 
+        public int Progress { set; get; }
+
         [NotMapped]
         public List<string> SelectedUsers { set; get; }
 

@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Data.Entity;
-using System.Linq;  
+using System.Linq;
+using System.Web.Mvc;
 using Core.Caching;
 using Core.Extensions;
 using Core.Repository;
@@ -85,9 +86,10 @@ namespace Core.Service
             var userTasks = _repository.AsQueryable()
                                        .Include(t => t.TaskUsers)
                                        .Include(p=>p.Project)
-                                       .Where(x=>x.IsDeleted == false)
-                                       .Where(x=>x.Project.IsDeleted == false)
-                                       .Where(x => x.TaskUsers.Any(r => r.UserId == userId)).OrderByDescending(x=>x.DateCreated);
+                                       .Where(x=>x.IsDeleted == false)  
+                                       .Where(x => x.TaskUsers.Any(r => r.UserId == userId))
+                                       .Where(x => (x.Project == null || x.Project.IsDeleted == false))
+                                       .OrderByDescending(x=>x.DateCreated);
 
             return userTasks;
         }
@@ -169,6 +171,7 @@ namespace Core.Service
             }
 
             return false;
-        }
+        } 
+
     }
 }

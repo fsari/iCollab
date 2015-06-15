@@ -48,7 +48,7 @@ namespace iCollab.Controllers
           
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var tasks = _service.GetTasks();
+            var tasks = _service.GetUserTasks(AppUser.Id).Select(x=> new TaskViewModel{Id = x.Id, Title = x.Title, Start = x.Start, End = x.End, Priority = x.Priority , TaskStatus = x.TaskStatus});
             return Json(tasks.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         } 
          
@@ -212,6 +212,14 @@ namespace iCollab.Controllers
             if (task.TaskUsers.Any(x => x.UserId == AppUser.Id) == false && task.TaskOwnerId != AppUser.Id)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (task.Project != null)
+            {
+                if (task.Project.IsDeleted)
+                {
+                    return HttpNotFound();
+                }
             }
 
             TaskViewModel taskViewModel = _mapper.ToEntity(task);
@@ -539,6 +547,31 @@ namespace iCollab.Controllers
 
             TempData["success"] = "Görev silinmiştir.";
             return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public ActionResult ChangeProgress(string progress, Guid id)
+        {
+            var task = _service.GetTask(id, true);
+
+            if (task == null)
+            {
+                return Content("fail");
+            }
+
+            int prog;
+
+            if (int.TryParse(progress, out prog))
+            {
+                if (prog%10 == 0 && prog < 101)
+                {
+                    task.Progress = prog;
+                    _service.Update(task);
+                    return Content("ok");
+                }
+            }
+
+            return Content("fail");
         }
     }
 }

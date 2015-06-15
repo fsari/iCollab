@@ -17,7 +17,7 @@ namespace iCollab.ViewModels
         [Display(Name = "Oluşturulma Zamanı")]
         public DateTime DateCreated { set; get; }
 
-        [Required]
+        [Required(ErrorMessage = "Zorunlu alan.")]
         [MinLength(3)]
         [Display(Name = "Başlık")]
         public string Title { get; set; }
@@ -35,11 +35,11 @@ namespace iCollab.ViewModels
         [Display(Name = "Saat")]
         public string Time { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Zorunlu alan.")]
         [Display(Name = "Katılımcılar")]
         public string Attendees { set; get; }
 
-        [Required]
+        [Required(ErrorMessage = "Zorunlu alan.")]
         [Display(Name = "Lokasyon")]
         public string Location { get; set; }
 

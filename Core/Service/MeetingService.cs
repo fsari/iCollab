@@ -73,7 +73,7 @@ namespace Core.Service
                             .Include(p=>p.Project)
                             .AsNoTracking()
                             .Where(m => m.IsDeleted == false)
-                            .Where(x=>x.Project.IsDeleted == false)
+                            .Where(x => (x.Project == null || x.Project.IsDeleted == false))
                             .Where(x => x.OwnerId == userId || x.IsPublic || x.Project.ProjectUsers.Any(c => c.UserId == userId))
                             .OrderByDescending(x => x.DateCreated);
 

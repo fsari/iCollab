@@ -20,7 +20,7 @@ namespace iCollab.ViewModels
         public DateTime DateCreated { set; get; }
 
         [Display(Name = "Başlık")]
-        [Required]
+        [Required(ErrorMessage = "Zorunlu alan.")]
         public string Title { get; set; }
 
         [Display(Name = "İçerik")]

@@ -1,5 +1,4 @@
-﻿@using System.Web
-@using Core.Extensions
+﻿@using Core.Extensions
 @using iCollab.ViewModels
 @using Microsoft.AspNet.Identity
 @model Model.Meeting
@@ -46,7 +45,7 @@
                             <br />
                             @if (Model.Project != null)
                             {
-                                <strong>ilgili proje: </strong> <a href="/Projects/View/@Model.ProjectId">@Model.Project.Title</a><br />
+                                <strong>Proje: </strong> <a href="/Projects/View/@Model.ProjectId">@Model.Project.Title</a><br />
                             }
 
                             <i class="fa fa-location-arrow"></i> <label class="label label-danger">@Model.Location</label><br />

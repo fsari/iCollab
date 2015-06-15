@@ -95,6 +95,14 @@ namespace iCollab.Controllers
                 return HttpNotFound();
             }
 
+            if (document.Project != null)
+            {
+                if (document.Project.IsDeleted)
+                {
+                    return new HttpNotFoundResult();
+                }
+            }
+
             bool canView = false;
 
             if (document.Project != null)
@@ -112,7 +120,7 @@ namespace iCollab.Controllers
 
             if (document.IsPublic == false && document.OwnerId != AppUser.Id)
             {
-                return new HttpUnauthorizedResult();
+                return new HttpNotFoundResult();
             }
 
             return View(document);

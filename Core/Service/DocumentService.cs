@@ -72,9 +72,10 @@ namespace Core.Service
             var documents = _repository.AsQueryable()
                                         .Include(o=>o.Owner)
                                         .Include(p=>p.Project)
+                                        .Include(u=>u.Project.ProjectUsers)
                                         .Where(m => m.IsDeleted == false)
                                         .Where(x => x.Owner.Id == userId || x.IsPublic || x.Project.ProjectUsers.Any(c => c.UserId == userId))
-                                        .Where(x=>x.Project.IsDeleted == false)
+                                        .Where(x=> (x.Project == null  || x.Project.IsDeleted == false))
                                         .OrderByDescending(x => x.DateCreated);
 
             return documents;

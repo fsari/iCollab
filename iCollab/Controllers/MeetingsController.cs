@@ -122,6 +122,14 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
+            if (meeting.Project != null)
+            {
+                if (meeting.Project.IsDeleted)
+                {
+                    return HttpNotFound();
+                }
+            }
+
             bool canView = false;
 
             if (meeting.Project != null)

@@ -2,6 +2,7 @@
     ViewBag.Title = "Görevler";
 }
 
+@using iCollab.ViewModels
 @using Model  
 
 <aside class="right-side">
@@ -16,7 +17,7 @@
                 <div class="box">
                     <div class="box-header">
                         @{Html.RenderPartial("_TaskMenu");}
-                        
+
                         <div class="pull-right" style="margin: 4px;">
                             <form id="searchform" name="searchform" action="/Tasks/Search" method="POST" class="sidebar-form">
                                 <div class="input-group">
@@ -31,15 +32,15 @@
                     </div>
 
                     <div class="box-body table-responsive no-padding">
-                        @(Html.Kendo().Grid<Task>()
+                        @(Html.Kendo().Grid<TaskViewModel>()
                             .Name("grid")
                             .Columns(columns =>
                             {
                                 columns.Bound(p => p.Title).Groupable(false).Filterable(true).ClientTemplate("<a href='/Tasks/View/#= Id#'>#=Title#</a>").Title("Görev");
-                                columns.Bound(c => c.Start).Width(220).Title("Başlangıç");
-                                columns.Bound(c => c.End).Width(220).Title("Bitiş"); 
+                                columns.Bound(c => c.Start).Format("{0:dd.MM.yyyy}").Width(125).Title("Başlangıç").Filterable(false);
+                                columns.Bound(c => c.End).Format("{0:dd.MM.yyyy}").Width(125).Title("Bitiş").Filterable(false);
                                 columns.Bound(c => c.Priority).Width(220).Title("Öncelik");
-                                columns.Bound(c => c.TaskStatus).Width(220).Title("Status"); 
+                                columns.Bound(c => c.TaskStatus).Width(220).Title("Status");
                             })
                             .HtmlAttributes(new { style = "height: 680px;" })
                             .Scrollable()
@@ -60,6 +61,7 @@
             </div>
         </div>
     </section>
+
 </aside>
 
 

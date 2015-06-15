@@ -79,6 +79,8 @@ namespace iCollab.ViewModels
 
         public AppUserViewModel TaskOwner { set; get; }
 
+        public int Progress { set; get; }
+
         public bool CanUserEdit { set; get; }
 
         public bool IsLate
