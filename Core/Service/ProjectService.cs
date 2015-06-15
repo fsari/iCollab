@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
+using System.Linq; 
 using Core.Caching;
-using Core.Extensions;
-using Core.Repository;
+using Core.Extensions; 
 using Core.Service.CrudService;
 using Model;
 using SharpRepository.Repository;
@@ -50,10 +48,8 @@ namespace Core.Service
             {
                 return null;
 
-            }
-
-            return project.ProjectUsers.AsEnumerable();
-
+            } 
+            return project.ProjectUsers.AsEnumerable(); 
         }
          
         public IQueryable<Project> GetProjects()
@@ -101,8 +97,9 @@ namespace Core.Service
         public IQueryable<Project> GetProjectsByStatus(ProjectStatus projectStatus)
         {
             var projects = _repository.AsQueryable() 
-                .Where(x => x.Status == projectStatus)
-                .OrderByDescending(o => o.DateCreated);
+                                        .Where(x=>x.IsDeleted == false)
+                                        .Where(x => x.Status == projectStatus)
+                                        .OrderByDescending(o => o.DateCreated);
 
             return projects;
         }
@@ -110,15 +107,16 @@ namespace Core.Service
         public IQueryable<Project> GetLateProjects()
         {
             var projects = _repository.AsQueryable() 
-                .Where(x => x.EndDatetime < DateTime.Now && x.Status != ProjectStatus.Bitti)
-                .OrderByDescending(o => o.DateCreated);
+                                        .Where(x=>x.IsDeleted == false)
+                                        .Where(x => x.EndDatetime < DateTime.Now && x.Status != ProjectStatus.Bitti)
+                                        .OrderByDescending(o => o.DateCreated);
 
             return projects;
         }
 
         public int ProjectsCount()
         {
-            int count = _repository.AsQueryable().Count();
+            int count = _repository.AsQueryable().Count(x=>x.IsDeleted == false);
 
             return count;
         }
@@ -139,8 +137,11 @@ namespace Core.Service
 
         public IQueryable<Project> GetUserProjects(ApplicationUser user)
         {  
-            var projects = _repository.AsQueryable().Include(u=>u.ProjectOwner).Include(p=>p.ProjectUsers).Include(o=>o.ProjectOwner)
-                .Where(x => x.ProjectUsers.Any(e=>e.UserId == user.Id) || x.ProjectOwnerId == user.Id).OrderByDescending(x => x.DateCreated);
+            var projects = _repository.AsQueryable().Include(u=>u.ProjectOwner)
+                                    .Include(p=>p.ProjectUsers).Include(o=>o.ProjectOwner)
+                                    .Where(x=>x.IsDeleted == false)
+                                    .Where(x => x.ProjectUsers.Any(e=>e.UserId == user.Id) || x.ProjectOwnerId == user.Id)
+                                    .OrderByDescending(x => x.DateCreated);
 
             return projects;
         }
@@ -178,7 +179,9 @@ namespace Core.Service
         {
             var projects = _repository
                 .AsQueryable() 
-                .Where(x => x.Title.Contains(query) || x.Description.Contains(query)).OrderByDescending(x=>x.DateCreated);
+                .Where(x=>x.IsDeleted == false)
+                .Where(x => x.Title.Contains(query) || x.Description.Contains(query))
+                .OrderByDescending(x=>x.DateCreated);
 
             return projects;
         }
@@ -186,6 +189,7 @@ namespace Core.Service
         public IQueryable<Project> SearchUserProjects(string query, string userId)
         {
             var projects = _repository.AsQueryable().Include(u => u.ProjectOwner).Include(p => p.ProjectUsers)
+                .Where(x=>x.IsDeleted == false)
                 .Where(x => x.ProjectUsers.Any(e => e.UserId == userId) || x.ProjectOwnerId == userId)
                 .Where(x => x.Title.Contains(query) || x.Description.Contains(query))
                 .OrderByDescending(x => x.DateCreated);

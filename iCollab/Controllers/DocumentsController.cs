@@ -44,7 +44,7 @@ namespace iCollab.Controllers
 
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var documents  = _service.UserDocuments(AppUser.UserName);
+            var documents  = _service.UserDocuments(AppUser.Id).Select(x=> new DocumentViewModel() {Id = x.Id, UserCreated = x.Owner.UserName, Title = x.Title, DateCreated = x.DateCreated});
             return Json(documents.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         } 
 

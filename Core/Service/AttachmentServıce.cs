@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using Core.Repository;
 using Model;
 using SharpRepository.Repository;
 

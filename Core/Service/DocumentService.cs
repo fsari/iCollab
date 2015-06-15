@@ -34,7 +34,11 @@ namespace Core.Service
         private Document GetDocumentInstance(Guid id)
         {
             Document document = _repository.AsQueryable()
-                                .Include(o=>o.Owner).Include(p=>p.Project).Include(u=>u.Project.ProjectUsers).Include(a => a.Attachments).Include(c => c.ContentPages)
+                                .Include(o=>o.Owner)
+                                .Include(p=>p.Project)
+                                .Include(u=>u.Project.ProjectUsers)
+                                .Include(a => a.Attachments)
+                                .Include(c => c.ContentPages)
                                 .FirstOrDefault(x => x.Id == id); 
             return document;
         }
@@ -56,14 +60,21 @@ namespace Core.Service
 
         public IQueryable<Document> GetDocuments()
         {
-            var documents = _repository.AsQueryable().Where(m => m.IsDeleted == false).OrderByDescending(t => t.DateCreated);
+            var documents = _repository.AsQueryable()
+                                       .Where(m => m.IsDeleted == false)
+                                       .OrderByDescending(t => t.DateCreated);
 
             return documents;
         }
 
-        public IQueryable<Document> UserDocuments(string username)
+        public IQueryable<Document> UserDocuments(string userId)
         {
-            var documents = _repository.AsQueryable().Where(m => m.IsDeleted == false).Where(x => x.CreatedBy == username || x.IsPublic).OrderByDescending(x => x.DateCreated);
+            var documents = _repository.AsQueryable()
+                                        .Include(o=>o.Owner)
+                                        .Include(p=>p.Project)
+                                        .Where(m => m.IsDeleted == false)
+                                        .Where(x => x.Owner.Id == userId || x.IsPublic || x.Project.ProjectUsers.Any(c => c.UserId == userId))
+                                        .OrderByDescending(x => x.DateCreated);
 
             return documents;
         }

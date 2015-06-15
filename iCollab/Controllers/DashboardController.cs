@@ -177,7 +177,7 @@ namespace iCollab.Controllers
         public ActionResult ViewDocuments()
         {
 
-            var documents = _documentService.UserDocuments(AppUser.UserName).ToPagedList(1, AppSettings.IndexPageSize);
+            var documents = _documentService.UserDocuments(AppUser.Id).ToPagedList(1, AppSettings.IndexPageSize);
 
             return PartialView(documents);
         }
