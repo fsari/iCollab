@@ -68,8 +68,13 @@ namespace Core.Service
         public IQueryable<Meeting> GetUserMeetings(string userId)
         {
             var meetings = _repository.AsQueryable()
-                            .Include(x=>x.Project.ProjectUsers).Include(o=>o.Owner).AsNoTracking()
-                            .Where(m => m.IsDeleted == false).Where(x => x.OwnerId == userId || x.IsPublic || x.Project.ProjectUsers.Any(c => c.UserId == userId))
+                            .Include(x=>x.Project.ProjectUsers)
+                            .Include(o=>o.Owner)
+                            .Include(p=>p.Project)
+                            .AsNoTracking()
+                            .Where(m => m.IsDeleted == false)
+                            .Where(x=>x.Project.IsDeleted == false)
+                            .Where(x => x.OwnerId == userId || x.IsPublic || x.Project.ProjectUsers.Any(c => c.UserId == userId))
                             .OrderByDescending(x => x.DateCreated);
 
             return meetings;

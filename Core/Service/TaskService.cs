@@ -33,14 +33,12 @@ namespace Core.Service
 
     public class TaskService : BaseCrudService<Task>, ITaskService
     {
-        private readonly IRepository<Task> _repository; 
-        private readonly ICacheManager _cache; 
+        private readonly IRepository<Task> _repository;  
 
         public TaskService(IRepository<Task> repository, Func<string, ICacheManager> cache)
             : base(repository, cache)
         {
-            _repository = repository;
-            _cache = cache("static"); 
+            _repository = repository; 
         } 
 
         public IQueryable<Task> GetTasksByStatus(TaskStatus status)
@@ -65,39 +63,31 @@ namespace Core.Service
         }
 
         public Task GetTask(Guid id, bool nocache = false)
-        {
-
+        { 
             Task task;
 
             if (nocache)
             {
-                _cache.Remove(id.ToString());
+                Cache.Remove(id.ToString());
 
                 task = GetTaskInstance(id);
                   
                 return task;
             }
 
-            task = _cache.Get(id.ToString(), () => GetTaskInstance(id));
-
-            /*if (task == null)
-            {
-                task = GetTaskInstance(id);
-
-                if (task == null)
-                {
-                    return null;
-                }
-
-                _cache.Set(id, task);
-            }*/
+            task = Cache.Get(id.ToString(), () => GetTaskInstance(id)); 
 
             return task;
         }
 
         public IQueryable<Task> GetUserTasks(string userId)
         {
-            var userTasks = _repository.AsQueryable().Include(t => t.TaskUsers).Where(x => x.TaskUsers.Any(r => r.UserId == userId)).OrderByDescending(x=>x.DateCreated);
+            var userTasks = _repository.AsQueryable()
+                                       .Include(t => t.TaskUsers)
+                                       .Include(p=>p.Project)
+                                       .Where(x=>x.IsDeleted == false)
+                                       .Where(x=>x.Project.IsDeleted == false)
+                                       .Where(x => x.TaskUsers.Any(r => r.UserId == userId)).OrderByDescending(x=>x.DateCreated);
 
             return userTasks;
         }
