@@ -651,5 +651,24 @@ namespace iCollab.Controllers
 
             return Content("fail");
         }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public ActionResult SaveDescription(Guid id, string data)
+        {
+            var task = _service.GetTask(id, true);
+
+            var user = UserService.FindById(AppUser.Id);
+
+            if (task.CanEditProject(user))
+            { 
+                task.Description = data;
+
+                _service.Update(task);
+                return Content("ok");
+            }
+
+            return Content("fail");
+        }
     }
 }
