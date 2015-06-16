@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Reflection;
 
 namespace Core.Extensions
@@ -25,7 +26,21 @@ namespace Core.Extensions
 
         public static T ParseEnum<T>(string value)
         {
-            return (T)Enum.Parse(typeof(T), value, true);
+            //return (T)Enum.Parse(typeof(T), value, true);
+
+            if (!typeof(T).IsEnum)
+            {
+                throw new ArgumentException("Generic Type 'T' must be an Enum");
+            }
+            if (!string.IsNullOrEmpty(value))
+            {
+                if (Enum.GetNames(typeof(T)).Any(
+                      e => e.Trim().ToUpperInvariant() == value.Trim().ToUpperInvariant()))
+                {
+                    return (T)Enum.Parse(typeof(T), value, true);
+                }
+            }
+            return default(T);
         }
     }
 }

@@ -98,20 +98,20 @@ namespace Model
     public enum TaskType
     {
         [Display(Name = "Genel")]
-        General = 0,
+        Genel = 0,
         [Display(Name = "Geliştirme")]
-        Development = 1,
+        Geliştirme = 1,
         [Display(Name = "Bug")]
         Bug = 2,
-        [Display(Name = "Değişiklik isteği")]
-        ChangeRequest = 4,
+        [Display(Name = "Değişiklik")]
+        Değişiklik = 4,
         [Display(Name = "İyileştirme")]
-        Enhancement = 8,
+        İyileştirme = 8,
         [Display(Name = "Bakım")]
-        Maintenance = 16,
+        Bakım = 16,
         [Display(Name = "Q/A")]
-        QualityAssurance = 32,
+        QA = 32,
         [Display(Name = "Deploy")]
-        Release = 64
+        Deploy = 64
     }
 }

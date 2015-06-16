@@ -13,6 +13,6 @@ namespace Model
         [Display(Name = "Durduruldu")]
         Durduruldu = 4,
         [Display(Name = "İptal")]
-        Iptal = 8
+        İptal = 8
     }
 }

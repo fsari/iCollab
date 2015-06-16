@@ -221,7 +221,6 @@
     <Compile Include="Controllers\TodosController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
     <Compile Include="Infra\Extensions\AttachmentHelper.cs" />
-    <Compile Include="Infra\Extensions\HtmlHelpers.cs" />
     <Compile Include="Infra\Extensions\MController.cs" />
     <Compile Include="Infra\Extensions\MyDateTimeModelBinder.cs" />
     <Compile Include="Global.asax.cs">
@@ -1843,10 +1842,8 @@
     <Content Include="Views\Account\ResetPasswordConfirmation.cshtml" />
     <Content Include="Views\Manage\ChangePassword.cshtml" />
     <Content Include="Views\Manage\Index.cshtml" />
-    <Content Include="Views\Dashboard\GetOnlineUsers.cshtml" />
     <Content Include="Views\Dashboard\Index.cshtml" />
     <Content Include="Views\Dashboard\QuickReports.cshtml" />
-    <Content Include="Views\Dashboard\ViewActivities.cshtml" />
     <Content Include="Views\Dashboard\ViewDocuments.cshtml" />
     <Content Include="Views\Dashboard\ViewMeetings.cshtml" />
     <Content Include="Views\Dashboard\ViewProjects.cshtml" />
