@@ -47,9 +47,19 @@
                                 <strong>Proje : </strong>
                                 @Html.ActionLink(Model.Project.Title, "View", "Projects", new { id = Model.Project.Id }, null)<br />
                             }
-                            <strong>Durumu : </strong><span class="@Model.TaskStatus.CssClass()"> @Model.TaskStatus.DisplayName()</span> <br />
-                            <strong>Önceliği :</strong><span class="@Model.Priority.CssClass()">@Model.Priority </span> <br />
-                            <strong>Türü :</strong><span class="label label-primary">@Model.TaskType </span> <br />
+                            
+                            <strong>Durumu : </strong>
+                            <a href="#" id="taskstatus" data-type="select" data-source="@Url.Action("GetTaskStatus")" data-value="@Model.TaskStatus" class="editable-click">@Model.TaskStatus</a>
+                            <br />
+                            
+                            <strong>Önceliği : </strong>
+                            <a href="#" id="taskpriority" data-type="select" data-source="@Url.Action("GetTaskPriority")" data-value="@Model.Priority" class="editable-click">@Model.Priority</a>
+                            <br />
+                            
+                            <strong>Türü : </strong>
+                            <a href="#" id="tasktype" data-type="select" data-source="@Url.Action("GetTaskTypes")" data-value="@Model.TaskType.DisplayName()" class="editable-click">@Model.TaskType.DisplayName()</a>
+                            <br />
+ 
                             <strong><i class="fa fa-user"></i> Atananlar: </strong>
                             @foreach (var u in Model.SelectedUsers)
                             {
@@ -121,8 +131,8 @@
             </div>
         </div>
 
-        <div class="row">
-@*            <div class="col-xs-6">
+@*        <div class="row">
+             <div class="col-xs-6">
                 <div class="box">
                     <div class="box-header" style="margin: 10px;">
                         <h3 class='box-title pull-left'>Alt Görevler</h3>
@@ -145,31 +155,108 @@
                         }
                     </div>
                 </div>
-            </div>*@
+            </div> 
 
-        </div>
+        </div>*@
     </section>
 </aside>
 
-<script>
-    $('#ex1').slider({
-        formatter: function (value) {
-            return '%' + value;
-        }
-    }); 
+<script> 
+    $(document).ready(function () {
 
-    $("#ex1").on("slideStop", function (slideEvt) {
-
-        $.ajax({
-            method: "POST",
-            url: "/Tasks/ChangeProgress",
-            data: { progress: slideEvt.value, id: "@Model.Id" }
+        $('#ex1').slider({
+            formatter: function (value) {
+                return '%' + value;
+            }
         });
 
-        if (slideEvt.value == 100) {
-            $("#ex1").slider("disable");
-        }
-    });
+        $("#ex1").on("slideStop", function (slideEvt) {
 
+            $.ajax({
+                method: "POST",
+                url: "/Tasks/ChangeProgress",
+                data: { progress: slideEvt.value, id: "@Model.Id" }
+            });
+
+            if (slideEvt.value == 100) {
+                $("#ex1").slider("disable");
+            }
+        });
+
+
+        //toggle `popup` / `inline` mode
+        $.fn.editable.defaults.mode = 'inline';
+
+        $('#taskstatus').editable({
+            type: 'select',
+            placement: 'right',
+            value: 2,
+            source: function () {
+                var result;
+                $.ajax({
+                    url: '/Tasks/GetTaskStatus',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        result = data;
+                    }
+                });
+                return result;
+            }
+            , pk: '@Model.Id'
+            , url: '/Tasks/ChangeStatus'
+            , success: function (response, newValue) {
+                if (response != 'ok') return response;
+            }
+        });
+
+
+        $('#taskpriority').editable({
+            type: 'select',
+            placement: 'right',
+            value: 2,
+            source: function () {
+                var result;
+                $.ajax({
+                    url: '/Tasks/GetTaskPriority',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        result = data;
+                    }
+                });
+                return result;
+            }
+            , pk: '@Model.Id'
+            , url: '/Tasks/ChangePriority'
+            , success: function (response, newValue) {
+                if (response != 'ok') return response;
+            }
+        });
+
+        $('#tasktype').editable({
+            type: 'select',
+            placement: 'right',
+            value: 2,
+            source: function () {
+                var result;
+                $.ajax({
+                    url: '/Tasks/GetTaskType',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        result = data;
+                    }
+                });
+                return result;
+            }
+            , pk: '@Model.Id'
+            , url: '/Tasks/ChangeTaskType'
+            , success: function (response, newValue) {
+                if (response != 'ok') return response;
+            }
+        });
+
+    }); 
 
 </script>

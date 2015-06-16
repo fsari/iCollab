@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
 using System.Web.Mvc;
 
 namespace Model
@@ -70,6 +71,26 @@ namespace Model
 
                 return false;
             }
+        }
+
+        public bool CanEditProject(ApplicationUser user)
+        {
+            if (CreatedBy == user.UserName)
+            {
+                return true;
+            }
+
+            if (TaskOwner.UserName == user.UserName)
+            {
+                return true;
+            }
+
+            if (TaskUsers.Any(x => x.UserId == user.Id))
+            {
+                return true;
+            }
+
+            return false;
         }
 
     }

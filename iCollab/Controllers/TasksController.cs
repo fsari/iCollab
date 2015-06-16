@@ -573,5 +573,83 @@ namespace iCollab.Controllers
 
             return Content("fail");
         }
+
+        public ActionResult GetTaskStatus()
+        {
+            var items = Enum.GetValues(typeof(TaskStatus)).Cast<TaskStatus>().Select(x => x.DisplayName());
+
+            return Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult ChangeStatus(Guid pk, string name, string value)
+        {
+            var task = _service.GetTask(pk, true);
+
+            var user = UserService.FindById(AppUser.Id);
+
+            if (task.CanEditProject(user))
+            {
+                var newstatus = EnumExtensions.ParseEnum<TaskStatus>(value);
+
+                task.TaskStatus = newstatus;
+
+                _service.Update(task);
+                return Content("ok");
+            }
+
+            return Content("fail");
+        }
+
+        public ActionResult GetTaskTypes()
+        {
+            var items = Enum.GetValues(typeof(TaskType)).Cast<TaskType>().Select(x => x.DisplayName());
+
+            return Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult ChangeTaskType(Guid pk, string name, string value)
+        {
+            var task = _service.GetTask(pk, true);
+
+            var user = UserService.FindById(AppUser.Id);
+
+            if (task.CanEditProject(user))
+            {
+                var newType = EnumExtensions.ParseEnum<TaskType>(value);
+
+                task.TaskType = newType;
+
+                _service.Update(task);
+                return Content("ok");
+            }
+
+            return Content("fail");
+        }
+
+        public ActionResult GetTaskPriority()
+        {
+            var items = Enum.GetValues(typeof(Priority)).Cast<Priority>().Select(x => x.DisplayName());
+
+            return Json(items, JsonRequestBehavior.AllowGet);
+        }
+
+        public ActionResult ChangePriority(Guid pk, string name, string value)
+        {
+            var task = _service.GetTask(pk, true);
+
+            var user = UserService.FindById(AppUser.Id);
+
+            if (task.CanEditProject(user))
+            {
+                var newpriority = EnumExtensions.ParseEnum<Priority>(value);
+
+                task.Priority = newpriority;
+
+                _service.Update(task);
+                return Content("ok");
+            }
+
+            return Content("fail");
+        }
     }
 }
