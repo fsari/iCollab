@@ -1918,7 +1918,6 @@
     <Folder Include="Attachments\Meetings\" />
     <Folder Include="Attachments\Presentations\" />
     <Folder Include="Attachments\Profile\" />
-    <Folder Include="Views\Mailer\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
@@ -1959,6 +1958,15 @@
     <None Include="Properties\PublishProfiles\dev.pubxml" />
     <None Include="Properties\PublishProfiles\devdep.pubxml" />
     <Content Include="Views\Tasks\ByMe.cshtml" />
+    <Content Include="Views\Mailer\ProjectCreated.cshtml" />
+    <Content Include="Views\Mailer\ProjectUpdated.cshtml" />
+    <Content Include="Views\Mailer\ProjectDeleted.cshtml" />
+    <Content Include="Views\Mailer\ProjectPriority.cshtml" />
+    <Content Include="Views\Mailer\ProjectStatus.cshtml" />
+    <Content Include="Views\Mailer\AddedMeeting.cshtml" />
+    <Content Include="Views\Mailer\AddedDocument.cshtml" />
+    <Content Include="Views\Mailer\AddedTask.cshtml" />
+    <Content Include="Views\Mailer\_Layout.cshtml.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

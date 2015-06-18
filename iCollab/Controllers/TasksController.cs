@@ -122,25 +122,7 @@ namespace iCollab.Controllers
             {
                 return new FineUploaderResult(false, error: ex.Message);
             }
-        } 
-
-        public ActionResult CompletedTasks(int? page)
-        {
-            int pagenumber = page ?? 1;
-
-            IPagedList<Task> tasks = _service.GetTasksByStatus(TaskStatus.Tamamlandı).ToPagedList(pagenumber, AppSettings.PageSize);
-
-            return View(tasks);
-        } 
-
-        public ActionResult LateTasks(int? page)
-        {
-            int pagenumber = page ?? 1;
-
-            IPagedList<Task> tasks = _service.GetLateTasks().ToPagedList(pagenumber, AppSettings.PageSize);
-
-            return View(tasks);
-        }
+        }  
 
         public ActionResult My(int? page)
         {

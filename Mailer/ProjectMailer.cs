@@ -79,7 +79,7 @@ namespace Mailer
             mail.IsBodyHtml = true;
             mail.Subject = project.Title;
             mail.Priority = MailPriority.High;
-            mail.ViewName = "ProjectCreated";
+            mail.ViewName = "ProjectStatus";
 
             var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
@@ -102,7 +102,7 @@ namespace Mailer
             mail.IsBodyHtml = true;
             mail.Subject = project.Title;
             mail.Priority = MailPriority.High;
-            mail.ViewName = "ProjectCreated";
+            mail.ViewName = "ProjectPriority";
 
             var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
@@ -125,7 +125,7 @@ namespace Mailer
             mail.IsBodyHtml = true;
             mail.Subject = project.Title;
             mail.Priority = MailPriority.High;
-            mail.ViewName = "ProjectCreated";
+            mail.ViewName = "ProjectDeleted";
 
             var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
