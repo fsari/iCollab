@@ -101,6 +101,19 @@ namespace iCollab.ViewModels
                 return false;
             }
         }
+
+        public bool HasUsers
+        {
+            get
+            {
+                if (SelectedUsers == null || SelectedUsers.Any() == false)
+                {
+                    return false;
+                }
+
+                return true;
+            }
+        }
     }
 
     public class UserSelectViewModel

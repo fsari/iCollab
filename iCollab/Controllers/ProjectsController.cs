@@ -528,9 +528,8 @@ namespace iCollab.Controllers
 
         [HttpPost]
         public ActionResult Edit(ProjectViewModel viewModel)
-        {
-
-            if (viewModel.SelectedUsers == null || viewModel.SelectedUsers.Any() == false)
+        { 
+            if (viewModel.HasUsers)
             { 
                 TempData["error"] = "Kullanıcı seçmeniz lazım.";
 
@@ -569,6 +568,10 @@ namespace iCollab.Controllers
                 project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers { UserId = x }));
   
                 _projectService.Update(project);
+
+                var projectUsers = UserService.GetUserEmailsByIds(viewModel.SelectedUsers.Select(x => x));
+
+                _mailer.ProjectUpdated(project, projectUsers);
 
                 TempData["success"] = "Proje güncellendi.";
 
