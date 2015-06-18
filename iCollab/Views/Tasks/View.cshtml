@@ -39,7 +39,15 @@
             <div class="col-md-8">
                 <div class="box">
                     <div class="box-body table-responsive no-padding" style="margin-left: 10px; margin-right: 10px;">
-                         <br/>
+
+                        <div class="pull-left">
+                            @{ Html.RenderAction("RenderUserDetails", "Users", new { username = Model.TaskOwner.UserName});}
+                        </div>
+                        <div class="pull-right" style="margin-top: 20px;">
+                            <strong>@Model.DateCreated.FormatDate()</strong>
+                        </div>
+                        <div class="clearfix"></div>
+                        <br/><br/>
                         <div class="pull-left">
                             @if (Model.Project != null)
                             {
@@ -65,10 +73,9 @@
                                 <label class="label label-default">@u</label>
                             }
                         </div>
-                        <div class="pull-right">
-                            <strong><i class="fa fa-clock-o"></i> Oluşturulma : </strong> @Model.DateCreated.FormatDate() <br />
+                        <div class="pull-right"> 
                             <strong><i class="fa fa-clock-o"></i> Başlangıç : </strong> @Html.DisplayFor(m => m.Start) <br />
-                            <strong><i class="fa fa-clock-o"></i> Bitiş : </strong> @Html.DisplayFor(m => m.End) <br />
+                            <strong><i class="fa fa-clock-o"></i> Bitiş : </strong> @Html.DisplayFor(m => m.End) <br/> 
                         </div>
                         <div class="clearfix"></div>
                         @if (Model.ParentTask != null)
@@ -136,7 +143,7 @@
                     <h4 class="header"><i class="fa fa-pencil"></i> Açıklama</h4>
 
                     <div class="box-body table-responsive no-padding">
-                        <div contenteditable="true" id="editable">
+                        <div contenteditable="true" id="editable" style="cursor: pointer;">
                             @if (string.IsNullOrEmpty(Model.Description))
                             {
                                 <div id="edit"><i class="fa fa-hand-o-up"></i>Buraya tıklayarak açıklama ve notları girebilirsiniz.</div>
