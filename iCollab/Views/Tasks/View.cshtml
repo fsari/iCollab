@@ -140,8 +140,7 @@
         <div class="row">
             <div class="col-xs-8">
                 <div class="box">
-                    <h4 class="header"><i class="fa fa-pencil"></i> Açıklama</h4>
-
+                    <h4 class="header"><i class="fa fa-pencil"></i> Açıklama</h4> 
                     <div class="box-body table-responsive no-padding">
                         <div contenteditable="true" id="editable" style="cursor: pointer;">
                             @if (string.IsNullOrEmpty(Model.Description))
@@ -155,8 +154,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
-
+            </div> 
         </div>
 
         @*        <div class="row">
@@ -214,14 +212,13 @@
                 saveEditorData();
             }, 500);
         };
-
-        // Start observing the data.
+         
         saveEditorData();
 
         $('#edit').click(function () {
             alert("foo");
             $('#edit').empty();
-            e.stopPropagation(); // This is the preferred method.
+            e.stopPropagation();  
             return false;
         });
 

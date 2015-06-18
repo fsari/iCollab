@@ -12,8 +12,7 @@ using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
 using Kendo.Mvc.UI;
 using Mailer;
-using Model;
-using Model.Activity;
+using Model; 
 using Model.FineUploader;
 using PagedList;
 
@@ -193,7 +192,10 @@ namespace iCollab.Controllers
 
             project.Meetings.Add(meeting);
 
-            _projectService.Update(project);
+            _projectService.Update(project); 
+
+            var userEmails = UserService.GetUserEmailsByIds(project.ProjectUsers.Select(i => i.UserId));
+            _mailer.AddedMeeting(project, meeting, userEmails).Send();
 
             TempData["success"] = "Toplantı oluşturuldu.";
 
@@ -249,6 +251,9 @@ namespace iCollab.Controllers
             project.Documents.Add(document);
 
             _projectService.Update(project);
+
+            var userEmails = UserService.GetUserEmailsByIds(project.ProjectUsers.Select(i => i.UserId));
+            _mailer.AddedDocument(project, document, userEmails).Send();
 
             TempData["success"] = "Doküman oluşturuldu.";
 
@@ -343,8 +348,10 @@ namespace iCollab.Controllers
 
             _projectService.Update(project);
 
-            TempData["success"] = "Görev oluşturuldu.";
+            var userEmails = UserService.GetUserEmailsByIds(project.ProjectUsers.Select(i => i.UserId));
+            _mailer.AddedTask(project, task, userEmails).Send();
 
+            TempData["success"] = "Görev oluşturuldu."; 
             return RedirectToAction("View", new {id = project.Id});
         }
 
@@ -397,7 +404,7 @@ namespace iCollab.Controllers
         [HttpPost]
         public ActionResult Create(ProjectViewModel viewModel)
         {
-            if (viewModel.SelectedUsers == null || viewModel.SelectedUsers.Any() == false)
+            if (viewModel.HasUsers == false)
             {
                 ModelState.AddModelError("Error", "Kullanıcı seçmeniz lazım.");
 
@@ -422,8 +429,7 @@ namespace iCollab.Controllers
 
                 _projectService.Update(project);
 
-                var userEmails = UserService.GetUserEmailsByIds(viewModel.SelectedUsers.Select(i => i));
-
+                var userEmails = UserService.GetUserEmailsByIds(viewModel.SelectedUsers.Select(i => i)); 
                 _mailer.ProjectCreated(project, userEmails).Send();
 
                 TempData["success"] = "Proje oluşturuldu.";
@@ -569,8 +575,7 @@ namespace iCollab.Controllers
   
                 _projectService.Update(project);
 
-                var projectUsers = UserService.GetUserEmailsByIds(viewModel.SelectedUsers.Select(x => x));
-
+                var projectUsers = UserService.GetUserEmailsByIds(viewModel.SelectedUsers.Select(x => x)); 
                 _mailer.ProjectUpdated(project, projectUsers);
 
                 TempData["success"] = "Proje güncellendi.";
@@ -611,6 +616,9 @@ namespace iCollab.Controllers
             project.DateDeleted = DateTime.UtcNow;
 
             _projectService.SoftDelete(project);
+
+            var userEmails = UserService.GetUserEmailsByIds(project.ProjectUsers.Select(i => i.UserId));
+            _mailer.ProjectDeleted(project, userEmails).Send();
 
             TempData["success"] = "Proje silindi.";
 
@@ -691,7 +699,7 @@ namespace iCollab.Controllers
         public ActionResult GetProjectStatus()
         {
             var items = Enum.GetValues(typeof(ProjectStatus)).Cast<ProjectStatus>().Select(x=>x.DisplayName());
-
+                        
             return Json(items, JsonRequestBehavior.AllowGet);
         }
 
@@ -708,6 +716,10 @@ namespace iCollab.Controllers
                 project.Status = newstatus;
 
                 _projectService.Update(project);
+
+                var userEmails = UserService.GetUserEmailsByIds(project.ProjectUsers.Select(i => i.UserId));
+                _mailer.ProjectStatus(project, userEmails).Send();
+
                 return Content("ok");
             }
 
@@ -733,7 +745,10 @@ namespace iCollab.Controllers
 
                 project.Priority = newstatus;
 
-                _projectService.Update(project); 
+                _projectService.Update(project);
+
+                var userEmails = UserService.GetUserEmailsByIds(project.ProjectUsers.Select(i => i.UserId));
+                _mailer.ProjectPriority(project, userEmails).Send();
 
                 return Content("ok");
             }
@@ -748,8 +763,6 @@ namespace iCollab.Controllers
             var users = UserService.GetUsers(userIds).Select(x=> new UserSelectViewModel(){ FullName = x.FullName, Id = x.Id}); 
 
             return Json(users, JsonRequestBehavior.AllowGet); 
-        }
-
-        
+        } 
     }
 }

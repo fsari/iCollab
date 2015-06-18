@@ -36,7 +36,7 @@ namespace iCollab
 
             builder.RegisterModule(new AutofacWebTypesModule());
 
-            builder.RegisterModule(new CachingModule());
+            builder.RegisterModule(new CachingModule()); 
 
             builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>();
 
@@ -45,12 +45,7 @@ namespace iCollab
             builder.RegisterType<UserService>().As<IUserService>().InstancePerRequest();
 
             builder.RegisterGeneric(typeof(EfRepository<>)).As(typeof(IRepository<>)).InstancePerRequest();
-
-
-            //builder.RegisterType<AppMailer>().As<IAppMailer>().InstancePerRequest();
-            
-
-
+             
             builder.RegisterGeneric(typeof(Mapper<,>)).As(typeof(IMapper<,>)).InstancePerRequest();
 
             builder.RegisterGeneric(typeof(BaseCrudService<>)).As(typeof(ICrudService<>)).InstancePerRequest();
@@ -73,6 +68,9 @@ namespace iCollab
 
             builder.RegisterType<Logger>().As<ILogger>().SingleInstance();
 
+            builder.RegisterType<ProjectMailer>().As<IProjectMailer>().InstancePerRequest();
+            builder.RegisterType<TaskMailer>().As<ITaskMailer>().InstancePerRequest();
+
 
             builder.RegisterType<ApplicationUserStore<ApplicationUser>>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();
@@ -83,15 +81,7 @@ namespace iCollab
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
          
-    }
-
-    public class MailerModule : Module
-    {
-        protected override void Load(ContainerBuilder builder)
-        {
-            builder.RegisterType<ProjectMailer>().As<IProjectMailer>().InstancePerRequest();
-        }
-    }
+    } 
 
     public class CachingModule : Module
     {

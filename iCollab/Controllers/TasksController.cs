@@ -7,12 +7,12 @@ using System.Web.Mvc;
 using Core.Extensions;
 using Core.Mappers;
 using Core.Service;
-using Core.Settings;
-using iCollab.Infra;
+using Core.Settings; 
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels; 
 using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI; 
+using Kendo.Mvc.UI;
+using Mailer;
 using Model;
 using Model.FineUploader;
 using PagedList;
@@ -28,6 +28,7 @@ namespace iCollab.Controllers
         private readonly IAttachmentService _attachmentService;
         private readonly IMapper<AppUserViewModel, ApplicationUser> _userMapper;
         private readonly IProjectService _projectService;
+        private readonly ITaskMailer _mailer;
 
         public TasksController(
             ITaskService service,
@@ -36,14 +37,17 @@ namespace iCollab.Controllers
             IUserService userService,
             IProjectService projectService, 
             IAttachmentService attachmentService, 
-            IMapper<AppUserViewModel, ApplicationUser> userMapper)
+            IMapper<AppUserViewModel, ApplicationUser> userMapper, 
+            ITaskMailer mailer)
             : base(userService, appSettings)
         {
             _service = service;
             _mapper = mapper; 
             _attachmentService = attachmentService;
             _userMapper = userMapper;
+            _mailer = mailer;
             _projectService = projectService;
+            _mailer = mailer;
         }
           
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
@@ -238,6 +242,7 @@ namespace iCollab.Controllers
             return View(taskViewModel);
         }
 
+        // TODO : email task owner that user began task
         public ActionResult Begin(Guid? id)
         {
             if (id.HasValue == false)
@@ -426,6 +431,9 @@ namespace iCollab.Controllers
             task.TaskUsers.AddRange(task.SelectedUsers.Select(x => new TaskUser { UserId = x }));
 
             _service.Update(task);
+
+            var userEmails = UserService.GetUserEmailsByIds(task.SelectedUsers.Select(i => i));
+            _mailer.TaskCreated(task, userEmails).Send();
             
             TempData["success"] = "Görev oluşturuldu.";
 
@@ -495,6 +503,9 @@ namespace iCollab.Controllers
 
                 _service.Update(instance);
 
+                var userEmails = UserService.GetUserEmailsByIds(instance.SelectedUsers.Select(i => i));
+                _mailer.TaskEdited(instance, userEmails).Send();
+
                 TempData["success"] = "Görev güncellendi.";
 
                 return RedirectToAction("View", new { taskViewModel.Id });
@@ -545,6 +556,9 @@ namespace iCollab.Controllers
                 _service.InvalidateCache(task.ParentTask.Id);
             }
 
+            var userEmails = UserService.GetUserEmailsByIds(task.SelectedUsers.Select(i => i));
+            _mailer.TaskDeleted(task, userEmails).Send();
+
             TempData["success"] = "Görev silinmiştir.";
             return RedirectToAction("Index");
         }
@@ -594,6 +608,10 @@ namespace iCollab.Controllers
                 task.TaskStatus = newstatus;
 
                 _service.Update(task);
+
+                var userEmails = UserService.GetUserEmailsByIds(task.SelectedUsers.Select(i => i));
+                _mailer.StatusChange(task, userEmails).Send();
+
                 return Content("ok");
             }
 
@@ -620,6 +638,10 @@ namespace iCollab.Controllers
                 task.TaskType = newType;
 
                 _service.Update(task);
+
+                var userEmails = UserService.GetUserEmailsByIds(task.SelectedUsers.Select(i => i));
+                _mailer.StatusChange(task, userEmails).Send();
+
                 return Content("ok");
             }
 
@@ -646,6 +668,10 @@ namespace iCollab.Controllers
                 task.Priority = newpriority;
 
                 _service.Update(task);
+
+                var userEmails = UserService.GetUserEmailsByIds(task.SelectedUsers.Select(i => i));
+                _mailer.StatusChange(task, userEmails).Send();
+
                 return Content("ok");
             }
 

@@ -25,8 +25,7 @@ namespace iCollab.Controllers
         private readonly IUserService _userService;
         private readonly IMeetingService _meetingService;
         private readonly IDocumentService _documentService;
-        private readonly ICrudService<Activity> _activityService;
-        private readonly ILogger _logger;
+        private readonly ICrudService<Activity> _activityService; 
 
         public DashboardController(
             IProjectService projectService,
@@ -45,8 +44,7 @@ namespace iCollab.Controllers
             _taskService = taskService; 
             _meetingService = meetingService;
             _documentService = documentService;
-            _activityService = activityService;
-            _logger = logger;
+            _activityService = activityService; 
         } 
 
         [ChildActionOnly]
@@ -211,8 +209,7 @@ namespace iCollab.Controllers
         }
 
         public ActionResult Index()
-        {
-            _logger.Info("test");
+        { 
             return View();
         }
     }
