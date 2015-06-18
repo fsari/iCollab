@@ -30,7 +30,7 @@ namespace Mailer
             mail.Priority = MailPriority.High;
             mail.ViewName = "ProjectCreated";
 
-            var from = new MailAddress("basin.haber@saglik.gov.tr", "Basın haber uygulaması");
+            var from = new MailAddress("basin.haber@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
             
             ViewBag.Project = project;

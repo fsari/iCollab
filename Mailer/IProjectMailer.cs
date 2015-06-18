@@ -11,9 +11,6 @@ namespace Mailer
     public interface IProjectMailer
     {
         MvcMailMessage ProjectCreated(Project project, IEnumerable<string> users );
-        MvcMailMessage NotifyProjectUsers(Project project, IEnumerable<string> users);
-
-
-
+        MvcMailMessage NotifyProjectUsers(Project project, IEnumerable<string> users); 
     }
 }

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System; 
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
@@ -11,7 +10,8 @@ using Core.Settings;
 using iCollab.Infra.Extensions;
 using iCollab.ViewModels;
 using Kendo.Mvc.Extensions;
-using Kendo.Mvc.UI; 
+using Kendo.Mvc.UI;
+using Mailer;
 using Model;
 using Model.Activity;
 using Model.FineUploader;
@@ -27,7 +27,8 @@ namespace iCollab.Controllers
         private readonly IMapper<ProjectViewModel, Project> _mapper;
         private readonly IMapper<MeetingViewModel, Meeting> _meetingMapper;
         private readonly IProjectService _projectService;
-        private readonly IMapper<TaskViewModel, Task> _taskMapper;  
+        private readonly IMapper<TaskViewModel, Task> _taskMapper;
+        private readonly IProjectMailer _mailer;
 
         public ProjectsController(
             IProjectService projectService,
@@ -37,6 +38,7 @@ namespace iCollab.Controllers
             IUserService userService,
             IMapper<DocumentViewModel, Document> documentMapper,
             IMapper<MeetingViewModel, Meeting> meetingMapper,
+            IProjectMailer mailer,
             IAttachmentService attachmentService)
             : base(userService, appSettings)
 
@@ -46,7 +48,8 @@ namespace iCollab.Controllers
             _attachmentService = attachmentService; 
             _projectService = projectService;
             _mapper = mapper;
-            _taskMapper = taskMapper; 
+            _taskMapper = taskMapper;
+            _mailer = mailer;
         }
 
         public ActionResult Index()
@@ -407,23 +410,22 @@ namespace iCollab.Controllers
 
                 project.ProjectOwner = UserService.FindById(AppUser.Id);
                 project.ProjectOwnerId = AppUser.Id;
+                 
+                _projectService.Create(project);
 
                 if (project.ProjectUsers == null)
                 {
                     project.ProjectUsers = new Collection<ProjectUsers>();
                 }
-                 
-                _projectService.Create(project);
 
                 project.ProjectUsers.AddRange(viewModel.SelectedUsers.Select(x => new ProjectUsers { UserId = x }));
 
                 _projectService.Update(project);
 
-                if (project.Activities == null)
-                {
-                    project.Activities = new Collection<Activity>();
-                }
-  
+                var userEmails = UserService.GetUserEmailsByIds(viewModel.SelectedUsers.Select(i => i));
+
+                _mailer.ProjectCreated(project, userEmails).Send();
+
                 TempData["success"] = "Proje oluşturuldu.";
                 return RedirectToAction("View", new {id = project.Id});
             }

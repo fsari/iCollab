@@ -4,8 +4,7 @@ using System.Data.Entity;
 using System.Linq;
 using System.Web.Mvc;
 using Core.Caching;
-using Core.Infrastructure;
-using Core.Repository;
+using Core.Infrastructure; 
 using Microsoft.AspNet.Identity;
 using Model;
 using PagedList;
@@ -28,9 +27,9 @@ namespace Core.Service
         int GetUserCount(); 
         IQueryable<ApplicationUser> GetUsers(IEnumerable<string> userId); 
         bool ChangePassword(string userId, string currentPassword, string newPassword);  
-        bool Update(ApplicationUser user);
-
+        bool Update(ApplicationUser user); 
         ApplicationUser FindByUsername(string userName);
+        IEnumerable<string> GetUserEmailsByIds(IEnumerable<string> ids);
     }
 
     public class UserService : IUserService
@@ -107,6 +106,13 @@ namespace Core.Service
             return user;
         }
 
+        public IEnumerable<string> GetUserEmailsByIds(IEnumerable<string> ids)
+        {
+            var emails = _userRepository.FindAll(x => ids.Contains(x.Id)).Select(x=>x.Email);
+
+            return emails;
+        }
+        
         public ApplicationUser FindByEmail(string email)
         {
             var user = _userManager.FindByEmail(email);

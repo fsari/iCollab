@@ -13,6 +13,7 @@ using Core.Service;
 using Core.Service.CrudService;
 using Core.Settings;
 using iCollab.Infra;
+using Mailer;
 using MemoryCacheT;
 using Microsoft.Owin.Security;
 using Model;
@@ -47,6 +48,7 @@ namespace iCollab
 
 
             //builder.RegisterType<AppMailer>().As<IAppMailer>().InstancePerRequest();
+            
 
 
             builder.RegisterGeneric(typeof(Mapper<,>)).As(typeof(IMapper<,>)).InstancePerRequest();
@@ -80,9 +82,15 @@ namespace iCollab
             var container = builder.Build();
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
+         
+    }
 
-
-
+    public class MailerModule : Module
+    {
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.RegisterType<ProjectMailer>().As<IProjectMailer>().InstancePerRequest();
+        }
     }
 
     public class CachingModule : Module
