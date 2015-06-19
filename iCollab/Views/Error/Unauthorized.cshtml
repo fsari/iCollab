@@ -1,21 +1,14 @@
-﻿@{
-    ViewBag.Title = "Yetkisiz";
+﻿@model iCollab.ViewModels.ErrorModel
+
+@{
+    ViewBag.Title = "Unauthorized";
+    ViewBag.Description = "Sorry, but the page requires authentication.";
 }
 
-<aside class="right-side">
-    <section class="content-header">
-        <h1>401 Hata Sayfası - Yetkisiz istek</h1>
-        <ol class="breadcrumb">
-            <li><a href="#"><i class="fa fa-dashboard"></i> Kontrol Paneli</a></li>
-            <li class="active">401 Hatası</li>
-        </ol>
-    </section>
-
-    <section class="content">
-        <div class="error-page">
-            <div class="error-content">
-                <h3><i class="fa fa-warning text-yellow"></i> Yetkiniz yok.</h3>
-            </div>
-        </div>
-    </section>
-</aside> 
+<div class="jumbotron text-center">
+    <header>
+        <h1><span aria-hidden="true" class="fa fa-ban text-danger"></span> @ViewBag.Title</h1>
+    </header>
+    <p>@ViewBag.Description</p>
+    <a class="btn btn-primary btn-lg" href="/"><span aria-hidden="true" class="fa fa-home"></span> Take me home</a>
+</div>

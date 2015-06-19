@@ -19,10 +19,8 @@
                         <span class="hidden-xs">@Model.Email</span>
                     </a>
                     <ul class="dropdown-menu"> 
-                        <li class="user-header">
-                            
-                            @Html.Partial("~/Views/Users/_RenderPicture.cshtml", Model.Picture)
-                             
+                        <li class="user-header"> 
+                            @Html.Partial("~/Views/Users/_RenderPicture.cshtml", Model.Picture) 
                             <p>
                                 @Model.UserName 
                             </p>

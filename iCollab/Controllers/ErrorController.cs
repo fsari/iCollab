@@ -1,28 +1,111 @@
-﻿using System.Web.Mvc;
+﻿using System.Net;
+using System.Web.Mvc;
+using iCollab.Infra;
+using iCollab.ViewModels;
 
 namespace iCollab.Controllers
 {
     [Authorize]
+    [RoutePrefix("error")]
     public class ErrorController : Controller
-    { 
-        public ViewResult Index()
+    {
+        #region Public Methods
+
+        /// <summary>
+        /// Returns a HTTP 400 Bad Request error view. Returns a partial view if the request is an AJAX call.
+        /// </summary>
+        /// <returns>The partial or full bad request view.</returns> 
+        [Route("badrequest", Name = ErrorControllerRoute.GetBadRequest)]
+        public ActionResult BadRequest()
         {
-            return View("Error");
-        }
-        public ViewResult NotFound()
-        {
-            Response.StatusCode = 404;  //you may want to set this to 200
-            return View("NotFound");
+            return this.GetErrorView(HttpStatusCode.BadRequest, ErrorControllerAction.BadRequest);
         }
 
-        public ViewResult InternalServerError()
+        /// <summary>
+        /// Returns a HTTP 403 Forbidden error view. Returns a partial view if the request is an AJAX call.
+        /// Unlike a 401 Unauthorized response, authenticating will make no difference.
+        /// </summary>
+        /// <returns>The partial or full forbidden view.</returns> 
+        [Route("forbidden", Name = ErrorControllerRoute.GetForbidden)]
+        public ActionResult Forbidden()
         {
-            return View("InternalServerError");
+            return this.GetErrorView(HttpStatusCode.Forbidden, ErrorControllerAction.Forbidden);
         }
 
-        public ViewResult Unauthorized()
+        /// <summary>
+        /// Returns a HTTP 500 Internal Server Error error view. Returns a partial view if the request is an AJAX call.
+        /// </summary>
+        /// <returns>The partial or full internal server error view.</returns> 
+        [Route("internalservererror", Name = ErrorControllerRoute.GetInternalServerError)]
+        public ActionResult InternalServerError()
         {
-            return View("Unauthorized");
+            return this.GetErrorView(HttpStatusCode.InternalServerError, ErrorControllerAction.InternalServerError);
         }
+
+        /// <summary>
+        /// Returns a HTTP 405 Method Not Allowed error view. Returns a partial view if the request is an AJAX call.
+        /// </summary>
+        /// <returns>The partial or full method not allowed view.</returns> 
+        [Route("methodnotallowed", Name = ErrorControllerRoute.GetMethodNotAllowed)]
+        public ActionResult MethodNotAllowed()
+        {
+            return this.GetErrorView(HttpStatusCode.MethodNotAllowed, ErrorControllerAction.MethodNotAllowed);
+        }
+
+        /// <summary>
+        /// Returns a HTTP 404 Not Found error view. Returns a partial view if the request is an AJAX call.
+        /// </summary>
+        /// <returns>The partial or full not found view.</returns> 
+        [Route("notfound", Name = ErrorControllerRoute.GetNotFound)]
+        public ActionResult NotFound()
+        {
+            return this.GetErrorView(HttpStatusCode.NotFound, ErrorControllerAction.NotFound);
+        }
+
+        /// <summary>
+        /// Returns a HTTP 401 Unauthorized error view. Returns a partial view if the request is an AJAX call.
+        /// </summary>
+        /// <returns>The partial or full unauthorized view.</returns> 
+        [Route("unauthorized", Name = ErrorControllerRoute.GetUnauthorized)]
+        public ActionResult Unauthorized()
+        {
+            return this.GetErrorView(HttpStatusCode.Unauthorized, ErrorControllerAction.Unauthorized);
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private ActionResult GetErrorView(HttpStatusCode statusCode, string viewName)
+        {
+            this.Response.StatusCode = (int)statusCode;
+
+            // Don't show IIS custom errors.
+            this.Response.TrySkipIisCustomErrors = true;
+
+            ErrorModel error = new ErrorModel()
+            {
+                RequestedUrl = this.Request.Url.ToString(),
+                ReferrerUrl =
+                    (this.Request.UrlReferrer == null) ?
+                    null :
+                    this.Request.UrlReferrer.ToString()
+            };
+
+            ActionResult result;
+            if (this.Request.IsAjaxRequest())
+            {
+                // This allows us to show errors even in partial views.
+                result = this.PartialView(viewName, error);
+            }
+            else
+            {
+                result = this.View(viewName, error);
+            }
+
+            return result;
+        }
+
+        #endregion
     }
 }

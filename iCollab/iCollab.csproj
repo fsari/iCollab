@@ -219,6 +219,7 @@
     <Compile Include="Controllers\TasksController.cs" />
     <Compile Include="Controllers\TodosController.cs" />
     <Compile Include="Controllers\UsersController.cs" />
+    <Compile Include="Infra\Constants.cs" />
     <Compile Include="Infra\Extensions\AttachmentHelper.cs" />
     <Compile Include="Infra\Extensions\MController.cs" />
     <Compile Include="Infra\Extensions\MyDateTimeModelBinder.cs" />
@@ -231,6 +232,7 @@
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ViewModels\AccountViewModels.cs" />
     <Compile Include="ViewModels\AppUserViewModel.cs" />
+    <Compile Include="ViewModels\ErrorModel.cs" />
     <Compile Include="ViewModels\Gantt\GanttTaskViewModel.cs" />
     <Compile Include="ViewModels\ManageViewModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -1967,6 +1969,9 @@
     <Content Include="Views\Mailer\AddedTask.cshtml" />
     <Content Include="Views\Mailer\_Layout.cshtml.cshtml" />
     <Content Include="Views\Users\_RenderPicture.cshtml" />
+    <Content Include="Views\Error\BadRequest.cshtml" />
+    <Content Include="Views\Error\Forbidden.cshtml" />
+    <Content Include="Views\Error\MethodNotAllowed.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
