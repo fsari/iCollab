@@ -32,10 +32,7 @@ namespace Core.Service
     {
         private readonly IRepository<Project> _repository; 
 
-        public ProjectService(
-            IRepository<Project> repository,
-            Func<string, ICacheManager> cache)
-            : base(repository, cache)
+        public ProjectService(IRepository<Project> repository, Func<string, ICacheManager> cache) : base(repository, cache)
         { 
             _repository = repository;
         }
@@ -62,18 +59,13 @@ namespace Core.Service
         private Project GetProjectInstance(Guid id)
         {
             Project project = _repository.AsQueryable(). 
-                    Include(a => a.Attachments).
-                    Include(d => d.Documents).
-                    Include(t => t.Tasks).
-                    Include(m=>m.Meetings). 
-                    Include(u=>u.ProjectUsers).
-                    Include(p=>p.ProjectOwner).
-                    FirstOrDefault(m => m.Id == id);
-
-            if (project == null)
-            {
-                return null;
-            }
+                                        Include(a => a.Attachments).
+                                        Include(d => d.Documents).
+                                        Include(t => t.Tasks).
+                                        Include(m=>m.Meetings). 
+                                        Include(u=>u.ProjectUsers).
+                                        Include(p=>p.ProjectOwner).
+                                        FirstOrDefault(m => m.Id == id);
 
             return project;
         }
@@ -97,9 +89,9 @@ namespace Core.Service
         public IQueryable<Project> GetProjectsByStatus(ProjectStatus projectStatus)
         {
             var projects = _repository.AsQueryable() 
-                                        .Where(x=>x.IsDeleted == false)
-                                        .Where(x => x.Status == projectStatus)
-                                        .OrderByDescending(o => o.DateCreated);
+                                      .Where(x=>x.IsDeleted == false)
+                                      .Where(x => x.Status == projectStatus)
+                                      .OrderByDescending(o => o.DateCreated);
 
             return projects;
         }
@@ -107,9 +99,9 @@ namespace Core.Service
         public IQueryable<Project> GetLateProjects()
         {
             var projects = _repository.AsQueryable() 
-                                        .Where(x=>x.IsDeleted == false)
-                                        .Where(x => x.EndDatetime < DateTime.Now && x.Status != ProjectStatus.Bitti)
-                                        .OrderByDescending(o => o.DateCreated);
+                                      .Where(x=>x.IsDeleted == false)
+                                      .Where(x => x.EndDatetime < DateTime.Now && x.Status != ProjectStatus.Bitti)
+                                      .OrderByDescending(o => o.DateCreated);
 
             return projects;
         }
@@ -138,10 +130,10 @@ namespace Core.Service
         public IQueryable<Project> GetUserProjects(ApplicationUser user)
         {  
             var projects = _repository.AsQueryable().Include(u=>u.ProjectOwner)
-                                    .Include(p=>p.ProjectUsers).Include(o=>o.ProjectOwner)
-                                    .Where(x=>x.IsDeleted == false)
-                                    .Where(x => x.ProjectUsers.Any(e=>e.UserId == user.Id) || x.ProjectOwnerId == user.Id)
-                                    .OrderByDescending(x => x.DateCreated);
+                                      .Include(p=>p.ProjectUsers).Include(o=>o.ProjectOwner)
+                                      .Where(x=>x.IsDeleted == false)
+                                      .Where(x => x.ProjectUsers.Any(e=>e.UserId == user.Id) || x.ProjectOwnerId == user.Id)
+                                      .OrderByDescending(x => x.DateCreated);
 
             return projects;
         }
@@ -177,22 +169,23 @@ namespace Core.Service
   
         public IQueryable<Project> Search(string query)
         {
-            var projects = _repository
-                .AsQueryable() 
-                .Where(x=>x.IsDeleted == false)
-                .Where(x => x.Title.Contains(query) || x.Description.Contains(query))
-                .OrderByDescending(x=>x.DateCreated);
+            var projects = _repository.AsQueryable() 
+                                      .Where(x=>x.IsDeleted == false)
+                                      .Where(x => x.Title.Contains(query) || x.Description.Contains(query))
+                                      .OrderByDescending(x=>x.DateCreated);
 
             return projects;
         }
 
         public IQueryable<Project> SearchUserProjects(string query, string userId)
         {
-            var projects = _repository.AsQueryable().Include(u => u.ProjectOwner).Include(p => p.ProjectUsers)
-                .Where(x=>x.IsDeleted == false)
-                .Where(x => x.ProjectUsers.Any(e => e.UserId == userId) || x.ProjectOwnerId == userId)
-                .Where(x => x.Title.Contains(query) || x.Description.Contains(query))
-                .OrderByDescending(x => x.DateCreated);
+            var projects = _repository.AsQueryable()
+                                      .Include(u => u.ProjectOwner)
+                                      .Include(p => p.ProjectUsers)
+                                      .Where(x=>x.IsDeleted == false)
+                                      .Where(x => x.ProjectUsers.Any(e => e.UserId == userId) || x.ProjectOwnerId == userId)
+                                      .Where(x => x.Title.Contains(query) || x.Description.Contains(query))
+                                      .OrderByDescending(x => x.DateCreated);
 
             return projects;
         }

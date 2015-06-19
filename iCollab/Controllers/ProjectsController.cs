@@ -39,8 +39,7 @@ namespace iCollab.Controllers
             IMapper<MeetingViewModel, Meeting> meetingMapper,
             IProjectMailer mailer,
             IAttachmentService attachmentService)
-            : base(userService, appSettings)
-
+            : base(userService, appSettings) 
         {
             _documentMapper = documentMapper;
             _meetingMapper = meetingMapper;
@@ -314,7 +313,7 @@ namespace iCollab.Controllers
             }
              
 
-            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
+            if (taskViewModel.HasUsers == false)
             {
                 taskViewModel.ProjectViewModel = _mapper.ToEntity(project);
                 ModelState.AddModelError("Error", "Bir kullanıcı seçmeniz gerekli.");

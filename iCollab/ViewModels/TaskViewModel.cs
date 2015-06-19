@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Web.Mvc;
 using Model;
 
@@ -82,6 +83,18 @@ namespace iCollab.ViewModels
         public int Progress { set; get; }
 
         public bool CanUserEdit { set; get; }
+
+        public bool HasUsers
+        {
+            get
+            {
+                if (SelectedUsers != null && SelectedUsers.Any() == false)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
 
         public bool IsLate
         {
