@@ -4,8 +4,9 @@
 {
     if (Model.Any() == false)
     {
-        <div class="callout">
-            Yeni bir toplantı yok.
+        <div class="callout callout-info">
+            Size ait bir toplantı yok. Yeni bir toplantı oluşturmak için :
+            @Html.ActionLink("Yeni toplantı", "Create", "Meetings", null, new { @class = "btn btn-sm btn-primary" })
         </div>
     }
     else
@@ -14,8 +15,7 @@
             <thead>
                 <tr>
                     <th></th>
-                    <th style="width: 100px;">Tarih</th>
-                    <th style="width: 90px;">Oluşturan</th>
+                    <th style="width: 100px;">Tarih</th> 
                 </tr>
             </thead>
             <tbody>
@@ -23,13 +23,7 @@
                 {
                     <tr>
                         <td>@Html.ActionLink(item.Title, "View", "Meetings", new { id = item.Id }, null)</td>
-                        <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
-                        <td>
-                            @if (item.CreatedBy != null)
-                            {
-                                <span class="label label-info">@item.CreatedBy</span>
-                            }
-                        </td>
+                        <td>@Html.DisplayFor(modelItem => item.DateCreated)</td> 
                     </tr>
                 }
             </tbody>

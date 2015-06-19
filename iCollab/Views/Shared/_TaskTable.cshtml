@@ -1,13 +1,13 @@
-﻿@using iCollab.Infra.Extensions
-@model IEnumerable<Model.Task>
+﻿@model IEnumerable<Model.Task>
 
 
 @if (Model != null)
 {
     if (Model.Any() == false)
     {
-        <div class="callout">
-            Bu projeye ait bir görev yok.
+        <div class="callout callout-info">
+            Herhangi bir görev yok. Yeni bir görev oluşturmak için :
+            @Html.ActionLink("Yeni görev", "CreateTask", "Tasks", null, new { @class = "btn btn-sm btn-primary" })
         </div>
     }
     else

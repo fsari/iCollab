@@ -5,8 +5,9 @@
 {
     if (Model.Any() == false)
     {
-        <div class="callout">
-            Yeni bir doküman yok.
+        <div class="callout callout-info">
+            Size ait bir doküman yok. Yeni bir doküman oluşturmak için :
+            @Html.ActionLink("Yeni doküman", "Create", "Documents", null, new { @class = "btn btn-sm btn-primary" })
         </div>
     }
     else
@@ -15,8 +16,7 @@
             <thead>
                 <tr>
                     <th></th>
-                    <th style="width: 90px;">Tarih</th>
-                    <th style="width: 90px;">Oluşturan</th>
+                    <th style="width: 90px;">Tarih</th> 
                 </tr>
             </thead>
             <tbody>
@@ -26,8 +26,7 @@
                     {
                         <tr>
                             <td>@Html.ActionLink(item.Title, "View", "Documents", new { id = item.Id }, null)</td>
-                            <td>@Html.DisplayFor(modelItem => item.DateCreated)</td>
-                            <td><span class="label label-info">@item.CreatedBy</span></td>
+                            <td>@Html.DisplayFor(modelItem => item.DateCreated)</td> 
                         </tr>
                     }
                 }

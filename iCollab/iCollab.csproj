@@ -1966,6 +1966,7 @@
     <Content Include="Views\Mailer\AddedDocument.cshtml" />
     <Content Include="Views\Mailer\AddedTask.cshtml" />
     <Content Include="Views\Mailer\_Layout.cshtml.cshtml" />
+    <Content Include="Views\Users\_RenderPicture.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

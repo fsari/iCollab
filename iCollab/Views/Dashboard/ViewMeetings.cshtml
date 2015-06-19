@@ -14,17 +14,7 @@
             </div>
         </div>
     </div>
-    <div class="box-body table-responsive no-padding"> 
-        @if (Model.Any() == false)
-        {
-            <div class="callout callout-info">
-                Size ait bir toplantı yok. Yeni bir toplantı olurmak için :
-                @Html.ActionLink("Yeni toplantı", "Create", "Meetings", null, new { @class = "btn btn-sm btn-primary" })
-            </div>
-        }
-        else
-        {
-            {Html.RenderPartial("_MeetingTable", Model);}
-        }
+    <div class="box-body table-responsive no-padding">
+        @{Html.RenderPartial("_MeetingTable", Model);}
     </div>
 </div>

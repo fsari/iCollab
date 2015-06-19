@@ -57,16 +57,11 @@ namespace iCollab
             builder.RegisterType<ProjectService>().As<IProjectService>().InstancePerRequest();
             builder.RegisterType<AttachmentService>().As<IAttachmentService>().InstancePerRequest(); 
 
-            builder.RegisterType<SettingService>().As<ISettingService>().InstancePerRequest();
-
-            builder.RegisterGeneric(typeof(ActivityService<>)).As(typeof(IActivityService<>)).InstancePerRequest();
+            builder.RegisterType<SettingService>().As<ISettingService>().InstancePerRequest(); 
 
             builder.Register<Serilog.ILogger>((c, p) => new LoggerConfiguration().ReadFrom.AppSettings().WriteTo.RollingFile(AppDomain.CurrentDomain.GetData("DataDirectory").ToString() + "/Log-{Date}.txt").CreateLogger()).SingleInstance();
 
-            builder.RegisterType<Logger>().As<ILogger>().SingleInstance();
-
-            //builder.RegisterType<ProjectMailer>().As<IProjectMailer>().InstancePerRequest();
-            //builder.RegisterType<TaskMailer>().As<ITaskMailer>().InstancePerRequest(); 
+            builder.RegisterType<Logger>().As<ILogger>().SingleInstance(); 
 
             builder.RegisterType<ApplicationUserStore<ApplicationUser>>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();
@@ -84,6 +79,7 @@ namespace iCollab
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<ProjectMailer>().As<IProjectMailer>().InstancePerRequest();
+            builder.RegisterType<TaskMailer>().As<ITaskMailer>().InstancePerRequest(); 
         }
     }
 

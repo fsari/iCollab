@@ -53,8 +53,7 @@
                                 </div>
                             }
                                
-                            <div class="pull-right">
-                                @*@Html.ActionLink("Pdf'e aktar", "ExportAsPdf", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-danger" })*@
+                            <div class="pull-right"> 
                                 @if (Model.CreatedBy == User.Identity.GetUserName())
                                 {
                                     @Html.ActionLink("İçerik ekle", "AddContentPage", "Documents", new { documentId = Model.Id }, new { @class = "btn btn-primary" })

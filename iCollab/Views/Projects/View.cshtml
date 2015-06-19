@@ -37,26 +37,11 @@
                                 <div class="pull-left">
                                     @{ Html.RenderAction("RenderUserDetails", "Users", new { username = Model.CreatedBy });}
                                 </div>
-                                <div class="pull-right">
+                                <div class="pull-right" style="margin-top: 10px;margin-right: 10px;">
                                     <strong>@Model.DateCreated.FormatDate()</strong>
                                 </div>
                                 <div class="clearfix"></div>
-                                
-                                <br />
-
-                                <div class="progress">
-                                    @if (Model.Status == ProjectStatus.Bitti)
-                                    {
-                                        <div class="progress-bar progress-bar-aqua" style="width: 100%"><span class="badge bg-navy">100%</span></div>
-                                    }
-                                    else
-                                    {
-                                        <div class="progress-bar progress-bar-aqua" style="width:  @Model.Progress()%"><span class="badge bg-navy">@Model.Progress()%</span></div>
-                                    }
-                                </div>
-
-                                <br />
-
+                                <br/>
                                 <div style="margin-right: 10px;">
                                     <div class="pull-left">
                                         <strong>Durumu : </strong>
@@ -74,17 +59,9 @@
                                         }
 
                                     </div>
-                                    <div class="pull-right">
-
-                                        @if (Model.StartDatetime.HasValue)
-                                        {
-                                            <strong>Başlangıç : </strong> @Html.DisplayFor(m => m.StartDatetime) <br />
-                                        }
-
-                                        @if (Model.EndDatetime.HasValue)
-                                        {
-                                            <strong>Bitiş : </strong> @Html.DisplayFor(m => m.EndDatetime) <br />
-                                        }
+                                    <div class="pull-right">  
+                                        <strong>Başlangıç : </strong> @Html.DisplayFor(m => m.StartDatetime) <br /> 
+                                        <strong>Bitiş : </strong> @Html.DisplayFor(m => m.EndDatetime) <br />
                                     </div>
 
                                     <div class="clearfix"></div>

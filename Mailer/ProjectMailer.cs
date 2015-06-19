@@ -24,19 +24,19 @@ namespace Mailer
     public class ProjectMailer : MailerBase, IProjectMailer
     {   
         private readonly bool _isDisabled = bool.Parse(ConfigurationManager.AppSettings["EmailDisabled"]);
+        private const string From = "dev@saglik.gov.tr";
+        private const string FromName = "Proje Geliştirme Uygulaması";
+
         public MailMessage ProjectCreated(Project project, IEnumerable<string> users)
         { 
             var mail = new MvcMailMessage();
               
             users.Where(x=>string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = project.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = project.Title; 
             mail.ViewName = "ProjectCreated";
-
-            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+             
+            mail.From = new MailAddress(From, FromName);
             
             ViewBag.Project = project;
 
@@ -52,14 +52,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = project.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = project.Title; 
             mail.ViewName = "ProjectUpdated";
 
-            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Project = project;
 
@@ -75,14 +72,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = project.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = project.Title; 
             mail.ViewName = "ProjectStatus";
 
-            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Project = project;
 
@@ -98,14 +92,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = project.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = project.Title; 
             mail.ViewName = "ProjectPriority";
 
-            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Project = project;
 
@@ -121,14 +112,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = project.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = project.Title; 
             mail.ViewName = "ProjectDeleted";
 
-            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Project = project;
 
@@ -144,14 +132,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = project.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = project.Title; 
             mail.ViewName = "AddedMeeting";
 
-            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Project = project;
 
@@ -167,14 +152,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = project.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = project.Title; 
             mail.ViewName = "AddedDocument";
 
-            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Project = project;
 
@@ -190,14 +172,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = project.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = project.Title; 
             mail.ViewName = "AddedTask";
 
-            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Project = project;
 

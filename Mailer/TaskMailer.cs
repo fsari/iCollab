@@ -25,20 +25,19 @@ namespace Mailer
     public class TaskMailer : MailerBase, ITaskMailer
     {
         private readonly bool _isDisabled = bool.Parse(ConfigurationManager.AppSettings["EmailDisabled"]);
+        private const string From = "dev@saglik.gov.tr";
+        private const string FromName = "Proje Geliştirme Uygulaması";
 
         public MailMessage TaskCreated(Task task, IEnumerable<string> users)
         {
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = task.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = task.Title; 
             mail.ViewName = "TaskCreated";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Task = task;
 
@@ -54,14 +53,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = task.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = task.Title; 
             mail.ViewName = "TaskEdited";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Task = task;
 
@@ -77,14 +73,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = task.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = task.Title; 
             mail.ViewName = "TaskDeleted";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Task = task;
 
@@ -100,14 +93,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = task.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = task.Title; 
             mail.ViewName = "TaskCompleted";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Task = task;
 
@@ -123,14 +113,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = task.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = task.Title; 
             mail.ViewName = "StatusChange";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Task = task;
 
@@ -146,14 +133,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = task.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = task.Title; 
             mail.ViewName = "PriorityChange";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Task = task;
 
@@ -169,14 +153,11 @@ namespace Mailer
             var mail = new MvcMailMessage();
 
             users.Where(x => string.IsNullOrEmpty(x) == false).ToList().ForEach(mail.Bcc.Add);
-
-            mail.IsBodyHtml = true;
-            mail.Subject = task.Title;
-            mail.Priority = MailPriority.High;
+             
+            mail.Subject = task.Title; 
             mail.ViewName = "TypeChange";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
-            mail.From = from;
+            mail.From = new MailAddress(From, FromName);
 
             ViewBag.Task = task;
 

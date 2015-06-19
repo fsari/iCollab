@@ -14,28 +14,14 @@
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         
-                        @if (Model.Picture != null)
-                        {
-                            <img src="@Model.Picture.Path" class="user-image" alt="User Image" />
-                        }
-                        else
-                        {
-                            <img src="/Assets/dist/img/sb.png" class="user-image" alt="User Image" />
-                        } 
-                        
+                       @Html.Partial("~/Views/Users/_RenderPicture.cshtml", Model.Picture)
+                         
                         <span class="hidden-xs">@Model.Email</span>
                     </a>
                     <ul class="dropdown-menu"> 
                         <li class="user-header">
                             
-                            @if (Model.Picture != null)
-                            {
-                                <img src="@Model.Picture.Path" class="img-circle" alt="User Image" />
-                            }
-                            else
-                            {
-                                <img src="/Assets/dist/img/sb.png" class="img-circle" alt="User Image" />
-                            } 
+                            @Html.Partial("~/Views/Users/_RenderPicture.cshtml", Model.Picture)
                              
                             <p>
                                 @Model.UserName 

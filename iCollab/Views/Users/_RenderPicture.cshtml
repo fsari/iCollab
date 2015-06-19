@@ -1,0 +1,11 @@
+﻿@model Model.Attachment
+           
+@if (Model != null)
+{
+    <img src="@Model.Path" class="user-image" alt="User Image" />
+}
+else
+{
+    <img src="/Assets/dist/img/sb.png" class="user-image" alt="User Image" />
+}
+ 

@@ -85,7 +85,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppMailer.cs" />
-    <Compile Include="IAppMailer.cs" />
     <Compile Include="MailMessage.cs" />
     <Compile Include="ProjectMailer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
