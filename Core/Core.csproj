@@ -175,7 +175,6 @@
     <Compile Include="Service\AttachmentServıce.cs" />
     <Compile Include="Service\CrudService\BaseCrudService.cs" />
     <Compile Include="Service\CrudService\ICrudService.cs" />
-    <Compile Include="Service\DependencyService.cs" />
     <Compile Include="Service\DocumentService.cs" />
     <Compile Include="Service\MeetingService.cs" />
     <Compile Include="Service\ProjectService.cs" />

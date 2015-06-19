@@ -37,6 +37,7 @@ namespace iCollab
             builder.RegisterModule(new AutofacWebTypesModule());
 
             builder.RegisterModule(new CachingModule()); 
+            builder.RegisterModule(new LoggingModule());
 
             builder.RegisterType<ApplicationSettings>().As<IApplicationSettings>();
 
@@ -54,23 +55,18 @@ namespace iCollab
             builder.RegisterType<MeetingService>().As<IMeetingService>().InstancePerRequest();
             builder.RegisterType<TaskService>().As<ITaskService>().InstancePerRequest();
             builder.RegisterType<ProjectService>().As<IProjectService>().InstancePerRequest();
-            builder.RegisterType<AttachmentService>().As<IAttachmentService>().InstancePerRequest();
-            builder.RegisterType<DependencyService>().As<IDependencyService>().InstancePerRequest();
+            builder.RegisterType<AttachmentService>().As<IAttachmentService>().InstancePerRequest(); 
 
             builder.RegisterType<SettingService>().As<ISettingService>().InstancePerRequest();
 
             builder.RegisterGeneric(typeof(ActivityService<>)).As(typeof(IActivityService<>)).InstancePerRequest();
 
-            builder.Register<Serilog.ILogger>((c, p) =>
-            {
-                return new LoggerConfiguration().ReadFrom.AppSettings().WriteTo.RollingFile(AppDomain.CurrentDomain.GetData("DataDirectory").ToString() + "/Log-{Date}.txt").CreateLogger();
-            }).SingleInstance();
+            builder.Register<Serilog.ILogger>((c, p) => new LoggerConfiguration().ReadFrom.AppSettings().WriteTo.RollingFile(AppDomain.CurrentDomain.GetData("DataDirectory").ToString() + "/Log-{Date}.txt").CreateLogger()).SingleInstance();
 
             builder.RegisterType<Logger>().As<ILogger>().SingleInstance();
 
-            builder.RegisterType<ProjectMailer>().As<IProjectMailer>().InstancePerRequest();
-            builder.RegisterType<TaskMailer>().As<ITaskMailer>().InstancePerRequest();
-
+            //builder.RegisterType<ProjectMailer>().As<IProjectMailer>().InstancePerRequest();
+            //builder.RegisterType<TaskMailer>().As<ITaskMailer>().InstancePerRequest(); 
 
             builder.RegisterType<ApplicationUserStore<ApplicationUser>>().AsSelf().InstancePerLifetimeScope();
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerLifetimeScope();
@@ -81,7 +77,15 @@ namespace iCollab
             DependencyResolver.SetResolver(new AutofacDependencyResolver(container));
         }
          
-    } 
+    }
+
+    public class LoggingModule : Module
+    {
+        protected override void Load(ContainerBuilder builder)
+        {
+            builder.RegisterType<ProjectMailer>().As<IProjectMailer>().InstancePerRequest();
+        }
+    }
 
     public class CachingModule : Module
     {
@@ -91,17 +95,10 @@ namespace iCollab
             builder.RegisterType<AspNetCache>().Keyed<ICache>(typeof(AspNetCache)).SingleInstance();
             builder.RegisterType<RequestCache>().Keyed<ICache>(typeof(RequestCache)).InstancePerRequest();
 
-            builder.RegisterType<CacheManager<RequestCache>>()
-                .As<ICacheManager>()
-                .InstancePerRequest();
-            builder.RegisterType<CacheManager<StaticCache>>()
-                .Named<ICacheManager>("static")
-                .SingleInstance();
-            builder.RegisterType<CacheManager<AspNetCache>>()
-                .Named<ICacheManager>("aspnet")
-                .SingleInstance();
-
-            // Register resolving delegate
+            builder.RegisterType<CacheManager<RequestCache>>().As<ICacheManager>().InstancePerRequest();
+            builder.RegisterType<CacheManager<StaticCache>>().Named<ICacheManager>("static").SingleInstance();
+            builder.RegisterType<CacheManager<AspNetCache>>().Named<ICacheManager>("aspnet").SingleInstance();
+             
             builder.Register<Func<Type, ICache>>(c =>
             {
                 var cc = c.Resolve<IComponentContext>();
