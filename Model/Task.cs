@@ -8,8 +8,7 @@ using System.Web.Mvc;
 namespace Model
 {
     public class Task : BaseEntity
-    { 
-
+    {  
         [StringLength(512)]
         [Display(Name = "Başlık")]
         [Required(ErrorMessage = "Zorunlu alan.")]
@@ -73,6 +72,7 @@ namespace Model
             }
         }
 
+
         public bool CanEditProject(ApplicationUser user)
         {
             if (CreatedBy == user.UserName)
@@ -91,8 +91,7 @@ namespace Model
             }
 
             return false;
-        }
-
+        }  
     }
 
     public enum TaskType

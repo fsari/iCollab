@@ -35,7 +35,7 @@ namespace Mailer
             mail.Priority = MailPriority.High;
             mail.ViewName = "ProjectCreated";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
+            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
             
             ViewBag.Project = project;
@@ -58,7 +58,7 @@ namespace Mailer
             mail.Priority = MailPriority.High;
             mail.ViewName = "ProjectUpdated";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
+            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
 
             ViewBag.Project = project;
@@ -81,7 +81,7 @@ namespace Mailer
             mail.Priority = MailPriority.High;
             mail.ViewName = "ProjectStatus";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
+            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
 
             ViewBag.Project = project;
@@ -104,7 +104,7 @@ namespace Mailer
             mail.Priority = MailPriority.High;
             mail.ViewName = "ProjectPriority";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
+            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
 
             ViewBag.Project = project;
@@ -127,7 +127,7 @@ namespace Mailer
             mail.Priority = MailPriority.High;
             mail.ViewName = "ProjectDeleted";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
+            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
 
             ViewBag.Project = project;
@@ -150,7 +150,7 @@ namespace Mailer
             mail.Priority = MailPriority.High;
             mail.ViewName = "AddedMeeting";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
+            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
 
             ViewBag.Project = project;
@@ -173,7 +173,7 @@ namespace Mailer
             mail.Priority = MailPriority.High;
             mail.ViewName = "AddedDocument";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
+            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
 
             ViewBag.Project = project;
@@ -196,7 +196,7 @@ namespace Mailer
             mail.Priority = MailPriority.High;
             mail.ViewName = "AddedTask";
 
-            var from = new MailAddress("dev@saglik.gov.tr", "Proje Geliştirme Uygulaması");
+            var from = new MailAddress("serkan.atagun@saglik.gov.tr", "Proje Geliştirme Uygulaması");
             mail.From = from;
 
             ViewBag.Project = project;
