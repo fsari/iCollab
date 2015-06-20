@@ -534,7 +534,7 @@ namespace iCollab.Controllers
         [HttpPost]
         public ActionResult Edit(ProjectViewModel viewModel)
         { 
-            if (viewModel.HasUsers)
+            if (viewModel.HasUsers == false)
             { 
                 TempData["error"] = "Kullanıcı seçmeniz lazım.";
 

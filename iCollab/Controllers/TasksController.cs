@@ -591,7 +591,7 @@ namespace iCollab.Controllers
 
                 _service.Update(task);
 
-                var userEmails = UserService.GetUserEmailsByIds(task.SelectedUsers.Select(i => i));
+                var userEmails = UserService.GetUserEmailsByIds(task.TaskUsers.Select(i => i.UserId));
                 _mailer.StatusChange(task, userEmails).Send();
 
                 return Content("ok");
@@ -621,7 +621,7 @@ namespace iCollab.Controllers
 
                 _service.Update(task);
 
-                var userEmails = UserService.GetUserEmailsByIds(task.SelectedUsers.Select(i => i));
+                var userEmails = UserService.GetUserEmailsByIds(task.TaskUsers.Select(i => i.UserId));
                 _mailer.StatusChange(task, userEmails).Send();
 
                 return Content("ok");
@@ -651,7 +651,7 @@ namespace iCollab.Controllers
 
                 _service.Update(task);
 
-                var userEmails = UserService.GetUserEmailsByIds(task.SelectedUsers.Select(i => i));
+                var userEmails = UserService.GetUserEmailsByIds(task.TaskUsers.Select(i => i.UserId));
                 _mailer.StatusChange(task, userEmails).Send();
 
                 return Content("ok");
