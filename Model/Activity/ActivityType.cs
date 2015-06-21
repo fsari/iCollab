@@ -5,12 +5,12 @@ namespace Model.Activity
     public enum Verb
     {
         [Display(Name="olusturdu",Description = "olusturdu")]
-        Created=0,
+        Created=1,
         [Display(Name = "okudu", Description = "okudu")]
-        Read=1,
+        Read=2,
         [Display(Name = "düzenledi", Description = "düzenledi")]
-        Updated=2,
+        Updated=3,
         [Display(Name = "sildi", Description = "sildi")]
-        Deleted=3
+        Deleted=4
     }
 }
