@@ -78,8 +78,7 @@ namespace iCollab
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<ProjectMailer>().As<IProjectMailer>().InstancePerRequest();
-            builder.RegisterType<TaskMailer>().As<ITaskMailer>().InstancePerRequest(); 
+            builder.RegisterType<Mailer.Mailer>().As<IMailer>().InstancePerRequest(); 
         }
     }
 

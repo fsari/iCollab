@@ -56,7 +56,7 @@
                                         @foreach (var user in Model.SelectedUsers)
                                         {
                                             <label class="label label-default">  @user </label>
-                                        }
+                                        } 
 
                                     </div>
                                     <div class="pull-right">  
@@ -150,6 +150,8 @@
 </aside>
 <script>
     $(document).ready(function () {
+         
+
         //toggle `popup` / `inline` mode
         $.fn.editable.defaults.mode = 'inline';
 
@@ -175,6 +177,7 @@
                 if (response != 'ok') return response;
             }
         });
+
 
         $('#projectpriority').editable({
             type: 'select',

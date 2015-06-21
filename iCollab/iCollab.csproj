@@ -1967,11 +1967,19 @@
     <Content Include="Views\Mailer\AddedMeeting.cshtml" />
     <Content Include="Views\Mailer\AddedDocument.cshtml" />
     <Content Include="Views\Mailer\AddedTask.cshtml" />
-    <Content Include="Views\Mailer\_Layout.cshtml.cshtml" />
+    <Content Include="Views\Mailer\_Layout.cshtml" />
     <Content Include="Views\Users\_RenderPicture.cshtml" />
     <Content Include="Views\Error\BadRequest.cshtml" />
     <Content Include="Views\Error\Forbidden.cshtml" />
     <Content Include="Views\Error\MethodNotAllowed.cshtml" />
+    <Content Include="Views\Mailer\TaskCreated.cshtml" />
+    <Content Include="Views\Mailer\TypeChange.cshtml" />
+    <Content Include="Views\Mailer\PriorityChange.cshtml" />
+    <Content Include="Views\Mailer\StatusChange.cshtml" />
+    <Content Include="Views\Mailer\TaskCompleted.cshtml" />
+    <Content Include="Views\Mailer\TaskDeleted.cshtml" />
+    <Content Include="Views\Mailer\TaskEdited.cshtml" />
+    <Content Include="Views\Mailer\TaskBegan.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

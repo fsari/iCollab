@@ -88,7 +88,7 @@ namespace iCollab.ViewModels
         {
             get
             {
-                if (SelectedUsers != null && SelectedUsers.Any() == false)
+                if (SelectedUsers != null && SelectedUsers.Any())
                 {
                     return true;
                 }

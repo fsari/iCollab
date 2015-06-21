@@ -45,7 +45,7 @@
                             .Pageable(pageable => pageable.Refresh(true).PageSizes(false))
                             .DataSource(dataSource => dataSource
                                 .Ajax()
-                                .Sort(sort => sort.Add("Id").Descending())
+                                .Sort(sort => sort.Add(product => product.DateCreated).Descending())
                                 .PageSize(60)
                                 .Model(model => model.Id(p => p.Id))
                                 .Read(read => read.Action("Read", "Projects"))

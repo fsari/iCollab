@@ -1,7 +1,20 @@
 ﻿
 @{
     ViewBag.Title = "ProjectCreated";
+    Layout = "~/Views/Mailer/_Layout.cshtml";
 }
 
-<h2>ProjectCreated</h2>
+<strong>@ViewBag.Project.Title</strong><br />
+
+Projeye yeni bir görev eklendi. <br /><br />
+
+<strong>Görev :</strong> @ViewBag.Task.Title<br />
+<strong>Başlangıç :</strong> @ViewBag.Task.Start<br />
+<strong>Bitiş :</strong> @ViewBag.Task.End<br />
+<strong>Öncelik :</strong> @ViewBag.Task.End<br />
+<strong>Durumu :</strong> @ViewBag.Task.End<br />
+<br />
+<br />
+
+Daha fazlası için: <a href="http://dev.saglik.gov.tr/Projects/View/@ViewBag.Project.Id">@ViewBag.Project.Title</a> <br />
 

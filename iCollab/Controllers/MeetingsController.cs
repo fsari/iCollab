@@ -40,7 +40,8 @@ namespace iCollab.Controllers
 
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            IQueryable<MeetingViewModel> meetings = _service.GetUserMeetings(AppUser.Id).Select(x=> new MeetingViewModel(){Id = x.Id, Title = x.Title, DateTime = x.DateTime,CreatedBy = x.Owner.FullName});
+            IQueryable<MeetingViewModel> meetings = _service.GetUserMeetings(AppUser.Id)
+                                                            .Select(x=> new MeetingViewModel(){Id = x.Id, Title = x.Title, DateTime = x.DateTime,CreatedBy = x.Owner.FullName, DateCreated = x.DateCreated});
             return Json(meetings.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         }
 

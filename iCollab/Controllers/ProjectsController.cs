@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Web.Mvc;
+using System.Web.UI.WebControls;
 using Core.Extensions;
 using Core.Mappers;
 using Core.Service;
@@ -27,7 +28,7 @@ namespace iCollab.Controllers
         private readonly IMapper<MeetingViewModel, Meeting> _meetingMapper;
         private readonly IProjectService _projectService;
         private readonly IMapper<TaskViewModel, Task> _taskMapper;
-        private readonly IProjectMailer _mailer;
+        private readonly IMailer _mailer;
 
         public ProjectsController(
             IProjectService projectService,
@@ -37,7 +38,7 @@ namespace iCollab.Controllers
             IUserService userService,
             IMapper<DocumentViewModel, Document> documentMapper,
             IMapper<MeetingViewModel, Meeting> meetingMapper,
-            IProjectMailer mailer,
+            IMailer mailer,
             IAttachmentService attachmentService)
             : base(userService, appSettings) 
         {
@@ -412,6 +413,9 @@ namespace iCollab.Controllers
 
             if (ModelState.IsValid)
             {
+                var mailer = new Mailer.Mailer();
+                mailer.Welcome(null);
+
                 Project project = _mapper.ToModel(viewModel);
 
                 project.ProjectOwner = UserService.FindById(AppUser.Id);
@@ -575,7 +579,7 @@ namespace iCollab.Controllers
                 _projectService.Update(project);
 
                 var projectUsers = UserService.GetUserEmailsByIds(viewModel.SelectedUsers.Select(x => x)); 
-                _mailer.ProjectUpdated(project, projectUsers);
+                _mailer.ProjectUpdated(project, projectUsers).Send();
 
                 TempData["success"] = "Proje güncellendi.";
 

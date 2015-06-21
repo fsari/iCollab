@@ -1,7 +1,12 @@
 ﻿
 @{
     ViewBag.Title = "ProjectCreated";
+    Layout = "~/Views/Mailer/_Layout.cshtml";
 }
 
-<h2>ProjectCreated</h2>
+<strong>@ViewBag.Project.Title</strong> projesi silindi.<br /><br />
 
+Projenin : <br /> 
+<strong>Önceliği : </strong> @ViewBag.Project.Priority <br />
+<strong>Başlangıç : </strong> @ViewBag.Project.StartDatetime <br />
+<strong>Bitiş :</strong> @ViewBag.Project.EndDatetime <br /> 

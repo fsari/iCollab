@@ -28,7 +28,7 @@ namespace iCollab.Controllers
         private readonly IAttachmentService _attachmentService;
         private readonly IMapper<AppUserViewModel, ApplicationUser> _userMapper;
         private readonly IProjectService _projectService;
-        private readonly ITaskMailer _mailer;
+        private readonly IMailer _mailer;
 
         public TasksController(
             ITaskService service,
@@ -37,8 +37,8 @@ namespace iCollab.Controllers
             IUserService userService,
             IProjectService projectService, 
             IAttachmentService attachmentService, 
-            IMapper<AppUserViewModel, ApplicationUser> userMapper, 
-            ITaskMailer mailer)
+            IMapper<AppUserViewModel, ApplicationUser> userMapper,
+            IMailer mailer)
             : base(userService, appSettings)
         {
             _service = service;
@@ -52,7 +52,8 @@ namespace iCollab.Controllers
           
         public ActionResult Read([DataSourceRequest] DataSourceRequest request)
         {
-            var tasks = _service.GetUserTasks(AppUser.Id).Select(x=> new TaskViewModel{Id = x.Id, Title = x.Title, Start = x.Start, End = x.End, Priority = x.Priority , TaskStatus = x.TaskStatus});
+            var tasks = _service.GetUserTasks(AppUser.Id)
+                .Select(x=> new TaskViewModel{Id = x.Id, Title = x.Title, Start = x.Start, End = x.End, Priority = x.Priority , TaskStatus = x.TaskStatus, DateCreated = x.DateCreated});
             return Json(tasks.ToDataSourceResult(request), JsonRequestBehavior.AllowGet);
         } 
          
@@ -171,6 +172,8 @@ namespace iCollab.Controllers
                 _projectService.InvalidateCache(task.ProjectId.Value);
             }
 
+            _mailer.TaskCompleted(task, new[] {task.TaskOwner.Email}).Send();
+
             TempData["success"] = "Görev tamamlandı.";
 
             return RedirectToAction("View", new {id = id.Value});
@@ -252,6 +255,9 @@ namespace iCollab.Controllers
             task.TaskStatus = TaskStatus.Aktif;
             _service.Update(task);
 
+            var user = task.TaskOwner.Email;
+            _mailer.TaskBegan(task, new [] {user}).Send();
+
             return RedirectToAction("View", new {id = id.Value});
         }
 
@@ -308,8 +314,7 @@ namespace iCollab.Controllers
 
             return View(taskViewModel);
         }
-
-        // TODO: Add parent task to errored requests
+         
         [HttpPost]
         public ActionResult AddSubTask(TaskViewModel taskViewModel)
         {
@@ -319,7 +324,7 @@ namespace iCollab.Controllers
                 return View(taskViewModel);
             }
 
-            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
+            if (taskViewModel.HasUsers == false)
             {
                 TempData["error"] = "Bir hata olustu formu kontrol edip tekrar deneyiniz.";
 
@@ -335,7 +340,7 @@ namespace iCollab.Controllers
 
             if (task.ParentTaskId.HasValue == false)
             {
-                throw new Exception("Parent task Id can not be null.");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             var parentTask = _service.GetTask(task.ParentTaskId.Value, nocache: true);
@@ -388,10 +393,9 @@ namespace iCollab.Controllers
                 return View(taskViewModel);
             }
 
-            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
+            if (taskViewModel.HasUsers == false)
             {
-                TempData["error"] = "Bir hata olustu formu kontrol edip tekrar deneyiniz.";
-
+                TempData["error"] = "Bir hata olustu formu kontrol edip tekrar deneyiniz."; 
                 return View(taskViewModel);
             }
              
@@ -443,7 +447,7 @@ namespace iCollab.Controllers
 
             if (task.CreatedBy != AppUser.UserName)
             {
-                return RedirectToAction("Unauthorized", "Error");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
             TaskViewModel taskviewmodel = _mapper.ToEntity(task); 
@@ -461,7 +465,7 @@ namespace iCollab.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Edit(TaskViewModel taskViewModel)
         {
-            if (taskViewModel.SelectedUsers == null || taskViewModel.SelectedUsers.Any() == false)
+            if (taskViewModel.HasUsers == false)
             {
                 TempData["error"] = "Kullanıcı seçmeniz lazım.";
                 return View(taskViewModel);
@@ -476,8 +480,7 @@ namespace iCollab.Controllers
                 instance.End = taskViewModel.End;
                 instance.Start = taskViewModel.Start;
                 instance.Priority = taskViewModel.Priority;
-
-
+                 
                 _service.Update(instance);
 
                 instance.TaskUsers.Clear();

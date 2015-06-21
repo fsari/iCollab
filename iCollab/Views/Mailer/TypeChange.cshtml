@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Yeni proje";
+    Layout = "~/Views/Mailer/_Layout.cshtml";
+}
+
+<strong>@ViewBag.Task.Title</strong><br /> görevi güncellendi. <br /><br />
+
+Görevin : <br />
+<strong>Durumu : </strong> @ViewBag.Task.TaskStatus <br />
+<strong>Önceliği : </strong> @ViewBag.Task.Priority <br />
+<strong>Başlangıç : </strong> @ViewBag.Task.Start <br />
+<strong>Bitiş :</strong> @ViewBag.Task.End <br />
+<br />
+<br />
+
+Daha fazlası için: <a href="http://dev.saglik.gov.tr/Tasks/View/@ViewBag.Task.Id">@ViewBag.Task.Title</a> <br />
