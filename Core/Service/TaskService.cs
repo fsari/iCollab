@@ -58,6 +58,7 @@ namespace Core.Service
                             .Include(p=>p.ParentTask) 
                             .Include(t=>t.TaskUsers)
                             .Include(t=>t.TaskOwner)
+                            .Include(p=>p.Project.ProjectUsers)
                             .FirstOrDefault(x => x.Id == id);
 
             return task;

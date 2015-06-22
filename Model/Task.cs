@@ -72,6 +72,31 @@ namespace Model
             }
         }
 
+        public bool CanViewTask(ApplicationUser user)
+        {
+            if (CreatedBy == user.UserName)
+            {
+                return true;
+            }
+
+            if (TaskUsers.Any(x => x.UserId == user.Id))
+            {
+                return true;
+            }
+
+            if (TaskOwner.Id == user.Id)
+            {
+                return true;
+            }
+
+            if (Project.ProjectUsers.Any(x=>x.UserId == user.Id))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
 
         public bool CanEditProject(ApplicationUser user)
         {

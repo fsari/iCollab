@@ -188,6 +188,8 @@ namespace iCollab.Controllers
 
             Task task = _service.GetTask(id.Value);
 
+            var user = UserService.FindById(AppUser.Id);
+
             if (task == null)
             {
                 return new HttpNotFoundResult();
@@ -198,7 +200,7 @@ namespace iCollab.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            if (task.TaskUsers.Any(x => x.UserId == AppUser.Id) == false && task.TaskOwnerId != AppUser.Id)
+            if (task.CanViewTask(user) == false)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
@@ -488,7 +490,7 @@ namespace iCollab.Controllers
 
                 _service.Update(instance);
 
-                var userEmails = UserService.GetUserEmailsByIds(instance.SelectedUsers.Select(i => i));
+                var userEmails = UserService.GetUserEmailsByIds(instance.TaskUsers.Select(i => i.UserId));
                 _mailer.TaskEdited(instance, userEmails).Send();
 
                 TempData["success"] = "Görev güncellendi.";
@@ -541,7 +543,7 @@ namespace iCollab.Controllers
                 _service.InvalidateCache(task.ParentTask.Id);
             }
 
-            var userEmails = UserService.GetUserEmailsByIds(task.SelectedUsers.Select(i => i));
+            var userEmails = UserService.GetUserEmailsByIds(task.TaskUsers.Select(i => i.UserId));
             _mailer.TaskDeleted(task, userEmails).Send();
 
             TempData["success"] = "Görev silinmiştir.";

@@ -1,4 +1,5 @@
-﻿using System; 
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -6,6 +7,7 @@ using Core.Infrastructure;
 using Core.Service;
 using iCollab.Infra;
 using iCollab.ViewModels;
+using Mailer;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
@@ -19,12 +21,18 @@ namespace iCollab.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
         private IUserService _service;
+        private IMailer _mailer;
           
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IUserService service)
+        public AccountController(
+            ApplicationUserManager userManager, 
+            ApplicationSignInManager signInManager, 
+            IUserService service, 
+            IMailer mailer)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _service = service;
+            _mailer = mailer;
         }
           
         [AllowAnonymous]
@@ -130,14 +138,15 @@ namespace iCollab.Controllers
         }
          
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        [AllowAnonymous] 
         public async Task<ActionResult> ForgotPassword(ForgotPasswordViewModel model)
         {
             if (ModelState.IsValid)
             {
+                
                 var user = await _userManager.FindByNameAsync(model.Email);
-                if (user == null || !(await _userManager.IsEmailConfirmedAsync(user.Id)))
+                // || !(await _userManager.IsEmailConfirmedAsync(user.Id))
+                if (user == null)
                 {
                     // Don't reveal that the user does not exist or is not confirmed
                     return View("ForgotPasswordConfirmation");
@@ -145,13 +154,22 @@ namespace iCollab.Controllers
 
                 // For more information on how to enable account confirmation and password reset please visit http://go.microsoft.com/fwlink/?LinkID=320771
                 // Send an email with this link
-                // string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
-                // var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);		
-                // await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
-                // return RedirectToAction("ForgotPasswordConfirmation", "Account");
-            }
+                string code = Guid.NewGuid().ToString();
 
-            // If we got this far, something failed, redisplay form
+                user.PasswordResetToken = code;
+                var result = _userManager.Update(user);
+
+                if (result.Succeeded)
+                {
+                    var callbackUrl = Url.Action("ResetPassword", "Account", new {userId = user.Id, code = code}, protocol: Request.Url.Scheme);
+                     
+                    _mailer.ForgotPassword(callbackUrl, model.Email).Send();
+
+                    return RedirectToAction("ForgotPasswordConfirmation", "Account");
+                }
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+             
             return View(model);
         }
 
@@ -161,20 +179,27 @@ namespace iCollab.Controllers
         {
             return View();
         }
-
-        //
-        // GET: /Account/ResetPassword
+         
         [AllowAnonymous]
-        public ActionResult ResetPassword(string code)
+        public ActionResult ResetPassword(string userId, string code)
         {
+            var user = _userManager.FindById(userId);
+
+            if (user == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
+            if (user.PasswordResetToken != code)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             return code == null ? View("Error") : View();
         }
-
-        //
-        // POST: /Account/ResetPassword
+        
         [HttpPost]
-        [AllowAnonymous]
-        [ValidateAntiForgeryToken]
+        [AllowAnonymous] 
         public async Task<ActionResult> ResetPassword(ResetPasswordViewModel model)
         {
             if (!ModelState.IsValid)
@@ -183,16 +208,31 @@ namespace iCollab.Controllers
             }
             var user = await _userManager.FindByNameAsync(model.Email);
             if (user == null)
-            {
-                // Don't reveal that the user does not exist
+            { 
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
-            var result = await _userManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
-            if (result.Succeeded)
+
+            if (user.PasswordResetTokenUsed ||
+                (user.PasswordTokenUsedOn.HasValue && user.PasswordTokenUsedOn.Value.AddDays(2) < DateTime.Now))
             {
-                return RedirectToAction("ResetPasswordConfirmation", "Account");
+                return View("ForgotPasswordError");
             }
-            AddErrors(result);
+
+            var res = _userManager.RemovePassword(user.Id);
+
+            if (res.Succeeded)
+            {
+                var createPassResult = _userManager.AddPassword(user.Id, model.Password);
+                if (createPassResult.Succeeded)
+                {
+                    user.PasswordResetTokenUsed = true;
+                    user.PasswordTokenUsedOn = DateTime.Now;
+                    _userManager.Update(user);
+                    return RedirectToAction("ResetPasswordConfirmation", "Account");
+                }
+                AddErrors(createPassResult);
+            }
+            AddErrors(res);
             return View();
         }
 

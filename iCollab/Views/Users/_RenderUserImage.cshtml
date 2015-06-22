@@ -2,7 +2,7 @@
 
 <div>
     <div class="pull-left" style="margin-left: 5px; margin-top: 10px;cursor: pointer;" data-toggle="modal" data-target="#userModal">
-        @Html.Partial("_RenderPicture", Model.Picture)
+        @Html.Partial("_RenderPicture", new ViewDataDictionary(Model.Picture))
     </div>
 
     <div class="pull-right" style="margin-left: 5px; margin-top: 10px;">
@@ -20,7 +20,7 @@
             </div>
             <div class="modal-body">
                 <div class="pull-left">
-                    @Html.Partial("_RenderPicture", Model.Picture)
+                    @Html.Partial("_RenderPicture", new ViewDataDictionary(Model.Picture))
                 </div>
                 
                 <div class="pull-left" style="margin-left: 10px;">

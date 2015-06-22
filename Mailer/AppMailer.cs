@@ -28,6 +28,8 @@ namespace Mailer
         MailMessage PriorityChange(Task task, IEnumerable<string> users);
         MailMessage TypeChange(Task task, IEnumerable<string> users);
         MailMessage TaskBegan(Task task, IEnumerable<string> users);
+
+        MailMessage ForgotPassword(string callback, string email);
     }
 
     public sealed class Mailer : MailerBase, IMailer
@@ -372,6 +374,26 @@ namespace Mailer
             mail.From = new MailAddress(From, FromName);
 
             ViewBag.Task = task;
+
+            PopulateBody(mail, mail.ViewName);
+
+            var mailMessage = new MailMessage(mail, _isDisabled);
+
+            return mailMessage;
+        }
+
+        public MailMessage ForgotPassword(string callback, string email)
+        {
+            var mail = new MvcMailMessage();
+
+            mail.Bcc.Add(email);
+
+            mail.Subject = "Şifrenizi resetleyin.";
+            mail.ViewName = "ForgotPassword";
+
+            mail.From = new MailAddress(From, FromName);
+
+            ViewBag.Callback = callback;
 
             PopulateBody(mail, mail.ViewName);
 

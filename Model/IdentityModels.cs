@@ -48,6 +48,11 @@ namespace Model
         public bool Disabled { set; get; }
 
         public ICollection<Todo> Todos { set; get; }
+
+        public string PasswordResetToken { set; get; }
+
+        public bool PasswordResetTokenUsed { set; get; }
+        public DateTime? PasswordTokenUsedOn { set; get; }
     }
 
     public class Department : BaseEntity

@@ -2,7 +2,7 @@
 @using iCollab.ViewModels
 @using Microsoft.AspNet.Identity
 @using Model
-@using Core.Extensions 
+@using Core.Extensions
 
 @model TaskViewModel
 @{
@@ -39,41 +39,41 @@
                     <div class="box-body table-responsive no-padding" style="margin-left: 10px; margin-right: 10px;">
 
                         <div class="pull-left">
-                            @{ Html.RenderAction("RenderUserDetails", "Users", new { username = Model.TaskOwner.UserName});}
+                            @{ Html.RenderAction("RenderUserDetails", "Users", new { username = Model.TaskOwner.UserName });}
                         </div>
                         <div class="pull-right" style="margin-top: 20px;">
                             <strong>@Model.DateCreated.FormatDate()</strong>
                         </div>
                         <div class="clearfix"></div>
-                        <br/><br/>
+                        <br /><br />
                         <div class="pull-left">
                             @if (Model.Project != null)
                             {
                                 <strong>Proje : </strong>
                                 @Html.ActionLink(Model.Project.Title, "View", "Projects", new { id = Model.Project.Id }, null)<br />
                             }
-                            
+
                             <strong>Durumu : </strong>
                             <a href="#" id="taskstatus" data-type="select" data-source="@Url.Action("GetTaskStatus")" data-value="@Model.TaskStatus" class="editable-click">@Model.TaskStatus</a>
                             <br />
-                            
+
                             <strong>Önceliği : </strong>
                             <a href="#" id="taskpriority" data-type="select" data-source="@Url.Action("GetTaskPriority")" data-value="@Model.Priority" class="editable-click">@Model.Priority</a>
                             <br />
-                            
+
                             <strong>Türü : </strong>
                             <a href="#" id="tasktype" data-type="select" data-source="@Url.Action("GetTaskTypes")" data-value="@Model.TaskType.DisplayName()" class="editable-click">@Model.TaskType.DisplayName()</a>
                             <br />
- 
+
                             <strong><i class="fa fa-user"></i> Atananlar: </strong>
                             @foreach (var u in Model.SelectedUsers)
                             {
                                 <label class="label label-default">@u</label>
                             }
                         </div>
-                        <div class="pull-right"> 
+                        <div class="pull-right">
                             <strong><i class="fa fa-clock-o"></i> Başlangıç : </strong> @Html.DisplayFor(m => m.Start) <br />
-                            <strong><i class="fa fa-clock-o"></i> Bitiş : </strong> @Html.DisplayFor(m => m.End) <br/> 
+                            <strong><i class="fa fa-clock-o"></i> Bitiş : </strong> @Html.DisplayFor(m => m.End) <br />
                         </div>
                         <div class="clearfix"></div>
                         @if (Model.ParentTask != null)
@@ -134,7 +134,7 @@
                 </div>
             </div>
         </div>
-        
+
         @if (string.IsNullOrEmpty(Model.Description) == false)
         {
             <div class="row">
@@ -142,9 +142,7 @@
                     <div class="box">
                         <h4 class="header"><i class="fa fa-pencil"></i> Açıklama</h4>
                         <div class="box-body table-responsive no-padding">
-                            <div contenteditable="true" id="editable" style="cursor: pointer;">
-                                @Html.Raw(HttpUtility.HtmlDecode(Model.Description));
-                            </div>
+                            @Html.Raw(HttpUtility.HtmlDecode(Model.Description));
                         </div>
                     </div>
                 </div>
@@ -152,32 +150,32 @@
         }
 
         @*        <div class="row">
-             <div class="col-xs-6">
-                <div class="box">
-                    <div class="box-header" style="margin: 10px;">
-                        <h3 class='box-title pull-left'>Alt Görevler</h3>
-                        <div class="pull-right">
-                            @Html.ActionLink("Alt görev ekle", "AddSubTask", "Tasks", new { parentId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
-                        </div>
-                        <div class="clearfix"></div>
-                    </div>
-                    <div class="box-body table-responsive no-padding">
-                        @if (Model.SubTasks != null && Model.SubTasks.Count > 0)
-                        {
-                            { Html.RenderPartial("_TaskTable", Model.SubTasks); }
-                        }
-                        else
-                        {
-                            <div class="callout callout-info">
-                                Herhangi bir alt görev yok. Yeni bir alt görev oluşturmak için :
+                 <div class="col-xs-6">
+                    <div class="box">
+                        <div class="box-header" style="margin: 10px;">
+                            <h3 class='box-title pull-left'>Alt Görevler</h3>
+                            <div class="pull-right">
                                 @Html.ActionLink("Alt görev ekle", "AddSubTask", "Tasks", new { parentId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
                             </div>
-                        }
+                            <div class="clearfix"></div>
+                        </div>
+                        <div class="box-body table-responsive no-padding">
+                            @if (Model.SubTasks != null && Model.SubTasks.Count > 0)
+                            {
+                                { Html.RenderPartial("_TaskTable", Model.SubTasks); }
+                            }
+                            else
+                            {
+                                <div class="callout callout-info">
+                                    Herhangi bir alt görev yok. Yeni bir alt görev oluşturmak için :
+                                    @Html.ActionLink("Alt görev ekle", "AddSubTask", "Tasks", new { parentId = Model.Id }, new { @class = "btn btn-sm btn-primary" })
+                                </div>
+                            }
+                        </div>
                     </div>
                 </div>
-            </div> 
 
-        </div>*@
+            </div>*@
     </section>
 </aside>
 
@@ -277,6 +275,6 @@
             }
         });
 
-        });
+    });
 
 </script>
