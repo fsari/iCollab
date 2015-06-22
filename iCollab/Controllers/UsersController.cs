@@ -64,6 +64,7 @@ namespace iCollab.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "manager")]
         public ActionResult DisableUser(string userId)
         {
             ApplicationUser user = _userService.FindById(userId);
@@ -82,6 +83,7 @@ namespace iCollab.Controllers
             return RedirectToAction("Index");
         }
 
+        [Authorize(Roles = "manager")]
         public ActionResult EnableUser(string userId)
         {
             ApplicationUser user = _userService.FindById(userId);

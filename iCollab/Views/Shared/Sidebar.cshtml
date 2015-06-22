@@ -43,9 +43,12 @@
             <li id="Meetings">
                 <a href="/Meetings/Index"> <i class="fa fa-exchange"></i> Toplantılar</a>
             </li> 
-            <li id="Users">
-                <a href="/Users/Index"> <i class="fa fa-user"></i> Kullanıcılar</a>
-            </li> 
+            @if (ViewBag.IsManager)
+            {
+                <li id="Users">
+                    <a href="/Users/Index"> <i class="fa fa-user"></i> Kullanıcılar</a>
+                </li>
+            }
         </ul>
     </section> 
 </aside>
