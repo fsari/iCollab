@@ -157,6 +157,7 @@ namespace iCollab.Controllers
                 string code = Guid.NewGuid().ToString();
 
                 user.PasswordResetToken = code;
+                user.PasswordResetTokenUsed = false;
                 var result = _userManager.Update(user);
 
                 if (result.Succeeded)

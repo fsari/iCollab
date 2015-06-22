@@ -1,10 +1,19 @@
 ﻿@{
-    ViewBag.Title = "Confirm Email";
+    ViewBag.Title = "Emailinizi doğrulayın.";
 }
 
-<h2>@ViewBag.Title.</h2>
-<div>
-    <p>
-        Thank you for confirming your email. Please @Html.ActionLink("Click here to Log in", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
-    </p>
-</div>
+<div class="login-box">
+    <div class="login-logo">
+        <br />
+        <a href="/"><b>dev</b></a>
+    </div>
+    <div class="login-box-body">
+        <h2>@ViewBag.Title.</h2>
+        <div>
+            <p>
+                Emailinizi doğruladınız. Giriş yapmak için 
+                @Html.ActionLink("buraya tıklayın.", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })
+            </p>
+        </div> 
+    </div>
+</div> 
