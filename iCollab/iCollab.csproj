@@ -1982,6 +1982,7 @@
     <Content Include="Views\Mailer\TaskBegan.cshtml" />
     <Content Include="Views\Mailer\ForgotPassword.cshtml" />
     <Content Include="Views\Account\ForgotPasswordError.cshtml" />
+    <Content Include="Views\Projects\_AddUserModal.cshtml" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

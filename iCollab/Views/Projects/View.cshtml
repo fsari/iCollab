@@ -55,10 +55,10 @@
                                         <strong>Kullanıcılar :</strong>
                                         @foreach (var user in Model.SelectedUsers)
                                         {
-                                            <label class="label label-default">  @user </label>
+                                            <label class="label label-primary">  @user </label>
                                         }
                                         &nbsp;&nbsp;
-                                        <a href="#"><i class="fa fa-user-plus"></i></a>
+                                        @Html.Partial("_AddUserModal")
 
                                     </div>
                                     <div class="pull-right">  
