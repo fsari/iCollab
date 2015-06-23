@@ -1,8 +1,8 @@
 ﻿@model iCollab.ViewModels.ErrorModel
 
 @{
-    ViewBag.Title = "Bad Request";
-    ViewBag.Description = "Your browser sent a request that this server could not understand.";
+    ViewBag.Title = "Geçersiz İstek";
+    ViewBag.Description = "İsteğiniz gerçekleştirilemiyor.Erişim yetkiniz yok ya da isteğiniz geçersiz.";
 }
 
 <div class="jumbotron text-center">
@@ -10,5 +10,5 @@
         <h1><span aria-hidden="true" class="fa fa-exclamation-circle text-danger"></span> @ViewBag.Title</h1>
     </header>
     <p>@ViewBag.Description</p>
-    <a class="btn btn-primary btn-lg" href="/"><span aria-hidden="true" class="fa fa-home"></span> Take me home</a>
+    <a class="btn btn-primary btn-lg" href="/"><span aria-hidden="true" class="fa fa-home"></span> Anasayfaya Dön</a>
 </div>
