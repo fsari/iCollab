@@ -4167,7 +4167,7 @@ Gradient Background colors
                 }
 
                     #todo-list li .toggle:after {
-                        content: '?';
+                        content: '';
                         /* 40 + a couple of pixels visual adjustment */
                         line-height: 43px;
                         font-size: 20px;
@@ -4220,7 +4220,7 @@ Gradient Background colors
                     }
 
                     #todo-list li .destroy:after {
-                        content: '?';
+                        content: '';
                     }
 
                 #todo-list li:hover .destroy {
