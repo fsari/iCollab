@@ -1,8 +1,8 @@
 ﻿@model iCollab.ViewModels.ErrorModel
 
 @{
-    ViewBag.Title = "Forbidden";
-    ViewBag.Description = "Sorry, but you don't have permission to access this page.";
+    ViewBag.Title = "Erişim Yasağı";
+    ViewBag.Description = "Üzgünüz, Bu sayfaya erişim yetkiniz yok.";
 }
 
 <div class="jumbotron text-center">
@@ -10,5 +10,5 @@
         <h1><span aria-hidden="true" class="fa fa-ban text-danger"></span> @ViewBag.Title</h1>
     </header>
     <p>@ViewBag.Description</p>
-    <a class="btn btn-primary btn-lg" href="/"><span aria-hidden="true" class="fa fa-home"></span> Take me home</a>
+    <a class="btn btn-primary btn-lg" href="/"><span aria-hidden="true" class="fa fa-home"></span> Anasayfaya Dön</a>
 </div>
